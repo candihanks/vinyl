@@ -1,5 +1,7 @@
 package com.carltaylordev.recordlisterandroidclient.models;
 
+import java.util.UUID;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -9,12 +11,12 @@ import io.realm.annotations.PrimaryKey;
 
 public class Category extends RealmObject {
     @PrimaryKey
-    private long id;
-    private  String name;
+    private String uuid = UUID.randomUUID().toString();
+    private String name;
     private String number;
 
-    public long getId() {
-        return id;
+    public String getId() {
+        return uuid;
     }
 
     public String getName() {
