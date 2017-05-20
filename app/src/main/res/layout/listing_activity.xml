@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -8,38 +7,47 @@
     android:padding="10dp"
     tools:context="com.carltaylordev.recordlisterandroidclient.ListingActivity">
 
-
     <EditText
         android:id="@+id/listing_activity_edit_text_artist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Artist"
-        />
+        android:hint="Artist"/>
 
     <EditText
         android:id="@+id/listing_activity_edit_text_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title"
-        />
-
+        android:hint="Title"/>
 
     <EditText
         android:id="@+id/listing_activity_edit_text_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Label"
-        />
+        android:hint="Label"/>
+
+    <ImageButton
+        android:id="@+id/listing_activity_image_button_concat"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/magic_wand"
+        android:scaleType="fitCenter"/>
+
+    <EditText
+        android:id="@+id/listing_activity_edit_text_listing_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Listing Title"/>
+
+    <EditText
+        android:id="@+id/listing_activity_edit_text_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Notes"/>
 
     <Spinner
         android:id="@+id/listing_activity_spinner_cats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></Spinner>
-
-
-
-
-
 
 
 </LinearLayout>
