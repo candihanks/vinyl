@@ -11,13 +11,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class Category extends RealmObject {
     @PrimaryKey
-    private String uuid = UUID.randomUUID().toString();
-    private String name;
     private String number;
-
-    public String getId() {
-        return uuid;
-    }
+    private String name;
 
     public String getName() {
         return name;
