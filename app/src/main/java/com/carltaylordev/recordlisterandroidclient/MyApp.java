@@ -17,8 +17,9 @@ public class MyApp extends Application {
         super.onCreate();
 
         Realm.init(this);
+        Realm realm = Realm.getDefaultInstance();
 
-        MockData mockDataSetUp = new MockData(this);
+        MockData mockDataSetUp = new MockData(realm);
         mockDataSetUp.setUp();
     }
 }

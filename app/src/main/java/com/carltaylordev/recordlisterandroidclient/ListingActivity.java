@@ -2,20 +2,23 @@ package com.carltaylordev.recordlisterandroidclient;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
+import com.carltaylordev.recordlisterandroidclient.models.Record;
+
 import java.util.ArrayList;
-import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class ListingActivity extends AppCompatActivity {
-
-    ArrayList<String> mStyleCatList = new ArrayList<>();
 
     Spinner mStyleCatSpinner;
 
@@ -25,26 +28,27 @@ public class ListingActivity extends AppCompatActivity {
     EditText mListingTitleEditText;
     EditText mNotesEditText;
 
-    // Activity Lifecycle
+    private Realm mRealm;
+
+    // - Activity Lifecycle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listing_activity);
 
+        mRealm = Realm.getDefaultInstance();
+
         setupEditTexts();
         setupSpinner();
         setupConcatButton();
+        setUpSaveButton();
     }
 
-    // Setup
+    // - Setup
     void setupSpinner() {
-        mStyleCatList.add("Motown");
-        mStyleCatList.add("Northern Soul");
-        mStyleCatList.add("Jazz");
-        mStyleCatList.add("Funk");
-        // TODO: replace with DB fetch
+        RealmResults cats = EbayCategory.getAll();
         mStyleCatSpinner = (Spinner)findViewById(R.id.listing_activity_spinner_cats);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mStyleCatList);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cats);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mStyleCatSpinner.setAdapter(spinnerArrayAdapter);
     }
@@ -72,22 +76,51 @@ public class ListingActivity extends AppCompatActivity {
         });
     }
 
-    // String
+    void setUpSaveButton() {
+        Button button = (Button)findViewById(R.id.listing_activity_button_save);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (recordIsValid()) {
+                    saveNewRecord();
+                }
+            }
+        });
+    }
+
+
     String createListingTitle() {
         String aritst = mArtistEditText.getText().toString();
         String title = mTitleEditText.getText().toString();
         String label = mLabelEditText.getText().toString();
         String styleCat = mStyleCatSpinner.getSelectedItem().toString();
-        // TODO: 06/05/17
-        // get format
-        // remove illegal chars
-
-        //
-
+        String ebayCategory = mStyleCatSpinner.getSelectedItem().toString();
+        // remove illegal chars for eBay
         return styleCat;
     }
 
-    // Alerts
+    // - Validation
+    Boolean recordIsValid() {
+        return true;
+    }
+
+    // - Saving
+    void saveNewRecord() {
+        EbayCategory ebayCategory = (EbayCategory)mStyleCatSpinner.getSelectedItem();
+        mRealm.beginTransaction();
+
+        Record record = new Record();
+        record.setArtist(mArtistEditText.getText().toString());
+        record.setTitle(mTitleEditText.getText().toString());
+        record.setLabel(mLabelEditText.getText().toString());
+        record.setListingTitle(mListingTitleEditText.getText().toString());
+        record.setEbayCategory(ebayCategory);
+
+        mRealm.copyToRealm(record);
+        mRealm.commitTransaction();
+    }
+
+    // - Alerts
     void showAlert(String title, String message) {
 
     }
