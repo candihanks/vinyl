@@ -1,5 +1,6 @@
 package com.carltaylordev.recordlisterandroidclient;
 
+import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,23 +11,32 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
-import android.widget.TextView;
+import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
+import com.carltaylordev.recordlisterandroidclient.models.Record;
 
-public class MainActivity extends AppCompatActivity {
+import io.realm.Realm;
+
+public class Main2Activity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
+    private Realm mRealm;
+
+    /**
+     * Activity LifeCycle
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -38,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -47,13 +59,16 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
     }
+
+    /**
+     * Menu
+     */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_main2, menu);
         return true;
     }
 
@@ -73,8 +88,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
+     * Validation / Saving
+     */
+
+
+    void setUpSaveButton() {
+        Button button = (Button)findViewById(R.id.listing_activity_button_save);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (recordIsValid()) {
+                    saveNewRecord();
+                }
+            }
+        });
+    }
+
+    // - Validation
+    Boolean recordIsValid() {
+        return true;
+    }
+
+    // - Saving
+    void saveNewRecord() {
+//        EbayCategory ebayCategory = (EbayCategory)mStyleCatSpinner.getSelectedItem();
+//        mRealm.beginTransaction();
+//
+//        Record record = new Record();
+//        record.setArtist(mArtistEditText.getText().toString());
+//        record.setTitle(mTitleEditText.getText().toString());
+//        record.setLabel(mLabelEditText.getText().toString());
+//        record.setListingTitle(mListingTitleEditText.getText().toString());
+//        record.setEbayCategory(ebayCategory);
+//
+//        mRealm.copyToRealm(record);
+//        mRealm.commitTransaction();
+    }
+
+    /**
+     * Alerts
+     */
+
+    void showAlert(String title, String message) {
+
+    }
+
+    void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * PagerAdapter
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -84,26 +148,35 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return RecordInfoFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return Info1Fragment.newInstance(position + 1);
+                case 1:
+                    return Info2Fragment.newInstance(position + 1);
+                case 2:
+                    return Info2Fragment.newInstance(position + 1);
+                case 3:
+                    return Info2Fragment.newInstance(position + 1);
+            }
+            return null;
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            return 4;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "Info 1";
                 case 1:
-                    return "SECTION 2";
+                    return "Info 2";
                 case 2:
-                    return "SECTION 3";
+                    return "Photos";
+                case 3:
+                    return "Audio";
             }
             return null;
         }

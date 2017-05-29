@@ -38,94 +38,41 @@ public class ListingActivity extends AppCompatActivity {
 
         mRealm = Realm.getDefaultInstance();
 
-        setupEditTexts();
-        setupSpinner();
-        setupConcatButton();
-        setUpSaveButton();
+//        setupEditTexts();
+//        setupSpinner();
+//        setupConcatButton();
+//        setUpSaveButton();
     }
 
-    // - Setup
-    void setupSpinner() {
-        RealmResults cats = EbayCategory.getAll();
-        mStyleCatSpinner = (Spinner)findViewById(R.id.listing_activity_spinner_cats);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cats);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mStyleCatSpinner.setAdapter(spinnerArrayAdapter);
-    }
-
-    void setupEditTexts() {
-        mArtistEditText = (EditText)findViewById(R.id.listing_activity_edit_text_artist);
-        mTitleEditText = (EditText)findViewById(R.id.listing_activity_edit_text_title);
-        mLabelEditText = (EditText)findViewById(R.id.listing_activity_edit_text_label);
-        mListingTitleEditText = (EditText)findViewById(R.id.listing_activity_edit_text_listing_title);
-        mNotesEditText = (EditText)findViewById(R.id.listing_activity_edit_text_notes);
-    }
-
-    void setupConcatButton() {
-        ImageButton imageButton = (ImageButton)findViewById(R.id.listing_activity_image_button_concat);
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String title = mTitleEditText.getText().toString();
-                if (title.length() == 0) {
-                    showToast("Please add a record title to use to this feature");
-                } else {
-                   mListingTitleEditText.setText(createListingTitle());
-                }
-            }
-        });
-    }
-
-    void setUpSaveButton() {
-        Button button = (Button)findViewById(R.id.listing_activity_button_save);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recordIsValid()) {
-                    saveNewRecord();
-                }
-            }
-        });
-    }
-
-
-    String createListingTitle() {
-        String aritst = mArtistEditText.getText().toString();
-        String title = mTitleEditText.getText().toString();
-        String label = mLabelEditText.getText().toString();
-        String styleCat = mStyleCatSpinner.getSelectedItem().toString();
-        String ebayCategory = mStyleCatSpinner.getSelectedItem().toString();
-        // remove illegal chars for eBay
-        return styleCat;
-    }
-
-    // - Validation
-    Boolean recordIsValid() {
-        return true;
-    }
-
-    // - Saving
-    void saveNewRecord() {
-        EbayCategory ebayCategory = (EbayCategory)mStyleCatSpinner.getSelectedItem();
-        mRealm.beginTransaction();
-
-        Record record = new Record();
-        record.setArtist(mArtistEditText.getText().toString());
-        record.setTitle(mTitleEditText.getText().toString());
-        record.setLabel(mLabelEditText.getText().toString());
-        record.setListingTitle(mListingTitleEditText.getText().toString());
-        record.setEbayCategory(ebayCategory);
-
-        mRealm.copyToRealm(record);
-        mRealm.commitTransaction();
-    }
-
-    // - Alerts
-    void showAlert(String title, String message) {
-
-    }
-
-    void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
+//    // - Setup
+//    void setupSpinner() {
+//        RealmResults cats = EbayCategory.getAll();
+//        mStyleCatSpinner = (Spinner)findViewById(R.id.listing_activity_spinner_cats);
+//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cats);
+//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        mStyleCatSpinner.setAdapter(spinnerArrayAdapter);
+//    }
+//
+//    void setupEditTexts() {
+//        mArtistEditText = (EditText)findViewById(R.id.listing_activity_edit_text_artist);
+//        mTitleEditText = (EditText)findViewById(R.id.listing_activity_edit_text_title);
+//        mLabelEditText = (EditText)findViewById(R.id.listing_activity_edit_text_label);
+//        mListingTitleEditText = (EditText)findViewById(R.id.listing_activity_edit_text_listing_title);
+//        mNotesEditText = (EditText)findViewById(R.id.listing_activity_edit_text_notes);
+//    }
+//
+//    void setupConcatButton() {
+//        ImageButton imageButton = (ImageButton)findViewById(R.id.listing_activity_image_button_concat);
+//        imageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String title = mTitleEditText.getText().toString();
+//                if (title.length() == 0) {
+//                    showToast("Please add a record title to use to this feature");
+//                } else {
+//                   mListingTitleEditText.setText(createListingTitle());
+//                }
+//            }
+//        });
+//    }
 }
