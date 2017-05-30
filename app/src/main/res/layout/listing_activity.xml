@@ -1,70 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:fitsSystemWindows="true"
     tools:context="com.carltaylordev.recordlisterandroidclient.ListingActivity">
 
-    <EditText
-        android:id="@+id/listing_activity_edit_text_artist"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Artist"/>
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <EditText
-        android:id="@+id/listing_activity_edit_text_title"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Title"/>
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        android:tint="@android:color/background_dark"
+        app:srcCompat="@android:drawable/ic_menu_save" />
 
-    <EditText
-        android:id="@+id/listing_activity_edit_text_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Label"/>
-
-    <ImageButton
-        android:id="@+id/listing_activity_image_button_concat"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/magic_wand"
-        android:scaleType="fitCenter"/>
-
-    <EditText
-        android:id="@+id/listing_activity_edit_text_listing_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Listing Title"/>
-
-    <EditText
-        android:id="@+id/listing_activity_edit_text_notes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Notes"/>
-
-    <Spinner
-        android:id="@+id/listing_activity_spinner_cats"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Spinner>
-
-    <Button
-        android:id="@+id/listing_activity_button_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save"/>
-
-
-
-
-</LinearLayout>
-
-</HorizontalScrollView>
+</android.support.design.widget.CoordinatorLayout>

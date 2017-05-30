@@ -24,12 +24,6 @@
         android:layout_height="wrap_content"
         android:hint="Label"/>
 
-    <EditText
-        android:id="@+id/listing_activity_edit_text_listing_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Listing Title"/>
-
     <Spinner
         android:id="@+id/listing_activity_spinner_cats"
         android:layout_width="match_parent"
@@ -41,6 +35,12 @@
         android:layout_height="50dp"
         android:src="@drawable/magic_wand"
         android:scaleType="fitCenter"/>
+
+    <EditText
+        android:id="@+id/listing_activity_edit_text_listing_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Listing Title"/>
 
 
 </LinearLayout>

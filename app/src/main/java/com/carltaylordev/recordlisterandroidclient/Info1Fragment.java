@@ -5,15 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
-
-import io.realm.Realm;
-import io.realm.RealmResults;
+import com.carltaylordev.recordlisterandroidclient.models.Record;
 
 /**
  * Created by carl on 29/05/2017.
@@ -29,23 +27,15 @@ public class Info1Fragment extends android.support.v4.app.Fragment {
     EditText mListingTitleEditText;
     EditText mNotesEditText;
 
-    private Realm mRealm;
-
-    private static final String ARG_SECTION_NUMBER = "section_number";
+    /**
+     * Constructors
+     */
 
     public Info1Fragment() {
     }
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    public static Info1Fragment newInstance(int sectionNumber) {
-        Info1Fragment fragment = new Info1Fragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
+    public static Info1Fragment newInstance() {
+        return new Info1Fragment();
     }
 
     @Override
@@ -53,22 +43,33 @@ public class Info1Fragment extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.info_1_fragment, container, false);
 
-        mRealm = Realm.getDefaultInstance();
+        ListingActivity activity = (ListingActivity)getActivity();
 
         setupEditTexts(rootView);
-        setupSpinner(rootView);
+        setupSpinner(rootView, activity);
         setupConcatButton(rootView);
 
         return rootView;
     }
 
-    // - Setup
-    void setupSpinner(View view) {
-        RealmResults cats = EbayCategory.getAll();
+    public void populateRecord(Record record) {
+        record.setArtist(mArtistEditText.getText().toString());
+        record.setTitle(mTitleEditText.getText().toString());
+        record.setLabel(mLabelEditText.getText().toString());
+        record.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
+    }
+
+    /**
+     *  Setup
+     */
+
+    void setupSpinner(View view, ListingActivity activity) {
+        ArrayAdapter<EbayCategory> spinnerArrayAdapter = new ArrayAdapter<>(activity,
+                android.R.layout.simple_spinner_item, activity.mListingCoordinator.getAllCategories());
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         mStyleCatSpinner = (Spinner)view.findViewById(R.id.listing_activity_spinner_cats);
-//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cats);
-//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        mStyleCatSpinner.setAdapter(spinnerArrayAdapter);
+        mStyleCatSpinner.setAdapter(spinnerArrayAdapter);
     }
 
     void setupEditTexts(View view) {
@@ -84,26 +85,14 @@ public class Info1Fragment extends android.support.v4.app.Fragment {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String title = mTitleEditText.getText().toString();
-                if (title.length() == 0) {
-                    Main2Activity activity = (Main2Activity)getActivity();
-                   activity.showToast("Please add a record title to use to this feature");
+                ListingActivity activity = (ListingActivity)getActivity();
+                BoolResponse response = activity.mListingCoordinator.canBuildListingTitle();
+                if (response.isTrue()) {
+                    mListingTitleEditText.setText(activity.mListingCoordinator.buildListingTitle());
                 } else {
-                    mListingTitleEditText.setText(createListingTitle());
+                    activity.showToast(response.getUserMessage());
                 }
             }
         });
     }
-
-    String createListingTitle() {
-        String aritst = mArtistEditText.getText().toString();
-        String title = mTitleEditText.getText().toString();
-        String label = mLabelEditText.getText().toString();
-        String styleCat = mStyleCatSpinner.getSelectedItem().toString();
-        String ebayCategory = mStyleCatSpinner.getSelectedItem().toString();
-        // remove illegal chars for eBay
-        return styleCat;
-    }
-
-
 }
