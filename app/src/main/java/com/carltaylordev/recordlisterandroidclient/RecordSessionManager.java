@@ -4,6 +4,8 @@ import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 import com.carltaylordev.recordlisterandroidclient.models.Record;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
+import java.util.Map;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -16,6 +18,7 @@ public class RecordSessionManager {
 
     public interface Interface {
         void updateRecord(Record record);
+        void updateUI(Record record);
     }
 
     private Record mRecord;
@@ -30,6 +33,17 @@ public class RecordSessionManager {
 
     public RealmResults<EbayCategory> getAllCategories() {
         return EbayCategory.getAll();
+    }
+
+    public void createTestData() {
+        mRecord.setArtist("Dave     Clarke");
+        mRecord.setTitle("Red 3");
+        mRecord.setLabel("Deconstruction");
+
+        RealmResults<EbayCategory>results = getAllCategories();
+        mRecord.setEbayCategory(results.first());
+
+        mUpdateInterface.updateUI(mRecord);
     }
 
     /**

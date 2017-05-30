@@ -25,7 +25,6 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
     EditText mTitleEditText;
     EditText mLabelEditText;
     EditText mListingTitleEditText;
-    EditText mNotesEditText;
 
     /**
      * Constructors
@@ -53,18 +52,6 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
     }
 
     /**
-     *  ListingCoordinator Interface
-     */
-
-    @Override
-    public void updateRecord(Record record) {
-        record.setArtist(mArtistEditText.getText().toString());
-        record.setTitle(mTitleEditText.getText().toString());
-        record.setLabel(mLabelEditText.getText().toString());
-        record.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
-    }
-
-    /**
      *  Setup
      */
 
@@ -82,7 +69,6 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
         mTitleEditText = (EditText)view.findViewById(R.id.listing_activity_edit_text_title);
         mLabelEditText = (EditText)view.findViewById(R.id.listing_activity_edit_text_label);
         mListingTitleEditText = (EditText)view.findViewById(R.id.listing_activity_edit_text_listing_title);
-        mNotesEditText = (EditText)view.findViewById(R.id.listing_activity_edit_text_notes);
     }
 
     void setupConcatButton(View view) {
@@ -99,5 +85,26 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
                 }
             }
         });
+    }
+
+
+    /**
+     *  ListingCoordinator Interface
+     */
+
+    @Override
+    public void updateRecord(Record record) {
+        record.setArtist(mArtistEditText.getText().toString());
+        record.setTitle(mTitleEditText.getText().toString());
+        record.setLabel(mLabelEditText.getText().toString());
+        record.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
+    }
+
+    @Override
+    public void updateUI(Record record) {
+        mArtistEditText.setText(record.getArtist());
+        mTitleEditText.setText(record.getTitle());
+        mLabelEditText.setText(record.getLabel());
+        mListingTitleEditText.setText(record.getListingTitle());
     }
 }

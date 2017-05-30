@@ -49,7 +49,8 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         mRecordSessionManager = new RecordSessionManager(new Record(),  realm, this);
 
         setupViewPager();
-        setUpFloatingActionButton();
+        setupSaveFab();
+        setupTestFab();
     }
 
     @Override
@@ -95,7 +96,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         tabLayout.setupWithViewPager(mViewPager);
     }
 
-    private void setUpFloatingActionButton() {
+    private void setupSaveFab() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +108,16 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
                 } else {
                     showToast(response.getUserMessage());
                 }
+            }
+        });
+    }
+
+    private void setupTestFab() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.test_data_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRecordSessionManager.createTestData();
             }
         });
     }
@@ -137,6 +148,18 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
                 ((RecordSessionManager.Interface) frag).updateRecord(record);
             } else {
                 Log.d(MY_LOG_TAG, "Fragment does not implement 'updateRecord' interface");
+            }
+        }
+    }
+
+    @Override
+    public void updateUI(Record record) {
+        List<Fragment> fragments = getActiveFragments();
+        for (Fragment frag : fragments) {
+            if (frag instanceof RecordSessionManager.Interface) {
+                ((RecordSessionManager.Interface) frag).updateUI(record);
+            } else {
+                Log.d(MY_LOG_TAG, "Fragment does not implement 'updateUI' interface");
             }
         }
     }
