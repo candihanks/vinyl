@@ -18,7 +18,7 @@ public class Record extends RealmObject {
     private String artist;
     private String title;
     private String label;
-    private String notes;
+    private String comments;
     private String format;
     private String mediaCondition;
     private String coverCondition;
@@ -62,12 +62,12 @@ public class Record extends RealmObject {
         this.label = label;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getComments() {
+        return comments;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public String getFormat() {

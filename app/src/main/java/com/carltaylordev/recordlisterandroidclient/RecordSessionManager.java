@@ -4,6 +4,8 @@ import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 import com.carltaylordev.recordlisterandroidclient.models.Record;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -29,19 +31,46 @@ public class RecordSessionManager {
         mUpdateInterface = updateInterface;
     }
 
-    public RealmResults<EbayCategory> getAllCategories() {
-        return EbayCategory.getAll();
-    }
+    /**
+     * Associated Data
+     */
 
     public void createTestData() {
-        mRecord.setArtist("Dave     Clarke");
+        mRecord.setArtist("Dave Clarke");
         mRecord.setTitle("Red 3");
         mRecord.setLabel("Deconstruction");
+        mRecord.setMediaCondition("Good Plus (G+)");
+        mRecord.setCoverCondition("Good Plus (G+)");
+        mRecord.setComments("Here is a great record");
 
         RealmResults<EbayCategory>results = getAllCategories();
         mRecord.setEbayCategory(results.first());
 
         mUpdateInterface.updateUI(mRecord);
+    }
+
+    public static RealmResults<EbayCategory> getAllCategories() {
+        return EbayCategory.getAll();
+    }
+
+    public static ArrayList<String> getRecordConditions() {
+        // todo: fetch these from the server? or at least make sure they match with server values
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Mint (M)");
+        list.add("Near Mint (NM or M-)");
+        list.add("Very Good Plus (VG+)");
+        list.add("Very Good (VG)");
+        list.add("Good Plus (G+)");
+        list.add("Good (G)");
+        list.add("Fair (F)");
+        list.add("Poor (P),");
+        return list;
+    }
+
+    public static ArrayList<String> getCoverConditions() {
+        ArrayList<String> list = getRecordConditions();
+        list.add(0, "Generic");
+        return list;
     }
 
     /**

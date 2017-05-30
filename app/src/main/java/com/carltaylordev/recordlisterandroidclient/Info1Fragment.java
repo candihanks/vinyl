@@ -91,7 +91,6 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
         });
     }
 
-
     /**
      *  ListingCoordinator Interface
      */

@@ -199,6 +199,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     /**
      * PagerAdapter
      */
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {

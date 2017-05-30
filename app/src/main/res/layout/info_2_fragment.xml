@@ -6,16 +6,20 @@
     android:padding="10dp"
     tools:context="com.carltaylordev.recordlisterandroidclient.Info2Fragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
     <EditText
-        android:id="@+id/listing_activity_edit_text_notes"
+        android:id="@+id/edit_text_comments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Notes"/>
+        android:hint="Optional Comments"/>
+
+    <Spinner
+        android:id="@+id/spinner_record_condition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></Spinner>
+
+    <Spinner
+        android:id="@+id/spinner_cover_condition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></Spinner>
 
 </LinearLayout>
