@@ -17,7 +17,7 @@ import com.carltaylordev.recordlisterandroidclient.models.Record;
  * Created by carl on 29/05/2017.
  */
 
-public class Info1Fragment extends android.support.v4.app.Fragment {
+public class Info1Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.Interface {
 
     Spinner mStyleCatSpinner;
 
@@ -52,7 +52,12 @@ public class Info1Fragment extends android.support.v4.app.Fragment {
         return rootView;
     }
 
-    public void populateRecord(Record record) {
+    /**
+     *  ListingCoordinator Interface
+     */
+
+    @Override
+    public void updateRecord(Record record) {
         record.setArtist(mArtistEditText.getText().toString());
         record.setTitle(mTitleEditText.getText().toString());
         record.setLabel(mLabelEditText.getText().toString());
@@ -65,7 +70,7 @@ public class Info1Fragment extends android.support.v4.app.Fragment {
 
     void setupSpinner(View view, ListingActivity activity) {
         ArrayAdapter<EbayCategory> spinnerArrayAdapter = new ArrayAdapter<>(activity,
-                android.R.layout.simple_spinner_item, activity.mListingCoordinator.getAllCategories());
+                android.R.layout.simple_spinner_item, activity.mRecordSessionManager.getAllCategories());
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mStyleCatSpinner = (Spinner)view.findViewById(R.id.listing_activity_spinner_cats);
@@ -86,9 +91,9 @@ public class Info1Fragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 ListingActivity activity = (ListingActivity)getActivity();
-                BoolResponse response = activity.mListingCoordinator.canBuildListingTitle();
+                BoolResponse response = activity.mRecordSessionManager.canBuildListingTitle();
                 if (response.isTrue()) {
-                    mListingTitleEditText.setText(activity.mListingCoordinator.buildListingTitle());
+                    mListingTitleEditText.setText(activity.mRecordSessionManager.buildListingTitle());
                 } else {
                     activity.showToast(response.getUserMessage());
                 }

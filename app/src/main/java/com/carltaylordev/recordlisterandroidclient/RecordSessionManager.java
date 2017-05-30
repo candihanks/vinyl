@@ -11,48 +11,61 @@ import io.realm.RealmResults;
  * Created by carl on 29/05/2017.
  */
 
-public class ListingCoordinator {
+
+public class RecordSessionManager {
+
+    public interface Interface {
+        void updateRecord(Record record);
+    }
 
     private Record mRecord;
     private Realm mRealm;
+    private Interface mUpdateInterface;
 
-    public ListingCoordinator(Record record, Realm realm) {
+    public RecordSessionManager(Record record, Realm realm, Interface updateInterface) {
         mRecord = record;
         mRealm = realm;
-    }
-
-    // - Validation
-    public BoolResponse recordIsValid() {
-        return new BoolResponse(false, "You need more stuff");
-    }
-
-    public BoolResponse canBuildListingTitle() {
-        boolean valid = mRecord.getArtist() != null && mRecord.getArtist() != null;
-        return new BoolResponse(valid, "Sort it out barry");
-    }
-
-    public String buildListingTitle() {
-        // todo: sort this so it concatenates relevant values
-        return mRecord.getEbayCategory().toString() + " - " + mRecord.getTitle();
+        mUpdateInterface = updateInterface;
     }
 
     public RealmResults<EbayCategory> getAllCategories() {
         return EbayCategory.getAll();
     }
 
-    // - Saving
+    /**
+     * Validation
+     */
+
+    public BoolResponse recordIsValid() {
+        mUpdateInterface.updateRecord(mRecord);
+        // check all fields
+        return new BoolResponse(true, "You need more stuff");
+    }
+
+    public BoolResponse canBuildListingTitle() {
+        mUpdateInterface.updateRecord(mRecord);
+        boolean valid = mRecord.getArtist() != null && mRecord.getArtist() != null;
+        return new BoolResponse(valid, "Sort it out barry");
+    }
+
+    /**
+     * Build Listing Title
+     */
+
+    public String buildListingTitle() {
+        mUpdateInterface.updateRecord(mRecord);
+        // todo: sort this so it concatenates relevant values
+        return mRecord.getEbayCategory().toString() + " - " + mRecord.getTitle();
+    }
+
+    /**
+     * Save
+     */
+
     public void save() {
-//        EbayCategory ebayCategory = (EbayCategory)mStyleCatSpinner.getSelectedItem();
-//        mRealm.beginTransaction();
-//
-//
-//        record.setArtist(mArtistEditText.getText().toString());
-//        record.setTitle(mTitleEditText.getText().toString());
-//        record.setLabel(mLabelEditText.getText().toString());
-//        record.setListingTitle(mListingTitleEditText.getText().toString());
-//        record.setEbayCategory(ebayCategory);
-//
-//        mRealm.copyToRealm(record);
-//        mRealm.commitTransaction();
+        mUpdateInterface.updateRecord(mRecord);
+        mRealm.beginTransaction();
+        mRealm.copyToRealmOrUpdate(mRecord);
+        mRealm.commitTransaction();
     }
 }

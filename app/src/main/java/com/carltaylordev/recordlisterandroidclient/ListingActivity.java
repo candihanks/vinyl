@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,14 +20,21 @@ import android.widget.Toast;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.Record;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.realm.Realm;
 
-public class ListingActivity extends AppCompatActivity {
+public class ListingActivity extends AppCompatActivity implements RecordSessionManager.Interface {
+
+    public static final String MY_LOG_TAG = "MY_LOG_TAG";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    List<WeakReference<Fragment>> fragList = new ArrayList<>();
 
-    public ListingCoordinator mListingCoordinator;
+    public RecordSessionManager mRecordSessionManager;
 
     /**
      * Activity LifeCycle
@@ -38,10 +46,37 @@ public class ListingActivity extends AppCompatActivity {
         setContentView(R.layout.listing_activity);
 
         Realm realm = Realm.getDefaultInstance();
-        mListingCoordinator = new ListingCoordinator(new Record(),  realm);
+        mRecordSessionManager = new RecordSessionManager(new Record(),  realm, this);
 
         setupViewPager();
         setUpFloatingActionButton();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main2, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onAttachFragment (Fragment fragment) {
+        fragList.add(new WeakReference(fragment));
+        super.onAttachFragment(fragment);
     }
 
     /**
@@ -65,10 +100,10 @@ public class ListingActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BoolResponse response = mListingCoordinator.recordIsValid();
+                BoolResponse response = mRecordSessionManager.recordIsValid();
                 if (response.isTrue()) {
+                    attemptSave();
                     showSnackBar(view, "Record Saved");
-                    mListingCoordinator.save();
                 } else {
                     showToast(response.getUserMessage());
                 }
@@ -76,29 +111,42 @@ public class ListingActivity extends AppCompatActivity {
         });
     }
 
+    public List<Fragment> getActiveFragments() {
+        ArrayList<Fragment> ret = new ArrayList<>();
+        for(WeakReference<Fragment> ref : fragList) {
+            Fragment f = ref.get();
+            if(f != null) {
+                if(f.isVisible()) {
+                    ret.add(f);
+                }
+            }
+        }
+        return ret;
+    }
+
+
     /**
-     * Menu
+     * ListingCoordinator Interface
      */
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main2, menu);
-        return true;
+    public void updateRecord(Record record) {
+        List<Fragment> fragments = getActiveFragments();
+        for (Fragment frag : fragments) {
+            if (frag instanceof RecordSessionManager.Interface) {
+                ((RecordSessionManager.Interface) frag).updateRecord(record);
+            } else {
+                Log.d(MY_LOG_TAG, "Fragment does not implement 'updateRecord' interface");
+            }
+        }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    /**
+     * Saving
+     */
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void attemptSave() {
+        mRecordSessionManager.save();
     }
 
     /**
