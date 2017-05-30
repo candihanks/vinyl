@@ -122,6 +122,10 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         });
     }
 
+    /**
+     * Helpers
+     */
+
     public List<Fragment> getActiveFragments() {
         ArrayList<Fragment> ret = new ArrayList<>();
         for(WeakReference<Fragment> ref : fragList) {

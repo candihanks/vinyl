@@ -37,6 +37,10 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
         return new Info1Fragment();
     }
 
+    /**
+     *  Fragment LifeCycle
+     */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,19 +64,19 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
                 android.R.layout.simple_spinner_item, activity.mRecordSessionManager.getAllCategories());
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        mStyleCatSpinner = (Spinner)view.findViewById(R.id.listing_activity_spinner_cats);
+        mStyleCatSpinner = (Spinner)view.findViewById(R.id.spinner_ebay_cats);
         mStyleCatSpinner.setAdapter(spinnerArrayAdapter);
     }
 
     void setupEditTexts(View view) {
-        mArtistEditText = (EditText)view.findViewById(R.id.listing_activity_edit_text_artist);
-        mTitleEditText = (EditText)view.findViewById(R.id.listing_activity_edit_text_title);
-        mLabelEditText = (EditText)view.findViewById(R.id.listing_activity_edit_text_label);
-        mListingTitleEditText = (EditText)view.findViewById(R.id.listing_activity_edit_text_listing_title);
+        mArtistEditText = (EditText)view.findViewById(R.id.edit_text_artist);
+        mTitleEditText = (EditText)view.findViewById(R.id.edit_text_title);
+        mLabelEditText = (EditText)view.findViewById(R.id.edit_text_label);
+        mListingTitleEditText = (EditText)view.findViewById(R.id.edit_text_listing_title);
     }
 
     void setupConcatButton(View view) {
-        ImageButton imageButton = (ImageButton)view.findViewById(R.id.listing_activity_image_button_concat);
+        ImageButton imageButton = (ImageButton)view.findViewById(R.id.image_button_concat);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

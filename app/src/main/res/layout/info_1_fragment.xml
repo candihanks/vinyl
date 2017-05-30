@@ -7,40 +7,39 @@
     tools:context="com.carltaylordev.recordlisterandroidclient.ListingActivity">
 
     <EditText
-        android:id="@+id/listing_activity_edit_text_artist"
+        android:id="@+id/edit_text_artist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Artist"/>
 
     <EditText
-        android:id="@+id/listing_activity_edit_text_title"
+        android:id="@+id/edit_text_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Title"/>
 
     <EditText
-        android:id="@+id/listing_activity_edit_text_label"
+        android:id="@+id/edit_text_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Label"/>
 
     <Spinner
-        android:id="@+id/listing_activity_spinner_cats"
+        android:id="@+id/spinner_ebay_cats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></Spinner>
 
     <ImageButton
-        android:id="@+id/listing_activity_image_button_concat"
+        android:id="@+id/image_button_concat"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/magic_wand"
         android:scaleType="fitCenter"/>
 
     <EditText
-        android:id="@+id/listing_activity_edit_text_listing_title"
+        android:id="@+id/edit_text_listing_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Listing Title"/>
-
 
 </LinearLayout>
