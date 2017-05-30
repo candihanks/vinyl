@@ -44,18 +44,50 @@ public class RecordSessionManager {
 
     public BoolResponse canBuildListingTitle() {
         mUpdateInterface.updateRecord(mRecord);
-        boolean valid = mRecord.getArtist() != null && mRecord.getArtist() != null;
-        return new BoolResponse(valid, "Sort it out barry");
+        String title = mRecord.getTitle();
+        return new BoolResponse(!title.isEmpty(), "Add 'Title' to use this feature");
     }
 
     /**
-     * Build Listing Title
+     * Listing Title
      */
 
     public String buildListingTitle() {
         mUpdateInterface.updateRecord(mRecord);
-        // todo: sort this so it concatenates relevant values
-        return mRecord.getEbayCategory().toString() + " - " + mRecord.getTitle();
+
+        String artist =  mRecord.getArtist();
+        String title = mRecord.getTitle();
+        String label = mRecord.getLabel();
+        String category = mRecord.getEbayCategory().toString();
+
+        String titleString = "";
+
+        if (!artist.isEmpty()) {
+            titleString += cleanString(artist);
+        }
+
+        if (!title.isEmpty()) {
+            titleString += " - ";
+            titleString += cleanString(title);
+        }
+
+        if (!label.isEmpty()) {
+            titleString += " - (";
+            titleString += cleanString(label);
+            titleString += ")";
+        }
+
+        if (!category.isEmpty()) {
+            titleString += " - ";
+            titleString += cleanString(category);
+        }
+
+        return titleString;
+    }
+
+    private String cleanString(String string) {
+        string.replace(" ", "");
+        return string;
     }
 
     /**
