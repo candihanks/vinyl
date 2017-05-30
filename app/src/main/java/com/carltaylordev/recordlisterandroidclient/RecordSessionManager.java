@@ -45,6 +45,18 @@ public class RecordSessionManager {
     }
 
     /**
+     * State Management
+     */
+
+    public void captureCurrentState() {
+        mUpdateInterface.updateRecord(mRecord);
+    }
+
+    public void reloadCurrentRecord() {
+        mUpdateInterface.updateUI(mRecord);
+    }
+
+    /**
      * Validation
      */
 

@@ -54,6 +54,18 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mRecordSessionManager.captureCurrentState();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mRecordSessionManager.reloadCurrentRecord();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main2, menu);
         return true;
@@ -103,7 +115,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
             public void onClick(View view) {
                 BoolResponse response = mRecordSessionManager.recordIsValid();
                 if (response.isTrue()) {
-                    attemptSave();
+                    mRecordSessionManager.save();
                     showSnackBar(view, "Record Saved");
                 } else {
                     showToast(response.getUserMessage());
@@ -166,14 +178,6 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
                 Log.d(MY_LOG_TAG, "Fragment does not implement 'updateUI' interface");
             }
         }
-    }
-
-    /**
-     * Saving
-     */
-
-    public void attemptSave() {
-        mRecordSessionManager.save();
     }
 
     /**
