@@ -4,8 +4,6 @@ import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 import com.carltaylordev.recordlisterandroidclient.models.Record;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
-import java.util.Map;
-
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -100,8 +98,8 @@ public class RecordSessionManager {
     }
 
     private String cleanString(String string) {
-        string.replace(" ", "");
-        return string;
+        String withoutUnwantedSpace = string.trim().replaceAll(" +", " ");
+        return withoutUnwantedSpace;
     }
 
     /**
