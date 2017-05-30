@@ -1,6 +1,11 @@
 package com.carltaylordev.recordlisterandroidclient;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +24,7 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
     Spinner mRecordConditionSpinner;
     Spinner mCoverConditionSpinner;
     EditText mCommentsEditText;
+    EditText mPriceEditText;
 
     /**
      *  Constructors
@@ -54,6 +60,35 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
 
     private void setupEditTexts(View view) {
         mCommentsEditText = (EditText)view.findViewById(R.id.edit_text_comments);
+        mPriceEditText = (EditText)view.findViewById(R.id.edit_text_price);
+        mPriceEditText.setFilters(new InputFilter[] {
+                new DigitsKeyListener(Boolean.FALSE, Boolean.TRUE) {
+                    int beforeDecimal = 5, afterDecimal = 2;
+
+                    @Override
+                    public CharSequence filter(CharSequence source, int start, int end,
+                                               Spanned dest, int dstart, int dend) {
+                        String temp = mPriceEditText.getText() + source.toString();
+
+                        if (temp.equals(".")) {
+                            return "0.";
+                        }
+                        else if (temp.toString().indexOf(".") == -1) {
+                            // no decimal point placed yet
+                            if (temp.length() > beforeDecimal) {
+                                return "";
+                            }
+                        } else {
+                            temp = temp.substring(temp.indexOf(".") + 1);
+                            if (temp.length() > afterDecimal) {
+                                return "";
+                            }
+                        }
+                        return super.filter(source, start, end, dest, dstart, dend);
+                    }
+                }
+        });
+
     }
 
     void setupSpinners(View view, ListingActivity activity) {
@@ -81,6 +116,7 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
         record.setComments(mCommentsEditText.getText().toString());
         record.setMediaCondition(mRecordConditionSpinner.toString());
         record.setCoverCondition(mCoverConditionSpinner.toString());
+        record.setPrice(mPriceEditText.getText().toString());
     }
 
     @Override
@@ -89,8 +125,9 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
 
         ArrayAdapter recordConditionAdapter = (ArrayAdapter)mRecordConditionSpinner.getAdapter();
         ArrayAdapter coverConditionAdapter = (ArrayAdapter)mCoverConditionSpinner.getAdapter();
-
         mRecordConditionSpinner.setSelection(recordConditionAdapter.getPosition(record.getMediaCondition()));
         mCoverConditionSpinner.setSelection(coverConditionAdapter.getPosition(record.getCoverCondition()));
+
+        mPriceEditText.setText(record.getPrice());
     }
 }

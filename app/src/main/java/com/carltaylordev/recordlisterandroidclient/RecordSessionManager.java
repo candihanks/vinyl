@@ -42,6 +42,7 @@ public class RecordSessionManager {
         mRecord.setMediaCondition("Good Plus (G+)");
         mRecord.setCoverCondition("Good Plus (G+)");
         mRecord.setComments("Here is a great record");
+        mRecord.setPrice("9.99");
 
         RealmResults<EbayCategory>results = getAllCategories();
         mRecord.setEbayCategory(results.first());

@@ -24,7 +24,7 @@ public class Record extends RealmObject {
     private String coverCondition;
     private String listingTitle;
     private EbayCategory ebayCategory;
-    private Double price;
+    private String price;
 
     // todo: sound clip relationship
     // todo: picture relationship
@@ -110,11 +110,11 @@ public class Record extends RealmObject {
         this.ebayCategory = ebayCategory;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 }
