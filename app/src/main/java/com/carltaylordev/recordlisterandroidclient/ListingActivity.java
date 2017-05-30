@@ -214,9 +214,9 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
                 case 1:
                     return Info2Fragment.newInstance();
                 case 2:
-                    return Info2Fragment.newInstance();
+                    return PhotosFragment.newInstance();
                 case 3:
-                    return Info2Fragment.newInstance();
+                    return PhotosFragment.newInstance();
             }
             return null;
         }
