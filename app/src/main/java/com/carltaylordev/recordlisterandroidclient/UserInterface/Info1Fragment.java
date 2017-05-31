@@ -98,18 +98,18 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
      */
 
     @Override
-    public void updateRecord(RealmRecord realmRecord) {
-        realmRecord.setArtist(mArtistEditText.getText().toString());
-        realmRecord.setTitle(mTitleEditText.getText().toString());
-        realmRecord.setLabel(mLabelEditText.getText().toString());
-        realmRecord.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
+    public void updateRecord(RecordSessionManager manager) {
+        manager.setArtist(mArtistEditText.getText().toString());
+        manager.setTitle(mTitleEditText.getText().toString());
+        manager.setLabel(mLabelEditText.getText().toString());
+        manager.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
     }
 
     @Override
-    public void updateUI(RealmRecord realmRecord) {
-        mArtistEditText.setText(realmRecord.getArtist());
-        mTitleEditText.setText(realmRecord.getTitle());
-        mLabelEditText.setText(realmRecord.getLabel());
-        mListingTitleEditText.setText(realmRecord.getListingTitle());
+    public void updateUI(RecordSessionManager manager) {
+        mArtistEditText.setText(manager.getArtist());
+        mTitleEditText.setText(manager.getTitle());
+        mLabelEditText.setText(manager.getLabel());
+        mListingTitleEditText.setText(manager.getListingTitle());
     }
 }

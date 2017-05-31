@@ -6,6 +6,7 @@ import android.os.Environment;
 
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
+import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
@@ -27,10 +28,11 @@ import io.realm.RealmResults;
 public class RecordSessionManager {
 
     public interface Interface {
-        void updateRecord(RealmRecord realmRecord);
-        void updateUI(RealmRecord realmRecord);
+        void updateRecord(RecordSessionManager sessionManager);
+        void updateUI(RecordSessionManager sessionManager);
     }
 
+    private ArrayList<ImageItem>imageCache = new ArrayList<>();
     private RealmRecord mRealmRecord;
     private Realm mRealm;
     private Interface mUpdateInterface;
@@ -57,8 +59,12 @@ public class RecordSessionManager {
         RealmResults<EbayCategory>results = getAllCategories();
         mRealmRecord.setEbayCategory(results.first());
 
-        mUpdateInterface.updateUI(mRealmRecord);
+        mUpdateInterface.updateUI(this);
     }
+
+    /**
+     * Get
+     */
 
     public static RealmResults<EbayCategory> getAllCategories() {
         return EbayCategory.getAll();
@@ -84,16 +90,92 @@ public class RecordSessionManager {
         return list;
     }
 
+    public String getArtist() {
+        return mRealmRecord.getArtist();
+    }
+
+    public String getTitle() {
+        return mRealmRecord.getTitle();
+    }
+
+    public String getLabel() {
+        return mRealmRecord.getLabel();
+    }
+
+    public String getMediaCondition() {
+        return mRealmRecord.getMediaCondition();
+    }
+
+    public String getCoverCondition() {
+        return mRealmRecord.getCoverCondition();
+    }
+
+    public String getComments() {
+        return mRealmRecord.getComments();
+    }
+
+    public String getPrice() {
+        return mRealmRecord.getPrice();
+    }
+
+    public String getListingTitle() {
+        return mRealmRecord.getListingTitle();
+    }
+
+    /**
+     * Set
+     */
+
+    public void addImageToCache(ImageItem imageItem) {
+        imageCache.add(imageItem);
+    }
+
+    public void removeImagesFromCache() {
+        imageCache = new ArrayList<>();
+    }
+
+    public void setArtist(String artist) {
+        mRealmRecord.setArtist(artist);
+    }
+
+    public void setTitle(String title) {
+        mRealmRecord.setTitle(title);
+    }
+
+    public void setLabel(String label) {
+        mRealmRecord.setLabel(label);
+    }
+
+    public void setMediaCondition(String condition) {
+        mRealmRecord.setMediaCondition(condition);
+    }
+
+    public void setCoverCondition(String condition) {
+        mRealmRecord.setCoverCondition(condition);
+    }
+
+    public void setComments(String comments) {
+        mRealmRecord.setComments(comments);
+    }
+
+    public void setPrice(String price) {
+        mRealmRecord.setPrice(price);
+    }
+
+    public void setEbayCategory(EbayCategory ebayCategory) {
+        mRealmRecord.setEbayCategory(ebayCategory);
+    }
+
     /**
      * State Management
      */
 
     public void captureCurrentState() {
-        mUpdateInterface.updateRecord(mRealmRecord);
+        mUpdateInterface.updateRecord(this);
     }
 
     public void reloadCurrentRecord() {
-        mUpdateInterface.updateUI(mRealmRecord);
+        mUpdateInterface.updateUI(this);
     }
 
     /**
@@ -101,13 +183,13 @@ public class RecordSessionManager {
      */
 
     public BoolResponse recordIsValid() {
-        mUpdateInterface.updateRecord(mRealmRecord);
+        mUpdateInterface.updateRecord(this);
         // check all fields
         return new BoolResponse(true, "You need more stuff");
     }
 
     public BoolResponse canBuildListingTitle() {
-        mUpdateInterface.updateRecord(mRealmRecord);
+        mUpdateInterface.updateRecord(this);
         String title = mRealmRecord.getTitle();
         return new BoolResponse(!title.isEmpty(), "Add 'Title' to use this feature");
     }
@@ -117,7 +199,7 @@ public class RecordSessionManager {
      */
 
     public String buildListingTitle() {
-        mUpdateInterface.updateRecord(mRealmRecord);
+        mUpdateInterface.updateRecord(this);
 
         String artist =  mRealmRecord.getArtist();
         String title = mRealmRecord.getTitle();
@@ -159,7 +241,7 @@ public class RecordSessionManager {
      */
 
     public void save() {
-        mUpdateInterface.updateRecord(mRealmRecord);
+        mUpdateInterface.updateRecord(this);
         mRealm.beginTransaction();
         mRealm.copyToRealmOrUpdate(mRealmRecord);
         mRealm.commitTransaction();

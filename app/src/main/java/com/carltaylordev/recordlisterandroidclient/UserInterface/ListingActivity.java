@@ -158,11 +158,11 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
      */
 
     @Override
-    public void updateRecord(RealmRecord realmRecord) {
+    public void updateRecord(RecordSessionManager sessionManager) {
         List<Fragment> fragments = getActiveFragments();
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.Interface) {
-                ((RecordSessionManager.Interface) frag).updateRecord(realmRecord);
+                ((RecordSessionManager.Interface) frag).updateRecord(sessionManager);
             } else {
                 Logger.logMessage("Fragment does not implement 'updateRecord' interface");
             }
@@ -170,11 +170,11 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     }
 
     @Override
-    public void updateUI(RealmRecord realmRecord) {
+    public void updateUI(RecordSessionManager sessionManager) {
         List<Fragment> fragments = getActiveFragments();
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.Interface) {
-                ((RecordSessionManager.Interface) frag).updateUI(realmRecord);
+                ((RecordSessionManager.Interface) frag).updateUI(sessionManager);
             } else {
                 Logger.logMessage("Fragment does not implement 'updateUI' interface");
             }

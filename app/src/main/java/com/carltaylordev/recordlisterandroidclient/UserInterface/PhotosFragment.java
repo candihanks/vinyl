@@ -145,17 +145,17 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      */
 
     @Override
-    public void updateRecord(RealmRecord realmRecord) {
-//        realmRecord.getImages().removeAll();
-//        RealmImage realmImage = new RealmImage();
-//        realmImage.setTitle("barry");
-//        realmImage.setPath(file.getAbsolutePath());
-//        mRealmRecord.getImages().add(realmImage);
-        //remove all, write all
+    public void updateRecord(RecordSessionManager manager) {
+        manager.removeImagesFromCache();
+        for (ImageItem imageItem : mGridAdapter.getItems()) {
+            if (!imageItem.isPlaceHolder()) {
+                manager.addImageToCache(imageItem);
+            }
+        }
     }
 
     @Override
-    public void updateUI(RealmRecord realmRecord) {
+    public void updateUI(RecordSessionManager manager) {
 
     }
 }

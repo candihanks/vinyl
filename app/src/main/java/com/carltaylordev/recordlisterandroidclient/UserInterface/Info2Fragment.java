@@ -106,22 +106,22 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
      */
 
     @Override
-    public void updateRecord(RealmRecord realmRecord) {
-        realmRecord.setComments(mCommentsEditText.getText().toString());
-        realmRecord.setMediaCondition(mRecordConditionSpinner.toString());
-        realmRecord.setCoverCondition(mCoverConditionSpinner.toString());
-        realmRecord.setPrice(mPriceEditText.getText().toString());
+    public void updateRecord(RecordSessionManager manager) {
+        manager.setComments(mCommentsEditText.getText().toString());
+        manager.setMediaCondition(mRecordConditionSpinner.toString());
+        manager.setCoverCondition(mCoverConditionSpinner.toString());
+        manager.setPrice(mPriceEditText.getText().toString());
     }
 
     @Override
-    public void updateUI(RealmRecord realmRecord) {
-        mCommentsEditText.setText(realmRecord.getComments());
+    public void updateUI(RecordSessionManager manager) {
+        mCommentsEditText.setText(manager.getComments());
 
         ArrayAdapter recordConditionAdapter = (ArrayAdapter)mRecordConditionSpinner.getAdapter();
         ArrayAdapter coverConditionAdapter = (ArrayAdapter)mCoverConditionSpinner.getAdapter();
-        mRecordConditionSpinner.setSelection(recordConditionAdapter.getPosition(realmRecord.getMediaCondition()));
-        mCoverConditionSpinner.setSelection(coverConditionAdapter.getPosition(realmRecord.getCoverCondition()));
+        mRecordConditionSpinner.setSelection(recordConditionAdapter.getPosition(manager.getMediaCondition()));
+        mCoverConditionSpinner.setSelection(coverConditionAdapter.getPosition(manager.getCoverCondition()));
 
-        mPriceEditText.setText(realmRecord.getPrice());
+        mPriceEditText.setText(manager.getPrice());
     }
 }
