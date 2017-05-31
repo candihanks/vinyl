@@ -9,13 +9,18 @@ import android.graphics.Bitmap;
 public class ImageItem {
     private Bitmap image;
     private String title;
+    private Boolean isPlaceHolder;
 
-    public ImageItem(Bitmap image, String title) {
+    public ImageItem(Bitmap image, String title, Boolean isPlaceHolder) {
         super();
         this.image = image;
         this.title = title;
+        this.isPlaceHolder = isPlaceHolder;
     }
 
+    public Boolean isPlaceHolder() {
+        return isPlaceHolder;
+    }
     public Bitmap getImage() {
         return image;
     }

@@ -17,8 +17,14 @@ import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GridViewAdapter extends ArrayAdapter<ImageItem> {
+
+    static class ViewHolder {
+        TextView imageTitle;
+        ImageView image;
+    }
 
     private Context context;
     private int layoutResourceId;
@@ -31,8 +37,13 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem> {
         this.data = data;
     }
 
+    public ArrayList<ImageItem> getItems() {
+        return data;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         View row = convertView;
         ViewHolder holder;
 
@@ -54,8 +65,4 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem> {
         return row;
     }
 
-    static class ViewHolder {
-        TextView imageTitle;
-        ImageView image;
-    }
 }

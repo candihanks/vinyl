@@ -1,10 +1,20 @@
 package com.carltaylordev.recordlisterandroidclient;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Environment;
+
+import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
+import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
