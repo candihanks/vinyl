@@ -45,7 +45,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listing_activity);
 
-        mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), this);
+        mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), this, this);
 
         setupViewPager();
         setupSaveFab();

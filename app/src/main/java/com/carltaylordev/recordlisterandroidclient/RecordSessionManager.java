@@ -269,7 +269,7 @@ public class RecordSessionManager {
     private File writeImage(Bitmap imageBitmap) {
         FileManager fileManager = new FileManager(mContext);
         try {
-            File file = fileManager.writeTempImageFile(imageBitmap);
+            File file = null;
             // // TODO: 31/05/2017 write perm file
             return file;
         } catch (Exception e) {

@@ -10,12 +10,14 @@ public class ImageItem {
     private Bitmap image;
     private String title;
     private Boolean isPlaceHolder;
+    public String uri;
 
-    public ImageItem(Bitmap image, String title, Boolean isPlaceHolder) {
+    public ImageItem(Bitmap image, String title, Boolean isPlaceHolder, String uri) {
         super();
         this.image = image;
         this.title = title;
         this.isPlaceHolder = isPlaceHolder;
+        this.uri = uri;
     }
 
     public Boolean isPlaceHolder() {

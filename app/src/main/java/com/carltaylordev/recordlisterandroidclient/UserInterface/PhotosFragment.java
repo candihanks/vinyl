@@ -3,8 +3,10 @@ package com.carltaylordev.recordlisterandroidclient.UserInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +14,13 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
+import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -32,6 +37,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     private GridViewAdapter mGridAdapter;
 
     private int mLastSelectedGridPosition;
+    private String mLastCreatedTempFileLocation;
 
     /**
      * Constructors
@@ -82,21 +88,32 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     }
 
     /**
-     *  Image Capture / Writing
+     *  Image Capture
      */
 
     private void captureImage(int gridPosition) {
-        mLastSelectedGridPosition = gridPosition; // // TODO: 31/05/2017 cant seem to pass this with the intent!
-
         ListingActivity activity = (ListingActivity) getActivity();
+        mLastSelectedGridPosition = gridPosition;
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, ""); // TODO: 31/05/2017 DO I need to pass a url to get full image size?
-        if (intent.resolveActivity(activity.getPackageManager()) != null) {
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-        } else {
-            Logger.logMessage("Devise can not take pictures");
-            activity.showToast("Your Devise Can Not Take Pictures");
+        FileManager fileManager = new FileManager(activity);
+        File tempFile = null;
+        try {
+            tempFile = fileManager.createTempImageFileOnDisc();
+        } catch (IOException e) {
+            Logger.logMessage("Error creating file: " + e.toString());
+        }
+
+        if (tempFile != null) {
+            mLastCreatedTempFileLocation = tempFile.getAbsolutePath();
+
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mLastCreatedTempFileLocation);
+            if (intent.resolveActivity(activity.getPackageManager()) != null) {
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            } else {
+                Logger.logMessage("Devise can not take pictures");
+                activity.showToast("Your Devise Can Not Take Pictures");
+            }
         }
     }
 
@@ -104,14 +121,15 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = intent.getExtras();
+            // // TODO: 31/05/2017 get tempURI and add to image item
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            addNewImageToAdapter(new ImageItem(imageBitmap, "New Image", false), mLastSelectedGridPosition);
+            addNewImageToAdapter(new ImageItem(imageBitmap, "New Image", false, mLastCreatedTempFileLocation), mLastSelectedGridPosition);
         }
     }
 
     private ImageItem placeHolderImage() {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.magic_wand);
-        return new ImageItem(bitmap, "Tap To Add", true);
+        return new ImageItem(bitmap, "Tap To Add", true, null);
     }
 
     private void addNewImageToAdapter(ImageItem imageItem, int gridPosition) {
@@ -126,10 +144,6 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         }
         mGridView.invalidateViews();
     }
-
-    /**
-     *  Image Reading / Decoding
-     */
 
     /**
      *  RecordSessionManager Interface
