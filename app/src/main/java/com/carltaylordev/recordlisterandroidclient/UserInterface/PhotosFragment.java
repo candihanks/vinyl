@@ -31,7 +31,6 @@ import static android.app.Activity.RESULT_OK;
 public class PhotosFragment extends android.support.v4.app.Fragment implements RecordSessionManager.Interface {
 
     static final int REQUEST_IMAGE_CAPTURE = 1001;
-    static final String EXTRA_KEY_IMAGE_POSITION = "EXTRA_KEY_IMAGE_POSITION";
 
     private GridView mGridView;
     private GridViewAdapter mGridAdapter;
