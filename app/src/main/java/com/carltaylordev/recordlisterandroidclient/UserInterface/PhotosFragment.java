@@ -12,12 +12,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
-import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -56,8 +54,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         View rootView = inflater.inflate(R.layout.photos_fragment, container, false);
 
         ListingActivity activity = (ListingActivity)getActivity();
-
-        setupGridView(rootView);
+        setupGridView(rootView, activity);
 
         return rootView;
     }
@@ -66,9 +63,11 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      *  Setup
      */
 
-    void setupGridView(View view) {
-        ArrayList<ImageItem> images = new ArrayList<>();
-        images.add(placeHolderImage());
+    void setupGridView(View view, ListingActivity activity) {
+        ArrayList<ImageItem> images = activity.mRecordSessionManager.getImages();
+        if (images.size() == 0) {
+            images.add(placeHolderImage());
+        }
 
         mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
         mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
@@ -76,6 +75,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int gridPosition, long id) {
+                // // TODO: 31/05/2017 check permissions: https://stackoverflow.com/questions/38284910/saving-image-file
                 captureImage(gridPosition);
             }
         });
@@ -105,16 +105,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = intent.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            addImageToAdapter(imageBitmap, mLastSelectedGridPosition);
-        }
-    }
-
-    private void writeImage(Bitmap imageBitmap) {
-        FileManager fileManager = new FileManager(getActivity());
-        try {
-            File file = fileManager.writeImageFile(imageBitmap);
-        } catch (Exception e) {
-            Logger.logMessage("Exception writing Image File: " + e.toString());
+            addNewImageToAdapter(new ImageItem(imageBitmap, "New Image", false), mLastSelectedGridPosition);
         }
     }
 
@@ -123,14 +114,16 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         return new ImageItem(bitmap, "Tap To Add", true);
     }
 
-    private void addImageToAdapter(Bitmap imageBitmap, int gridPosition) {
+    private void addNewImageToAdapter(ImageItem imageItem, int gridPosition) {
         ArrayList<ImageItem> images = mGridAdapter.getItems();
         ImageItem selectedImage = images.get(gridPosition);
+        images.remove(gridPosition);
+        images.add(imageItem);
+
+        // If we replaced a placeholder image, we need to append a new one
         if (selectedImage.isPlaceHolder()) {
             images.add(placeHolderImage());
         }
-        images.remove(gridPosition);
-        images.add(gridPosition, new ImageItem(imageBitmap, "New Image", false));
         mGridView.invalidateViews();
     }
 
@@ -154,7 +147,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
 
     @Override
     public void updateUI(RecordSessionManager manager) {
-
+        // Not using this method.
     }
 }
 

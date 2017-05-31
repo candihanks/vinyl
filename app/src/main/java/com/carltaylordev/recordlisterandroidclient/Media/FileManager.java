@@ -21,7 +21,7 @@ public class FileManager {
         this.mContext = mContext;
     }
 
-    public File writeImageFile(Bitmap imageBitMap) throws IOException {
+    public File writeTempImageFile(Bitmap imageBitMap) throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "Record_Lister_" + timeStamp + "_";
         File storageDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);

@@ -32,7 +32,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-    List<WeakReference<Fragment>> fragList = new ArrayList<>();
+    List<WeakReference<Fragment>> mFragList = new ArrayList<>();
 
     public RecordSessionManager mRecordSessionManager;
 
@@ -45,8 +45,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listing_activity);
 
-        Realm realm = Realm.getDefaultInstance();
-        mRecordSessionManager = new RecordSessionManager(new RealmRecord(),  realm, this);
+        mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), this);
 
         setupViewPager();
         setupSaveFab();
@@ -88,7 +87,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
     @Override
     public void onAttachFragment (Fragment fragment) {
-        fragList.add(new WeakReference(fragment));
+        mFragList.add(new WeakReference(fragment));
         super.onAttachFragment(fragment);
     }
 
@@ -141,7 +140,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
     public List<Fragment> getActiveFragments() {
         ArrayList<Fragment> ret = new ArrayList<>();
-        for(WeakReference<Fragment> ref : fragList) {
+        for(WeakReference<Fragment> ref : mFragList) {
             Fragment f = ref.get();
             if(f != null) {
                 if(f.isVisible()) {

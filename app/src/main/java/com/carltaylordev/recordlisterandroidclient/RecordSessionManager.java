@@ -1,10 +1,16 @@
 package com.carltaylordev.recordlisterandroidclient;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+
+import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
+import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -22,15 +28,24 @@ public class RecordSessionManager {
         void updateUI(RecordSessionManager sessionManager);
     }
 
-    private ArrayList<ImageItem>imageCache = new ArrayList<>();
+    private ArrayList<ImageItem> mImageCacheList = new ArrayList<>();
     private RealmRecord mRealmRecord;
     private Realm mRealm;
     private Interface mUpdateInterface;
+    private Context mContext;
 
-    public RecordSessionManager(RealmRecord realmRecord, Realm realm, Interface updateInterface) {
+    public RecordSessionManager(RealmRecord realmRecord, Realm realm, Interface updateInterface, Context context) {
         mRealmRecord = realmRecord;
         mRealm = realm;
         mUpdateInterface = updateInterface;
+        mContext = context;
+
+        if (mRealmRecord.getImages() != null) {
+            for (RealmImage image : mRealmRecord.getImages()) {
+                // get image from disc
+//            mImageCacheList.add(new ImageItem())
+            }
+        }
     }
 
     /**
@@ -80,6 +95,10 @@ public class RecordSessionManager {
         return list;
     }
 
+    public ArrayList<ImageItem> getImages() {
+        return mImageCacheList;
+    }
+
     public String getArtist() {
         return mRealmRecord.getArtist();
     }
@@ -117,11 +136,11 @@ public class RecordSessionManager {
      */
 
     public void addImageToCache(ImageItem imageItem) {
-        imageCache.add(imageItem);
+        mImageCacheList.add(imageItem);
     }
 
     public void removeImagesFromCache() {
-        imageCache = new ArrayList<>();
+        mImageCacheList = new ArrayList<>();
     }
 
     public void setArtist(String artist) {
@@ -231,10 +250,31 @@ public class RecordSessionManager {
      */
 
     public void save() {
-        // // TODO: 31/05/2017 gather all images from cache and add to record
+        for (ImageItem imageItem : mImageCacheList) {
+            if (imageItem.isPlaceHolder()) {
+                continue;
+            }
+            File file = writeImage(imageItem.getImage());
+            RealmImage realmImage = new RealmImage();
+            realmImage.setTitle(imageItem.getTitle());
+            realmImage.setPath(file.getAbsolutePath());
+        }
+
         mUpdateInterface.updateSession(this);
         mRealm.beginTransaction();
         mRealm.copyToRealmOrUpdate(mRealmRecord);
         mRealm.commitTransaction();
+    }
+
+    private File writeImage(Bitmap imageBitmap) {
+        FileManager fileManager = new FileManager(mContext);
+        try {
+            File file = fileManager.writeTempImageFile(imageBitmap);
+            // // TODO: 31/05/2017 write perm file
+            return file;
+        } catch (Exception e) {
+            Logger.logMessage("Exception writing Image File: " + e.toString());
+            return null;
+        }
     }
 }
