@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.carltaylordev.recordlisterandroidclient">
 
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="false">
+    </uses-feature>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -11,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ListingActivity"
+            android:name=".UserInterface.ListingActivity"
             android:label="Edit Record"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

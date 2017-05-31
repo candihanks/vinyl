@@ -1,4 +1,4 @@
-package com.carltaylordev.recordlisterandroidclient;
+package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -11,14 +11,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.carltaylordev.recordlisterandroidclient.Logger;
+import com.carltaylordev.recordlisterandroidclient.R;
+import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
-import com.carltaylordev.recordlisterandroidclient.models.Record;
+import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -27,8 +29,6 @@ import java.util.List;
 import io.realm.Realm;
 
 public class ListingActivity extends AppCompatActivity implements RecordSessionManager.Interface {
-
-    public static final String MY_LOG_TAG = "MY_LOG_TAG";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -46,7 +46,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         setContentView(R.layout.listing_activity);
 
         Realm realm = Realm.getDefaultInstance();
-        mRecordSessionManager = new RecordSessionManager(new Record(),  realm, this);
+        mRecordSessionManager = new RecordSessionManager(new RealmRecord(),  realm, this);
 
         setupViewPager();
         setupSaveFab();
@@ -157,25 +157,25 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
      */
 
     @Override
-    public void updateRecord(Record record) {
+    public void updateRecord(RealmRecord realmRecord) {
         List<Fragment> fragments = getActiveFragments();
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.Interface) {
-                ((RecordSessionManager.Interface) frag).updateRecord(record);
+                ((RecordSessionManager.Interface) frag).updateRecord(realmRecord);
             } else {
-                Log.d(MY_LOG_TAG, "Fragment does not implement 'updateRecord' interface");
+                Logger.logMessage("Fragment does not implement 'updateRecord' interface");
             }
         }
     }
 
     @Override
-    public void updateUI(Record record) {
+    public void updateUI(RealmRecord realmRecord) {
         List<Fragment> fragments = getActiveFragments();
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.Interface) {
-                ((RecordSessionManager.Interface) frag).updateUI(record);
+                ((RecordSessionManager.Interface) frag).updateUI(realmRecord);
             } else {
-                Log.d(MY_LOG_TAG, "Fragment does not implement 'updateUI' interface");
+                Logger.logMessage("Fragment does not implement 'updateUI' interface");
             }
         }
     }

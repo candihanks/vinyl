@@ -1,10 +1,8 @@
-package com.carltaylordev.recordlisterandroidclient;
+package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
-import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
-import com.carltaylordev.recordlisterandroidclient.models.Record;
-
-import org.w3c.dom.Text;
+import com.carltaylordev.recordlisterandroidclient.R;
+import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
+import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 public class Info2Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.Interface {
 
@@ -95,39 +91,37 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
         ArrayAdapter<String> recordConditionAdapter = new ArrayAdapter<>(activity,
                 android.R.layout.simple_spinner_item, activity.mRecordSessionManager.getRecordConditions());
         recordConditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         mRecordConditionSpinner = (Spinner)view.findViewById(R.id.spinner_record_condition);
         mRecordConditionSpinner.setAdapter(recordConditionAdapter);
 
         ArrayAdapter<String> coverConditionAdapter = new ArrayAdapter<>(activity,
                 android.R.layout.simple_spinner_item, activity.mRecordSessionManager.getCoverConditions());
         recordConditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         mCoverConditionSpinner = (Spinner)view.findViewById(R.id.spinner_cover_condition);
         mCoverConditionSpinner.setAdapter(coverConditionAdapter);
     }
 
     /**
-     *  ListingCoordinator Interface
+     *  RecordSessionManager Interface
      */
 
     @Override
-    public void updateRecord(Record record) {
-        record.setComments(mCommentsEditText.getText().toString());
-        record.setMediaCondition(mRecordConditionSpinner.toString());
-        record.setCoverCondition(mCoverConditionSpinner.toString());
-        record.setPrice(mPriceEditText.getText().toString());
+    public void updateRecord(RealmRecord realmRecord) {
+        realmRecord.setComments(mCommentsEditText.getText().toString());
+        realmRecord.setMediaCondition(mRecordConditionSpinner.toString());
+        realmRecord.setCoverCondition(mCoverConditionSpinner.toString());
+        realmRecord.setPrice(mPriceEditText.getText().toString());
     }
 
     @Override
-    public void updateUI(Record record) {
-        mCommentsEditText.setText(record.getComments());
+    public void updateUI(RealmRecord realmRecord) {
+        mCommentsEditText.setText(realmRecord.getComments());
 
         ArrayAdapter recordConditionAdapter = (ArrayAdapter)mRecordConditionSpinner.getAdapter();
         ArrayAdapter coverConditionAdapter = (ArrayAdapter)mCoverConditionSpinner.getAdapter();
-        mRecordConditionSpinner.setSelection(recordConditionAdapter.getPosition(record.getMediaCondition()));
-        mCoverConditionSpinner.setSelection(coverConditionAdapter.getPosition(record.getCoverCondition()));
+        mRecordConditionSpinner.setSelection(recordConditionAdapter.getPosition(realmRecord.getMediaCondition()));
+        mCoverConditionSpinner.setSelection(coverConditionAdapter.getPosition(realmRecord.getCoverCondition()));
 
-        mPriceEditText.setText(record.getPrice());
+        mPriceEditText.setText(realmRecord.getPrice());
     }
 }

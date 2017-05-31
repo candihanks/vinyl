@@ -1,7 +1,7 @@
 package com.carltaylordev.recordlisterandroidclient;
 
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
-import com.carltaylordev.recordlisterandroidclient.models.Record;
+import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
 import java.util.ArrayList;
@@ -17,16 +17,16 @@ import io.realm.RealmResults;
 public class RecordSessionManager {
 
     public interface Interface {
-        void updateRecord(Record record);
-        void updateUI(Record record);
+        void updateRecord(RealmRecord realmRecord);
+        void updateUI(RealmRecord realmRecord);
     }
 
-    private Record mRecord;
+    private RealmRecord mRealmRecord;
     private Realm mRealm;
     private Interface mUpdateInterface;
 
-    public RecordSessionManager(Record record, Realm realm, Interface updateInterface) {
-        mRecord = record;
+    public RecordSessionManager(RealmRecord realmRecord, Realm realm, Interface updateInterface) {
+        mRealmRecord = realmRecord;
         mRealm = realm;
         mUpdateInterface = updateInterface;
     }
@@ -36,18 +36,18 @@ public class RecordSessionManager {
      */
 
     public void createTestData() {
-        mRecord.setArtist("Dave Clarke");
-        mRecord.setTitle("Red 3");
-        mRecord.setLabel("Deconstruction");
-        mRecord.setMediaCondition("Good Plus (G+)");
-        mRecord.setCoverCondition("Good Plus (G+)");
-        mRecord.setComments("Here is a great record");
-        mRecord.setPrice("9.99");
+        mRealmRecord.setArtist("Dave Clarke");
+        mRealmRecord.setTitle("Red 3");
+        mRealmRecord.setLabel("Deconstruction");
+        mRealmRecord.setMediaCondition("Good Plus (G+)");
+        mRealmRecord.setCoverCondition("Good Plus (G+)");
+        mRealmRecord.setComments("Here is a great record");
+        mRealmRecord.setPrice("9.99");
 
         RealmResults<EbayCategory>results = getAllCategories();
-        mRecord.setEbayCategory(results.first());
+        mRealmRecord.setEbayCategory(results.first());
 
-        mUpdateInterface.updateUI(mRecord);
+        mUpdateInterface.updateUI(mRealmRecord);
     }
 
     public static RealmResults<EbayCategory> getAllCategories() {
@@ -79,11 +79,11 @@ public class RecordSessionManager {
      */
 
     public void captureCurrentState() {
-        mUpdateInterface.updateRecord(mRecord);
+        mUpdateInterface.updateRecord(mRealmRecord);
     }
 
     public void reloadCurrentRecord() {
-        mUpdateInterface.updateUI(mRecord);
+        mUpdateInterface.updateUI(mRealmRecord);
     }
 
     /**
@@ -91,14 +91,14 @@ public class RecordSessionManager {
      */
 
     public BoolResponse recordIsValid() {
-        mUpdateInterface.updateRecord(mRecord);
+        mUpdateInterface.updateRecord(mRealmRecord);
         // check all fields
         return new BoolResponse(true, "You need more stuff");
     }
 
     public BoolResponse canBuildListingTitle() {
-        mUpdateInterface.updateRecord(mRecord);
-        String title = mRecord.getTitle();
+        mUpdateInterface.updateRecord(mRealmRecord);
+        String title = mRealmRecord.getTitle();
         return new BoolResponse(!title.isEmpty(), "Add 'Title' to use this feature");
     }
 
@@ -107,12 +107,12 @@ public class RecordSessionManager {
      */
 
     public String buildListingTitle() {
-        mUpdateInterface.updateRecord(mRecord);
+        mUpdateInterface.updateRecord(mRealmRecord);
 
-        String artist =  mRecord.getArtist();
-        String title = mRecord.getTitle();
-        String label = mRecord.getLabel();
-        String category = mRecord.getEbayCategory().toString();
+        String artist =  mRealmRecord.getArtist();
+        String title = mRealmRecord.getTitle();
+        String label = mRealmRecord.getLabel();
+        String category = mRealmRecord.getEbayCategory().toString();
 
         String titleString = "";
 
@@ -149,9 +149,9 @@ public class RecordSessionManager {
      */
 
     public void save() {
-        mUpdateInterface.updateRecord(mRecord);
+        mUpdateInterface.updateRecord(mRealmRecord);
         mRealm.beginTransaction();
-        mRealm.copyToRealmOrUpdate(mRecord);
+        mRealm.copyToRealmOrUpdate(mRealmRecord);
         mRealm.commitTransaction();
     }
 }

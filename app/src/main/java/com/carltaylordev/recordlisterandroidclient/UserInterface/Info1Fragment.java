@@ -1,4 +1,4 @@
-package com.carltaylordev.recordlisterandroidclient;
+package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,9 +9,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import com.carltaylordev.recordlisterandroidclient.R;
+import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
-import com.carltaylordev.recordlisterandroidclient.models.Record;
+import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 /**
  * Created by carl on 29/05/2017.
@@ -92,22 +94,22 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
     }
 
     /**
-     *  ListingCoordinator Interface
+     *  RecordSessionManager Interface
      */
 
     @Override
-    public void updateRecord(Record record) {
-        record.setArtist(mArtistEditText.getText().toString());
-        record.setTitle(mTitleEditText.getText().toString());
-        record.setLabel(mLabelEditText.getText().toString());
-        record.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
+    public void updateRecord(RealmRecord realmRecord) {
+        realmRecord.setArtist(mArtistEditText.getText().toString());
+        realmRecord.setTitle(mTitleEditText.getText().toString());
+        realmRecord.setLabel(mLabelEditText.getText().toString());
+        realmRecord.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
     }
 
     @Override
-    public void updateUI(Record record) {
-        mArtistEditText.setText(record.getArtist());
-        mTitleEditText.setText(record.getTitle());
-        mLabelEditText.setText(record.getLabel());
-        mListingTitleEditText.setText(record.getListingTitle());
+    public void updateUI(RealmRecord realmRecord) {
+        mArtistEditText.setText(realmRecord.getArtist());
+        mTitleEditText.setText(realmRecord.getTitle());
+        mLabelEditText.setText(realmRecord.getLabel());
+        mListingTitleEditText.setText(realmRecord.getListingTitle());
     }
 }

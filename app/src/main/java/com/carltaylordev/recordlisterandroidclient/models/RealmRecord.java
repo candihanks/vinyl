@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.UUID;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -12,7 +13,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by carl on 21/05/2017.
  */
 
-public class Record extends RealmObject {
+public class RealmRecord extends RealmObject {
     @PrimaryKey
     private String uuid = UUID.randomUUID().toString();
     private String artist;
@@ -26,6 +27,7 @@ public class Record extends RealmObject {
     private EbayCategory ebayCategory;
     private String price;
 
+    private RealmList<RealmImage>images;
     // todo: sound clip relationship
     // todo: picture relationship
 
@@ -116,5 +118,13 @@ public class Record extends RealmObject {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public RealmList<RealmImage> getImages() {
+        return images;
+    }
+
+    public void setImages(RealmList<RealmImage> images) {
+        this.images = images;
     }
 }
