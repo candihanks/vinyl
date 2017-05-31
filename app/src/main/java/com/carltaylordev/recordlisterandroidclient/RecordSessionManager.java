@@ -1,21 +1,11 @@
 package com.carltaylordev.recordlisterandroidclient;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Environment;
-
-import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
-import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -28,7 +18,7 @@ import io.realm.RealmResults;
 public class RecordSessionManager {
 
     public interface Interface {
-        void updateRecord(RecordSessionManager sessionManager);
+        void updateSession(RecordSessionManager sessionManager);
         void updateUI(RecordSessionManager sessionManager);
     }
 
@@ -171,7 +161,7 @@ public class RecordSessionManager {
      */
 
     public void captureCurrentState() {
-        mUpdateInterface.updateRecord(this);
+        mUpdateInterface.updateSession(this);
     }
 
     public void reloadCurrentRecord() {
@@ -183,13 +173,13 @@ public class RecordSessionManager {
      */
 
     public BoolResponse recordIsValid() {
-        mUpdateInterface.updateRecord(this);
+        mUpdateInterface.updateSession(this);
         // check all fields
         return new BoolResponse(true, "You need more stuff");
     }
 
     public BoolResponse canBuildListingTitle() {
-        mUpdateInterface.updateRecord(this);
+        mUpdateInterface.updateSession(this);
         String title = mRealmRecord.getTitle();
         return new BoolResponse(!title.isEmpty(), "Add 'Title' to use this feature");
     }
@@ -199,7 +189,7 @@ public class RecordSessionManager {
      */
 
     public String buildListingTitle() {
-        mUpdateInterface.updateRecord(this);
+        mUpdateInterface.updateSession(this);
 
         String artist =  mRealmRecord.getArtist();
         String title = mRealmRecord.getTitle();
@@ -241,7 +231,8 @@ public class RecordSessionManager {
      */
 
     public void save() {
-        mUpdateInterface.updateRecord(this);
+        // // TODO: 31/05/2017 gather all images from cache and add to record
+        mUpdateInterface.updateSession(this);
         mRealm.beginTransaction();
         mRealm.copyToRealmOrUpdate(mRealmRecord);
         mRealm.commitTransaction();

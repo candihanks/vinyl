@@ -16,8 +16,6 @@ import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
-import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
-import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -145,7 +143,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      */
 
     @Override
-    public void updateRecord(RecordSessionManager manager) {
+    public void updateSession(RecordSessionManager manager) {
         manager.removeImagesFromCache();
         for (ImageItem imageItem : mGridAdapter.getItems()) {
             if (!imageItem.isPlaceHolder()) {

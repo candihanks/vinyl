@@ -158,13 +158,13 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
      */
 
     @Override
-    public void updateRecord(RecordSessionManager sessionManager) {
+    public void updateSession(RecordSessionManager sessionManager) {
         List<Fragment> fragments = getActiveFragments();
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.Interface) {
-                ((RecordSessionManager.Interface) frag).updateRecord(sessionManager);
+                ((RecordSessionManager.Interface) frag).updateSession(sessionManager);
             } else {
-                Logger.logMessage("Fragment does not implement 'updateRecord' interface");
+                Logger.logMessage("Fragment does not implement 'updateSession' interface");
             }
         }
     }

@@ -98,7 +98,7 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
      */
 
     @Override
-    public void updateRecord(RecordSessionManager manager) {
+    public void updateSession(RecordSessionManager manager) {
         manager.setArtist(mArtistEditText.getText().toString());
         manager.setTitle(mTitleEditText.getText().toString());
         manager.setLabel(mLabelEditText.getText().toString());

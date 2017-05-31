@@ -106,7 +106,7 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
      */
 
     @Override
-    public void updateRecord(RecordSessionManager manager) {
+    public void updateSession(RecordSessionManager manager) {
         manager.setComments(mCommentsEditText.getText().toString());
         manager.setMediaCondition(mRecordConditionSpinner.toString());
         manager.setCoverCondition(mCoverConditionSpinner.toString());
