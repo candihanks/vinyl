@@ -2,6 +2,8 @@ package com.carltaylordev.recordlisterandroidclient;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
@@ -68,6 +70,13 @@ public class RecordSessionManager {
         } catch (NullPointerException e) {
             Logger.logMessage("No Images For Record");
         }
+
+        mImageCacheList.add(placeHolderImage());
+    }
+
+    private ImageItem placeHolderImage() {
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.magic_wand);
+        return new ImageItem(bitmap, "Tap To Add", true, null);
     }
 
     public void createTestData() {
@@ -163,12 +172,18 @@ public class RecordSessionManager {
      * Set
      */
 
-    public void addImageToCache(ImageItem imageItem) {
-        mImageCacheList.add(imageItem);
+    public void setImageAtIndex(ImageItem imageItem, int index) {
+        ImageItem selectedImage = mImageCacheList.get(index);
+        mImageCacheList.set(index, imageItem);
+        // If we replaced a placeholder image, we need to append a new one
+        if (selectedImage.isPlaceHolder()) {
+            mImageCacheList.add(placeHolderImage());
+        }
+        reloadCurrentRecord();
     }
 
-    public void removeImagesFromCache() {
-        mImageCacheList = new ArrayList<>();
+    public void setImages(ArrayList<ImageItem> images) {
+        mImageCacheList = images;
     }
 
     public void setArtist(String artist) {

@@ -71,14 +71,9 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
 
     void setupGridView(View view, ListingActivity activity) {
         ArrayList<ImageItem> images = activity.mRecordSessionManager.getImages();
-        if (images.size() == 0) {
-            images.add(placeHolderImage());
-        }
-
         mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
         mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
         mGridView.setAdapter(mGridAdapter);
-
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int gridPosition, long id) {
                 // // TODO: 31/05/2017 check permissions: https://stackoverflow.com/questions/38284910/saving-image-file
@@ -121,28 +116,12 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = intent.getExtras();
-            // // TODO: 31/05/2017 get tempURI and add to image item
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            addNewImageToAdapter(new ImageItem(imageBitmap, "New Image", false, mLastCreatedTempFileLocation), mLastSelectedGridPosition);
+
+            ListingActivity activity = (ListingActivity) getActivity();
+            RecordSessionManager manager = activity.mRecordSessionManager;
+            manager.setImageAtIndex(new ImageItem(imageBitmap, "New Image", false, mLastCreatedTempFileLocation), mLastSelectedGridPosition);
         }
-    }
-
-    private ImageItem placeHolderImage() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.magic_wand);
-        return new ImageItem(bitmap, "Tap To Add", true, null);
-    }
-
-    private void addNewImageToAdapter(ImageItem imageItem, int gridPosition) {
-        ArrayList<ImageItem> images = mGridAdapter.getItems();
-        ImageItem selectedImage = images.get(gridPosition);
-        images.remove(gridPosition);
-        images.add(imageItem);
-
-        // If we replaced a placeholder image, we need to append a new one
-        if (selectedImage.isPlaceHolder()) {
-            images.add(placeHolderImage());
-        }
-        mGridView.invalidateViews();
     }
 
     /**
@@ -151,17 +130,13 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
 
     @Override
     public void updateSession(RecordSessionManager manager) {
-        manager.removeImagesFromCache();
-        for (ImageItem imageItem : mGridAdapter.getItems()) {
-            if (!imageItem.isPlaceHolder()) {
-                manager.addImageToCache(imageItem);
-            }
-        }
+        manager.setImages(mGridAdapter.getItems());
     }
 
     @Override
     public void updateUI(RecordSessionManager manager) {
-        // Not using this method.
+        mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, manager.getImages());
+        mGridView.invalidateViews();
     }
 }
 
