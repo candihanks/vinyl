@@ -3,6 +3,7 @@ package com.carltaylordev.recordlisterandroidclient.UserInterface;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -28,7 +29,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class ListingActivity extends AppCompatActivity implements RecordSessionManager.Interface {
+public class ListingActivity extends AppCompatActivity implements RecordSessionManager.Interface, RecordSessionManager.ErrorInterface {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -45,7 +46,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listing_activity);
 
-        mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), this, this);
+        mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), this);
 
         setupViewPager();
         setupSaveFab();
@@ -153,7 +154,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
 
     /**
-     * ListingCoordinator Interface
+     * RecordSessionManager Interface
      */
 
     @Override
@@ -180,12 +181,21 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         }
     }
 
+    @Override
+    public void showErrorMessage(String message) {
+        showAlert("Error", message);
+    }
+
     /**
-     * Alerts
+     * User Notifications
      */
 
     void showAlert(String title, String message) {
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setTitle(title);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     void showSnackBar(View view, String message) {

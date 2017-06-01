@@ -1,5 +1,6 @@
 package com.carltaylordev.recordlisterandroidclient;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -28,17 +29,23 @@ public class RecordSessionManager {
         void updateUI(RecordSessionManager sessionManager);
     }
 
+    public interface ErrorInterface {
+        void showErrorMessage(String message);
+    }
+
     private ArrayList<ImageItem> mImageCacheList = new ArrayList<>();
     private RealmRecord mRealmRecord;
     private Realm mRealm;
     private Interface mUpdateInterface;
+    private ErrorInterface mErrorInterface;
     private Context mContext;
 
-    public RecordSessionManager(RealmRecord realmRecord, Realm realm, Interface updateInterface, Context context) {
+    public RecordSessionManager(RealmRecord realmRecord, Realm realm, Activity activity) {
         mRealmRecord = realmRecord;
         mRealm = realm;
-        mUpdateInterface = updateInterface;
-        mContext = context;
+        mUpdateInterface = (Interface) activity;
+        mErrorInterface = (ErrorInterface)activity;
+        mContext = activity;
 
         if (mRealmRecord.getImages() != null) {
             for (RealmImage image : mRealmRecord.getImages()) {
@@ -254,10 +261,16 @@ public class RecordSessionManager {
             if (imageItem.isPlaceHolder()) {
                 continue;
             }
-            File file = writeImage(imageItem.getImage());
-            RealmImage realmImage = new RealmImage();
-            realmImage.setTitle(imageItem.getTitle());
-            realmImage.setPath(file.getAbsolutePath());
+            try {
+                File file = writeImage(imageItem.getImage());
+
+                RealmImage realmImage = new RealmImage();
+                realmImage.setTitle(imageItem.getTitle());
+                realmImage.setPath(file.getAbsolutePath());
+            } catch (Exception e) {
+                mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
+            }
+
         }
 
         mUpdateInterface.updateSession(this);
@@ -266,15 +279,11 @@ public class RecordSessionManager {
         mRealm.commitTransaction();
     }
 
-    private File writeImage(Bitmap imageBitmap) {
+    private File writeImage(Bitmap imageBitmap) throws Exception {
         FileManager fileManager = new FileManager(mContext);
-        try {
-            File file = null;
-            // // TODO: 31/05/2017 write perm file
-            return file;
-        } catch (Exception e) {
-            Logger.logMessage("Exception writing Image File: " + e.toString());
-            return null;
-        }
+        throw new Exception();
+
+
+
     }
 }
