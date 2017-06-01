@@ -2,11 +2,8 @@ package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +73,6 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         mGridView.setAdapter(mGridAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int gridPosition, long id) {
-                // // TODO: 31/05/2017 check permissions: https://stackoverflow.com/questions/38284910/saving-image-file
                 captureImage(gridPosition);
             }
         });
