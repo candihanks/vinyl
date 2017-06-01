@@ -28,6 +28,10 @@ public class FileManager {
         this.mContext = mContext;
     }
 
+    public static String getRootExternalPath() {
+        return Environment.getExternalStorageDirectory().toString() + "/record_lister/";
+    }
+
     public boolean deleteFile(String filePath) {
         File file = new File(filePath);
         return file.delete();
@@ -46,8 +50,7 @@ public class FileManager {
     }
 
     public File writeJpegToExternalStorage(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
-        String root = Environment.getExternalStorageDirectory().toString();
-        File appDir = new File(root + appDirPath);
+        File appDir = new File(appDirPath);
         appDir.mkdirs();
 
         Random generator = new Random();
@@ -73,8 +76,8 @@ public class FileManager {
         MediaScannerConnection.scanFile(mContext, new String[] { file.toString() }, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
-                        Logger.logMessage("ExternalStorage: Scanned " + path + ":");
-                        Logger.logMessage("ExternalStorage: -> uri=" + uri);
+                        Logger.logMessage("ExternalStorage: Scanned " + path);
+                        Logger.logMessage("ExternalStorage: uri: " + uri);
                     }
                 });
     }

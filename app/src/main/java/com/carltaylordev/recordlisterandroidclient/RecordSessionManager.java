@@ -2,8 +2,6 @@ package com.carltaylordev.recordlisterandroidclient;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
@@ -58,6 +56,7 @@ public class RecordSessionManager {
      */
 
     private void loadAssociatedData() {
+        mImageCacheList.clear();
         try {
             for (RealmImage image : mRealmRecord.getImages()) {
                 try {
@@ -70,13 +69,7 @@ public class RecordSessionManager {
         } catch (NullPointerException e) {
             Logger.logMessage("No Images For Record");
         }
-
-        mImageCacheList.add(placeHolderImage());
-    }
-
-    private ImageItem placeHolderImage() {
-        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.magic_wand);
-        return new ImageItem(bitmap, "Tap To Add", true, null);
+        mImageCacheList.add(ImageItem.placeHolderImage(mContext));
     }
 
     public void createTestData() {
@@ -177,7 +170,7 @@ public class RecordSessionManager {
         mImageCacheList.set(index, imageItem);
         // If we replaced a placeholder image, we need to append a new one
         if (selectedImage.isPlaceHolder()) {
-            mImageCacheList.add(placeHolderImage());
+            mImageCacheList.add(ImageItem.placeHolderImage(mContext));
         }
         reloadCurrentRecord();
     }
@@ -320,12 +313,12 @@ public class RecordSessionManager {
                     }
                     try {
                         File imageFile = fileManager.writeJpegToExternalStorage(imageItem.getImage(),
-                                "/record_lister/saved_images",
+                                FileManager.getRootExternalPath(),
                                 cleanStringForFileName(mRealmRecord.getListingTitle()));
 
                         RealmImage realmImage = mRealm.copyToRealm(new RealmImage());
                         realmImage.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter));
-                        realmImage.setPath(imageFile.getAbsolutePath());
+                        realmImage.setPath(imageFile.getPath());
                         realmImages.add(realmImage);
                     } catch (Exception e) {
                         mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
@@ -335,6 +328,7 @@ public class RecordSessionManager {
                 }
 
                 mRealmRecord.setImages(realmImages);
+                realm.copyToRealmOrUpdate(mRealmRecord);
             }
         });
     }

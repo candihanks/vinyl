@@ -4,7 +4,11 @@ package com.carltaylordev.recordlisterandroidclient.models;
  * Created by carl on 31/05/2017.
  */
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.carltaylordev.recordlisterandroidclient.R;
 
 public class ImageItem {
     private Bitmap image;
@@ -18,6 +22,11 @@ public class ImageItem {
         this.title = title;
         this.isPlaceHolder = isPlaceHolder;
         this.uri = uri;
+    }
+
+    public static ImageItem placeHolderImage(Context context) {
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.magic_wand);
+        return new ImageItem(bitmap, "Tap To Add", true, null);
     }
 
     public Boolean isPlaceHolder() {

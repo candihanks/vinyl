@@ -27,8 +27,9 @@ public class RealmImage extends RealmObject {
     }
 
     public ImageItem convertToImageItem(Context context) throws FileNotFoundException {
-        InputStream image_stream = context.getContentResolver().openInputStream(Uri.parse(path));
-        Bitmap bitmap = BitmapFactory.decodeStream(image_stream);
+        Uri uri = Uri.parse("file://" + path);
+        InputStream imageStream = context.getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
         return new ImageItem(bitmap, title, false, path);
     }
 
