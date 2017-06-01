@@ -29,7 +29,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class ListingActivity extends AppCompatActivity implements RecordSessionManager.Interface, RecordSessionManager.ErrorInterface {
+public class ListingActivity extends AppCompatActivity implements RecordSessionManager.UpdateInterface, RecordSessionManager.ErrorInterface {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -161,8 +161,8 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     public void updateSession(RecordSessionManager sessionManager) {
         List<Fragment> fragments = getActiveFragments();
         for (Fragment frag : fragments) {
-            if (frag instanceof RecordSessionManager.Interface) {
-                ((RecordSessionManager.Interface) frag).updateSession(sessionManager);
+            if (frag instanceof RecordSessionManager.UpdateInterface) {
+                ((RecordSessionManager.UpdateInterface) frag).updateSession(sessionManager);
             } else {
                 Logger.logMessage("Fragment does not implement 'updateSession' interface");
             }
@@ -173,8 +173,8 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     public void updateUI(RecordSessionManager sessionManager) {
         List<Fragment> fragments = getActiveFragments();
         for (Fragment frag : fragments) {
-            if (frag instanceof RecordSessionManager.Interface) {
-                ((RecordSessionManager.Interface) frag).updateUI(sessionManager);
+            if (frag instanceof RecordSessionManager.UpdateInterface) {
+                ((RecordSessionManager.UpdateInterface) frag).updateUI(sessionManager);
             } else {
                 Logger.logMessage("Fragment does not implement 'updateUI' interface");
             }

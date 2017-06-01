@@ -1,7 +1,6 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +27,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by carl on 30/05/2017.
  */
 
-public class PhotosFragment extends android.support.v4.app.Fragment implements RecordSessionManager.Interface {
+public class PhotosFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface {
 
     static final int REQUEST_IMAGE_CAPTURE = 1001;
 

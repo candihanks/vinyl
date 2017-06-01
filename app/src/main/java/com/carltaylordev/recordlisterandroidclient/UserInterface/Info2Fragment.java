@@ -13,9 +13,8 @@ import android.widget.Spinner;
 
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
-import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
-public class Info2Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.Interface {
+public class Info2Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface {
 
     Spinner mRecordConditionSpinner;
     Spinner mCoverConditionSpinner;

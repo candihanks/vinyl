@@ -13,13 +13,12 @@ import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
-import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 /**
  * Created by carl on 29/05/2017.
  */
 
-public class Info1Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.Interface {
+public class Info1Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface {
 
     Spinner mStyleCatSpinner;
 
