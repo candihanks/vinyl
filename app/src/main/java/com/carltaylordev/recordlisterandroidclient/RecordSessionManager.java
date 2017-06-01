@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 /**
@@ -201,6 +202,9 @@ public class RecordSessionManager {
     public BoolResponse recordIsValid() {
         mUpdateInterface.updateSession(this);
         // check all fields
+        // 1 picture
+        // title
+        // listing title
         return new BoolResponse(true, "You need more stuff");
     }
 
@@ -225,31 +229,34 @@ public class RecordSessionManager {
         String titleString = "";
 
         if (!artist.isEmpty()) {
-            titleString += cleanString(artist);
+            titleString += cleanStringOfUnwantedSpace(artist);
         }
 
         if (!title.isEmpty()) {
             titleString += " - ";
-            titleString += cleanString(title);
+            titleString += cleanStringOfUnwantedSpace(title);
         }
 
         if (!label.isEmpty()) {
             titleString += " - (";
-            titleString += cleanString(label);
+            titleString += cleanStringOfUnwantedSpace(label);
             titleString += ")";
         }
 
         if (!category.isEmpty()) {
             titleString += " - ";
-            titleString += cleanString(category);
+            titleString += cleanStringOfUnwantedSpace(category);
         }
 
         return titleString;
     }
 
-    private String cleanString(String string) {
-        String withoutUnwantedSpace = string.trim().replaceAll(" +", " ");
-        return withoutUnwantedSpace;
+    private String cleanStringOfUnwantedSpace(String string) {
+        return new String (string.trim().replaceAll(" +", " "));
+    }
+
+    private String cleanStringForFileName(String string) {
+        return new String (string.replaceAll("\\W+", ""));
     }
 
     /**
@@ -257,33 +264,35 @@ public class RecordSessionManager {
      */
 
     public void save() {
-        for (ImageItem imageItem : mImageCacheList) {
-            if (imageItem.isPlaceHolder()) {
-                continue;
-            }
-            try {
-                File file = writeImage(imageItem.getImage());
-
-                RealmImage realmImage = new RealmImage();
-                realmImage.setTitle(imageItem.getTitle());
-                realmImage.setPath(file.getAbsolutePath());
-            } catch (Exception e) {
-                mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
-            }
-
-        }
-
         mUpdateInterface.updateSession(this);
-        mRealm.beginTransaction();
-        mRealm.copyToRealmOrUpdate(mRealmRecord);
-        mRealm.commitTransaction();
-    }
+        final FileManager fileManager = new FileManager(mContext);
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
 
-    private File writeImage(Bitmap imageBitmap) throws Exception {
-        FileManager fileManager = new FileManager(mContext);
-        throw new Exception();
+                realm.copyToRealmOrUpdate(mRealmRecord);
+                RealmList<RealmImage> realmImages = new RealmList<>();
 
+                for (ImageItem imageItem : mImageCacheList) {
+                    if (imageItem.isPlaceHolder()) {
+                        continue;
+                    }
+                    try {
+                        File imageFile = fileManager.writeJpegToExternalStorage(imageItem.getImage(),
+                                "/record_lister/saved_images",
+                                cleanStringForFileName(mRealmRecord.getListingTitle()));
 
+                        RealmImage realmImage = mRealm.copyToRealm(new RealmImage());
+                        realmImage.setTitle(imageItem.getTitle());
+                        realmImage.setPath(imageFile.getAbsolutePath());
+                        realmImages.add(realmImage);
+                    } catch (Exception e) {
+                        mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
+                    }
+                }
 
+                mRealmRecord.setImages(realmImages);
+            }
+        });
     }
 }

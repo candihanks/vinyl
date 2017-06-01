@@ -98,7 +98,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         FileManager fileManager = new FileManager(activity);
         File tempFile = null;
         try {
-            tempFile = fileManager.createTempImageFileOnDisc();
+            tempFile = fileManager.createTempFileOnDisc(".jpg");
         } catch (IOException e) {
             Logger.logMessage("Error creating file: " + e.toString());
         }

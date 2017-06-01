@@ -41,10 +41,6 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem> {
         return data;
     }
 
-    public void setItems(ArrayList imageItems) {
-        data = imageItems;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -68,5 +64,4 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem> {
         holder.image.setImageBitmap(item.getImage());
         return row;
     }
-
 }
