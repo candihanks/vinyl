@@ -14,6 +14,7 @@ import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -53,7 +54,12 @@ public class RecordSessionManager {
 
         if (mRealmRecord.getImages() != null) {
             for (RealmImage image : mRealmRecord.getImages()) {
-                mImageCacheList.add(image.convertToImageItem());
+                try {
+                    mImageCacheList.add(image.convertToImageItem(mContext));
+                } catch (FileNotFoundException e) {
+                    mErrorInterface.showErrorMessage("Error loading images for record");
+                    break;
+                }
             }
         }
     }
