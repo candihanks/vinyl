@@ -229,11 +229,33 @@ public class RecordSessionManager {
 
     public BoolResponse recordIsValid() {
         mUpdateInterface.updateSession(this);
-        // check all fields
-        // 1 picture
-        // title
-        // listing title
-        return new BoolResponse(true, "You need more stuff");
+
+        String message = "";
+        boolean valid = true;
+
+        if (mRealmRecord.getTitle().isEmpty()) {
+            message += "Title\n";
+            valid = false;
+        }
+
+        if (mRealmRecord.getListingTitle() == null || mRealmRecord.getListingTitle().isEmpty()) {
+            message += "Listing title\n";
+            valid = false;
+        }
+
+        if (mRealmRecord.getPrice().isEmpty()) {
+            message += "Price\n";
+            valid = false;
+        }
+
+        if (mImageCacheList.size() == 1) {
+            ImageItem onlyImage = mImageCacheList.get(0);
+            if (onlyImage.isPlaceHolder()) {
+                message += "At least 1 Image\n";
+                valid = false;
+            }
+        }
+        return new BoolResponse(valid, message);
     }
 
     public BoolResponse canBuildListingTitle() {

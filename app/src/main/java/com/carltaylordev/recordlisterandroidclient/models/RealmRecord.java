@@ -29,7 +29,6 @@ public class RealmRecord extends RealmObject {
 
     private RealmList<RealmImage>images;
     // todo: sound clip relationship
-    // todo: picture relationship
 
     public String toJson() {
         Gson gson = new GsonBuilder().create();

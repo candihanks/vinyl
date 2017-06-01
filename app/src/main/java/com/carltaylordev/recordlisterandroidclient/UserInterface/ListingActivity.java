@@ -119,7 +119,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
                     mRecordSessionManager.save();
                     showSnackBar(view, "Record Saved");
                 } else {
-                    showToast(response.getUserMessage());
+                    showAlert("You need to add:", response.getUserMessage());
                 }
             }
         });
