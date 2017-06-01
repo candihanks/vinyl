@@ -2,9 +2,6 @@ package com.carltaylordev.recordlisterandroidclient;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
@@ -15,7 +12,6 @@ import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -52,7 +48,15 @@ public class RecordSessionManager {
         mErrorInterface = (ErrorInterface)activity;
         mContext = activity;
 
-        if (mRealmRecord.getImages() != null) {
+        loadAssociatedData();
+    }
+
+    /**
+     * Associated Data
+     */
+
+    private void loadAssociatedData() {
+        try {
             for (RealmImage image : mRealmRecord.getImages()) {
                 try {
                     mImageCacheList.add(image.convertToImageItem(mContext));
@@ -61,20 +65,28 @@ public class RecordSessionManager {
                     break;
                 }
             }
+        } catch (NullPointerException e) {
+            Logger.logMessage("No Images For Record");
         }
     }
 
-    /**
-     * Associated Data
-     */
-
     public void createTestData() {
+        RealmResults<RealmRecord> savedRecords = mRealm.where(RealmRecord.class).findAll();
+        if (savedRecords.size() > 0) {
+            mRealmRecord = mRealm.copyFromRealm(savedRecords.get(savedRecords.size() - 1));
+            mRealmRecord.setListingTitle("Test Listing Do Not Buy");
+            loadAssociatedData();
+            mUpdateInterface.updateUI(this);
+            return;
+        }
+
         mRealmRecord.setArtist("Dave Clarke");
         mRealmRecord.setTitle("Red 3");
         mRealmRecord.setLabel("Deconstruction");
         mRealmRecord.setMediaCondition("Good Plus (G+)");
         mRealmRecord.setCoverCondition("Good Plus (G+)");
         mRealmRecord.setComments("Here is a great record");
+        mRealmRecord.setListingTitle("Test Listing Do Not Buy");
         mRealmRecord.setPrice("9.99");
 
         RealmResults<EbayCategory>results = getAllCategories();
