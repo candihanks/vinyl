@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
+import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -26,10 +28,8 @@ public class RealmImage extends RealmObject {
         return uuid;
     }
 
-    public ImageItem convertToImageItem(Context context) throws FileNotFoundException {
-        Uri uri = Uri.parse("file://" + path);
-        InputStream imageStream = context.getContentResolver().openInputStream(uri);
-        Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+    public ImageItem convertToImageItem() throws FileNotFoundException {
+        Bitmap bitmap = FileManager.decodeImageFromPath(path);
         return new ImageItem(bitmap, title, false, path);
     }
 

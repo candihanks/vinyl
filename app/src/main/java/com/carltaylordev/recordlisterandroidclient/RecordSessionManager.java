@@ -60,7 +60,7 @@ public class RecordSessionManager {
         try {
             for (RealmImage image : mRealmRecord.getImages()) {
                 try {
-                    mImageCacheList.add(image.convertToImageItem(mContext));
+                    mImageCacheList.add(image.convertToImageItem());
                 } catch (FileNotFoundException e) {
                     mErrorInterface.showErrorMessage("Error loading images for record");
                     break;
@@ -312,14 +312,20 @@ public class RecordSessionManager {
                         continue;
                     }
                     try {
-                        File imageFile = fileManager.writeJpegToExternalStorage(imageItem.getImage(),
-                                FileManager.getRootExternalPath(),
+                        // Write to app storage
+                        File imageFile = fileManager.writeJpegToDisc(imageItem.getImage(),
+                                FileManager.getRootPicturesPath(),
                                 cleanStringForFileName(mRealmRecord.getListingTitle()));
 
+                        // Add to Realm
                         RealmImage realmImage = mRealm.copyToRealm(new RealmImage());
                         realmImage.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter));
                         realmImage.setPath(imageFile.getPath());
                         realmImages.add(realmImage);
+
+                        // Delete temp image
+                        FileManager.deleteFile(imageItem.getPath());
+
                     } catch (Exception e) {
                         mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
                     }

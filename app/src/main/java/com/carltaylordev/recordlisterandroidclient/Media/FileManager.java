@@ -2,6 +2,7 @@ package com.carltaylordev.recordlisterandroidclient.Media;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
@@ -32,24 +33,35 @@ public class FileManager {
         return Environment.getExternalStorageDirectory().toString() + "/record_lister/";
     }
 
-    public boolean deleteFile(String filePath) {
+    public static String getRootPicturesPath() {
+        return getRootExternalPath() + "/pictures/";
+    }
+
+    public static String getRootSoundClipsPath() {
+        return getRootExternalPath() + "/sound_clips/";
+    }
+
+    public static boolean deleteFile(String filePath) {
         File file = new File(filePath);
-        return file.delete();
+        boolean success = file.delete();
+        return success;
     }
 
-    public File createTempFileOnDisc(String fileExtention) throws IOException {
+    public static Bitmap decodeImageFromPath(String path) {
+        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        return bitmap;
+    }
+
+    public static File createTempFileOnDisc(String fileExtension) throws IOException {
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fileName = "temp_file_" + timeStamp + "_";
-        File storageDir = mContext.getFilesDir();
-        File tempFile = File.createTempFile(
-                fileName,
-                fileExtention,
-                storageDir
-        );
-        return tempFile;
+        String fileName = "temp_file_" + timeStamp + "_" + fileExtension;
+        String path = storageDir.getAbsolutePath() + "/" + fileName;
+        File file = new File(path);
+        return file;
     }
 
-    public File writeJpegToExternalStorage(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
+    public File writeJpegToDisc(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
         File appDir = new File(appDirPath);
         appDir.mkdirs();
 
@@ -68,7 +80,6 @@ public class FileManager {
         out.close();
 
         updateMediaScannerWithFile(file);
-
         return file;
     }
 

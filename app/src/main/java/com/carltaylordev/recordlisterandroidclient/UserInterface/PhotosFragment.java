@@ -2,6 +2,8 @@ package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -98,7 +100,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
             mLastCreatedTempFileLocation = tempFile.getAbsolutePath();
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mLastCreatedTempFileLocation);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
             if (intent.resolveActivity(activity.getPackageManager()) != null) {
                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
             } else {
@@ -111,12 +113,13 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = intent.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
             ListingActivity activity = (ListingActivity) getActivity();
             RecordSessionManager manager = activity.mRecordSessionManager;
-            manager.setImageAtIndex(new ImageItem(imageBitmap, "New Image", false, mLastCreatedTempFileLocation), mLastSelectedGridPosition);
+            manager.setImageAtIndex(new ImageItem(BitmapFactory.decodeFile(mLastCreatedTempFileLocation),
+                    "New Image",
+                    false,
+                    mLastCreatedTempFileLocation),
+                    mLastSelectedGridPosition);
         }
     }
 

@@ -14,14 +14,18 @@ public class ImageItem {
     private Bitmap image;
     private String title;
     private Boolean isPlaceHolder;
-    public String uri;
+    public String path;
 
-    public ImageItem(Bitmap image, String title, Boolean isPlaceHolder, String uri) {
+    public ImageItem(Bitmap image, String title, Boolean isPlaceHolder, String path) {
         super();
         this.image = image;
         this.title = title;
         this.isPlaceHolder = isPlaceHolder;
-        this.uri = uri;
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public static ImageItem placeHolderImage(Context context) {
