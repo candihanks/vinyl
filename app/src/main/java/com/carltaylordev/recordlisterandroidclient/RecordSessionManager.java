@@ -3,6 +3,8 @@ package com.carltaylordev.recordlisterandroidclient;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
@@ -12,6 +14,7 @@ import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -50,8 +53,7 @@ public class RecordSessionManager {
 
         if (mRealmRecord.getImages() != null) {
             for (RealmImage image : mRealmRecord.getImages()) {
-                // get image from disc
-//            mImageCacheList.add(new ImageItem())
+                mImageCacheList.add(image.convertToImageItem());
             }
         }
     }
@@ -251,6 +253,10 @@ public class RecordSessionManager {
         return titleString;
     }
 
+    /**
+     * String Cleaning
+     */
+
     private String cleanStringOfUnwantedSpace(String string) {
         return new String (string.trim().replaceAll(" +", " "));
     }
@@ -273,6 +279,8 @@ public class RecordSessionManager {
                 realm.copyToRealmOrUpdate(mRealmRecord);
                 RealmList<RealmImage> realmImages = new RealmList<>();
 
+                int counter = 1;
+
                 for (ImageItem imageItem : mImageCacheList) {
                     if (imageItem.isPlaceHolder()) {
                         continue;
@@ -283,12 +291,14 @@ public class RecordSessionManager {
                                 cleanStringForFileName(mRealmRecord.getListingTitle()));
 
                         RealmImage realmImage = mRealm.copyToRealm(new RealmImage());
-                        realmImage.setTitle(imageItem.getTitle());
+                        realmImage.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter));
                         realmImage.setPath(imageFile.getAbsolutePath());
                         realmImages.add(realmImage);
                     } catch (Exception e) {
                         mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
                     }
+
+                    counter ++;
                 }
 
                 mRealmRecord.setImages(realmImages);
