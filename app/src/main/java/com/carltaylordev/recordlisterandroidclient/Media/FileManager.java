@@ -41,10 +41,20 @@ public class FileManager {
         return getRootExternalPath() + "/sound_clips/";
     }
 
+    public static String getRootTempPath() {
+        return getRootExternalPath() + "/temp/";
+    }
+
     public static boolean deleteFile(String filePath) {
         File file = new File(filePath);
         boolean success = file.delete();
         return success;
+    }
+
+    public static File createDirectory(String path) {
+        File appDir = new File(path);
+        appDir.mkdirs();
+        return appDir;
     }
 
     public static Bitmap decodeImageFromPath(String path) {
@@ -53,7 +63,7 @@ public class FileManager {
     }
 
     public static File createTempFileOnDisc(String fileExtension) throws IOException {
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File storageDir = FileManager.createDirectory(getRootTempPath());
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "temp_file_" + timeStamp + "_" + fileExtension;
         String path = storageDir.getAbsolutePath() + "/" + fileName;
@@ -62,14 +72,11 @@ public class FileManager {
     }
 
     public File writeJpegToDisc(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
-        File appDir = new File(appDirPath);
-        appDir.mkdirs();
-
         Random generator = new Random();
         int randNumber = 10000;
         randNumber = generator.nextInt(randNumber);
 
-        File file = new File (appDir, "image_" + imageName + "_" + randNumber + ".jpg");
+        File file = new File (FileManager.createDirectory(appDirPath), "image_" + imageName + "_" + randNumber + ".jpg");
         if (file.exists ()) {
             throw new Exception("Duplicate file found");
         }
