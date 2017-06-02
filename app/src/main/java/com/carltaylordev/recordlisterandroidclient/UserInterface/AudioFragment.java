@@ -10,8 +10,6 @@ import com.carltaylordev.recordlisterandroidclient.Media.MultiAudioRecorder;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 
-import static android.view.View.GONE;
-
 
 public class AudioFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface, MultiAudioRecorder.Interface {
 
@@ -66,8 +64,6 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
                 }
             }
         });
-
-        //// TODO: 02/06/2017 separate stop button?
 
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
