@@ -10,8 +10,10 @@ import com.carltaylordev.recordlisterandroidclient.Media.MultiAudioRecorder;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 
+import static android.view.View.GONE;
 
-public class AudioFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface  {
+
+public class AudioFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface, MultiAudioRecorder.Interface {
 
     private Button mRecordButton;
     private Button mPlayButton;
@@ -47,7 +49,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
      */
 
     private void setupMultiAudioRecorder() {
-        mRecorder = new MultiAudioRecorder();
+        mRecorder = new MultiAudioRecorder(this);
     }
 
     private void setupButtons(View view) {
@@ -59,10 +61,8 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
             public void onClick(View v) {
                 if (mRecorder.inUse()) {
                     mRecorder.stop();
-                    mRecordButton.setText("Start Recording");
                 } else {
                     mRecorder.record(1);
-                    mRecordButton.setText("Stop Recording");
                 }
             }
         });
@@ -74,10 +74,8 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
             public void onClick(View v) {
                 if (mRecorder.inUse()) {
                     mRecorder.stop();
-                    mPlayButton.setText("Start Playing");
                 } else {
                     mRecorder.play(1);
-                    mPlayButton.setText("Stop Playing");
                 }
             }
         });
@@ -89,12 +87,45 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
 
     @Override
     public void updateSession(RecordSessionManager manager) {
-
+        // // TODO: 02/06/2017 gather tracks from recorder
     }
 
     @Override
     public void updateUI(RecordSessionManager manager) {
+        // TODO: 02/06/2017 load tracks into recorder
+    }
 
+    /**
+     *  MultiAudioRecorder Interface
+     */
 
+    @Override
+    public void didStartPlaying() {
+        mPlayButton.setText("Stop Playing");
+        mRecordButton.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void didFinishPlaying() {
+        mPlayButton.setText("Start Playing");
+        mRecordButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void didStartRecording() {
+        mRecordButton.setText("Stop Recording");
+        mPlayButton.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void didFinishRecording() {
+        mRecordButton.setText("Start Recording");
+        mPlayButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void didError(String message) {
+        ListingActivity activity = (ListingActivity)getActivity();
+        activity.showAlert("Error:", message);
     }
 }
