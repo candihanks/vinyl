@@ -71,7 +71,6 @@ public class MultiAudioRecorder {
         return mFilesMap;
     }
 
-
     /**
      *  Audio Controls
      */
@@ -91,7 +90,7 @@ public class MultiAudioRecorder {
         try {
             String path = mFilesMap.get(trackNumber);
             if (path.isEmpty()) {
-                File tempFile = FileManager.createTempFileOnDisc(".3gp");
+                File tempFile = FileManager.createTempFileOnDisc(".aac");
                 mFilesMap.put(trackNumber, tempFile.getAbsolutePath());
             }
         } catch (Exception e) {
@@ -118,9 +117,6 @@ public class MultiAudioRecorder {
             }
             mInterface.didFinishPlaying();
         }
-
-//        mPlayer = null;
-//        mRecorder = null;
         mInUse = false;
     }
 
@@ -134,6 +130,7 @@ public class MultiAudioRecorder {
         mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
+                mInUse = false;
                 mInterface.didError("Error Playing Audio");
                 return false;
             }
@@ -142,6 +139,7 @@ public class MultiAudioRecorder {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                mInUse = false;
                 mInterface.didFinishPlaying();
             }
         });
@@ -158,6 +156,7 @@ public class MultiAudioRecorder {
             mPlayer.setDataSource(inputFile);
             mPlayer.prepare();
         } catch (IOException e) {
+            mInUse = false;
             mInterface.didError("Media Player Failed:" + e.toString());
         }
     }
@@ -170,15 +169,16 @@ public class MultiAudioRecorder {
         }
 
         try {
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
             mRecorder.setAudioEncodingBitRate(16);
             mRecorder.setAudioSamplingRate(44);
             mRecorder.setMaxDuration(60 * 1000);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             mRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
                 @Override
                 public void onError(MediaRecorder mr, int what, int extra) {
+                    mInUse = false;
                     mInterface.didError("Error Recording");
                 }
             });
@@ -187,6 +187,7 @@ public class MultiAudioRecorder {
                 public void onInfo(MediaRecorder mr, int what, int extra) {
                     switch (what) {
                         case MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
+                            mInUse = false;
                             mInterface.didFinishRecording();
                     }
                 }
@@ -197,6 +198,7 @@ public class MultiAudioRecorder {
             mRecorder.start();
             mInterface.didStartRecording();
         } catch (IOException e) {
+            mInUse = false;
             mInterface.didError("Media Record Failed:" + e.toString());
         }
     }
