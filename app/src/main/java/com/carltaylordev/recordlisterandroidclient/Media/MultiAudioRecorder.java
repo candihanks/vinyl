@@ -103,22 +103,34 @@ public class MultiAudioRecorder {
 
     public void stop() {
         if (mRecorder != null) {
-            mRecorder.stop();
+            try {
+                mRecorder.stop();
+            } catch (IllegalStateException e) {
+                Logger.logMessage(e.toString());
+            }
             mInterface.didFinishRecording();
         }
         if (mPlayer != null) {
-            mPlayer.stop();
-            mPlayer.release();
+            try {
+                mPlayer.stop();
+            } catch (IllegalStateException e) {
+                Logger.logMessage(e.toString());
+            }
             mInterface.didFinishPlaying();
         }
 
-        mPlayer = null;
-        mRecorder = null;
+//        mPlayer = null;
+//        mRecorder = null;
         mInUse = false;
     }
 
     private void startPlaying(String inputFile) {
-        mPlayer = new MediaPlayer();
+        if (mPlayer == null) {
+            mPlayer = new MediaPlayer();
+        } else {
+            mPlayer.reset();
+        }
+
         mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -126,47 +138,61 @@ public class MultiAudioRecorder {
                 return false;
             }
         });
+
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mInterface.didFinishPlaying();
             }
         });
+
+        mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mPlayer.start();
+                mInterface.didStartPlaying();
+            }
+        });
+
         try {
             mPlayer.setDataSource(inputFile);
             mPlayer.prepare();
-            mPlayer.start();
-            mInterface.didStartPlaying();
         } catch (IOException e) {
             mInterface.didError("Media Player Failed:" + e.toString());
         }
     }
 
     private void startRecording(String outputFile) {
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setAudioEncodingBitRate(16);
-        mRecorder.setAudioSamplingRate(44);
-        mRecorder.setMaxDuration(60 * 1000);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(outputFile);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
-            @Override
-            public void onError(MediaRecorder mr, int what, int extra) {
-                mInterface.didError("Error Recording");
-            }
-        });
-        mRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
-            @Override
-            public void onInfo(MediaRecorder mr, int what, int extra) {
-                switch (what) {
-                    case MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
-                        mInterface.didFinishRecording();
-                }
-            }
-        });
+        if (mRecorder == null) {
+            mRecorder = new MediaRecorder();
+        } else {
+            mRecorder.reset();
+        }
+
         try {
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setAudioEncodingBitRate(16);
+            mRecorder.setAudioSamplingRate(44);
+            mRecorder.setMaxDuration(60 * 1000);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            mRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
+                @Override
+                public void onError(MediaRecorder mr, int what, int extra) {
+                    mInterface.didError("Error Recording");
+                }
+            });
+            mRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+                @Override
+                public void onInfo(MediaRecorder mr, int what, int extra) {
+                    switch (what) {
+                        case MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
+                            mInterface.didFinishRecording();
+                    }
+                }
+            });
+
+            mRecorder.setOutputFile(outputFile);
             mRecorder.prepare();
             mRecorder.start();
             mInterface.didStartRecording();
