@@ -169,9 +169,9 @@ public class MultiAudioRecorder {
         }
 
         try {
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-            mRecorder.setAudioEncodingBitRate(16);
-            mRecorder.setAudioSamplingRate(44);
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setAudioEncodingBitRate(44100);
+            mRecorder.setAudioSamplingRate(44100);
             mRecorder.setMaxDuration(60 * 1000);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
