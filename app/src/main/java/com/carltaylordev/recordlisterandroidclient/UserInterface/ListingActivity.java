@@ -1,8 +1,12 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,6 +41,13 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
     public RecordSessionManager mRecordSessionManager;
 
+    private static final int REQUEST_PERMISSIONS = 200;
+    private boolean permissionsAccepted = false;
+    private String [] permissions = {
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     /**
      * Activity LifeCycle
      */
@@ -45,6 +56,8 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listing_activity);
+
+        requestPermissions();
 
         mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), this);
 
@@ -64,6 +77,22 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         super.onResume();
         mRecordSessionManager.reloadCurrentRecord();
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case REQUEST_PERMISSIONS:
+                permissionsAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        if (!permissionsAccepted) {
+            showAlert("Oops", "You need to accept the Permissions");
+            requestPermissions();
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,6 +124,10 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     /**
      * Setup
      */
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSIONS);
+    }
 
     private void setupViewPager() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
