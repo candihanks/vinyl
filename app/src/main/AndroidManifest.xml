@@ -21,6 +21,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".UserInterface.ListingActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="Edit Record"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
