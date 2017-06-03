@@ -90,9 +90,7 @@ public class MultiAudioRecorder {
         HashMap<Integer, String> recorded = new HashMap();
         for (int i = 0; i < mFilesMap.size(); i++) {
             String path = mFilesMap.get(new Integer(i));
-            if (path != null && !path.isEmpty()) {
-                recorded.put(i, path);
-            }
+            recorded.put(i, path);
         }
         Map<Integer, String> immutableMap = Collections.unmodifiableMap(new LinkedHashMap<>(recorded));
         return immutableMap;

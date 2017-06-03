@@ -372,8 +372,17 @@ public class RecordSessionManager {
     }
 
     private void writeOutAndAttachPictures(FileManager fileManager) {
-        RealmList<RealmImage> realmImages = new RealmList<>();
+        try {
+            // Remove all existing pics
+            // // TODO: 03/06/2017 this is NOT deleting them from the DB
+            RealmList<RealmImage> existingImages = mRealmRecord.getImages();
+            existingImages.clear();
+        } catch (Exception e) {
+            Logger.logMessage(e.toString());
+        }
 
+        // Add New
+        RealmList<RealmImage> newImages = new RealmList<>();
         int counter = 1;
 
         for (ImageItem imageItem : mImageCacheList) {
@@ -390,7 +399,7 @@ public class RecordSessionManager {
                 RealmImage realmImage = mRealm.copyToRealm(new RealmImage());
                 realmImage.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter));
                 realmImage.setPath(imageFile.getPath());
-                realmImages.add(realmImage);
+                newImages.add(realmImage);
 
                 // Delete temp image
                 FileManager.deleteFileAtPath(imageItem.getPath());
@@ -402,14 +411,33 @@ public class RecordSessionManager {
             counter ++;
         }
 
-        mRealmRecord.setImages(realmImages);
+        mRealmRecord.setImages(newImages);
     }
 
     private void writeOutAndAttachAudioClips(FileManager fileManager) {
-        RealmList<RealmAudioClip> realmAudioClips = new RealmList<>();
+        try {
+            // Delete all existing clips
+            RealmList<RealmAudioClip> existingClips = mRealmRecord.getAudioClips();
+            for (RealmAudioClip existingClip : existingClips) {
+                try {
+                    existingClip.deleteFromRealm();
+                } catch (Exception e) {
+                    Logger.logMessage(e.toString());
+                }
+            }
+            existingClips.clear();
+        } catch (Exception e) {
+            Logger.logMessage(e.toString());
+        }
+
+        // Add New
+        RealmList<RealmAudioClip> newAudioClips = new RealmList<>();
 
         for (int i = 0; i < mAudioMap.size(); i ++) {
             String path = mAudioMap.get(new Integer(i));
+            if (path == null || path.isEmpty()) {
+                continue;
+            }
             try {
                 // Write to app storage
                 File soundCLipFile = fileManager.copyAudioClipFromPathToDirectory(path,
@@ -420,7 +448,7 @@ public class RecordSessionManager {
                 RealmAudioClip realmAudioClip = mRealm.copyToRealm(new RealmAudioClip());
                 realmAudioClip.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(i));
                 realmAudioClip.setPath(soundCLipFile.getPath());
-                realmAudioClips.add(realmAudioClip);
+                newAudioClips.add(realmAudioClip);
 
                 // Delete temp image
                 FileManager.deleteFileAtPath(path);
@@ -430,6 +458,7 @@ public class RecordSessionManager {
             }
         }
 
-        mRealmRecord.setAudioClips(realmAudioClips);
+        // Set New Clips
+        mRealmRecord.setAudioClips(newAudioClips);
     }
 }
