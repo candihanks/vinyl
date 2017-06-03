@@ -393,7 +393,7 @@ public class RecordSessionManager {
                 realmImages.add(realmImage);
 
                 // Delete temp image
-                FileManager.deleteFile(imageItem.getPath());
+                FileManager.deleteFileAtPath(imageItem.getPath());
 
             } catch (Exception e) {
                 mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
@@ -423,7 +423,7 @@ public class RecordSessionManager {
                 realmAudioClips.add(realmAudioClip);
 
                 // Delete temp image
-                FileManager.deleteFile(path);
+                FileManager.deleteFileAtPath(path);
 
             } catch (Exception e) {
                 mErrorInterface.showErrorMessage("Could not save record: " + e.toString());

@@ -76,7 +76,7 @@ public class MultiAudioRecorder {
     }
 
     public void deleteFile(Integer trackNumber) {
-        FileManager.deleteFile(mFilesMap.get(trackNumber.intValue() - 1));
+        FileManager.deleteFileAtPath(mFilesMap.get(trackNumber.intValue() - 1));
         mFilesMap.put(indexOffset(trackNumber), "");
     }
 
