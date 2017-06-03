@@ -135,6 +135,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
         if (manager.getAudio() != null) {
             mRecorder.loadAudioMap(manager.getAudio());
         }
+        setButtonStateForTrack(mNumberPicker.getValue());
     }
 
     /**
