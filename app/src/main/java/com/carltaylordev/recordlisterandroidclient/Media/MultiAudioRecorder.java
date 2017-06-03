@@ -61,12 +61,12 @@ public class MultiAudioRecorder {
      */
 
     public Boolean audioFileExists(Integer trackNumber) {
-        return !mFilesMap.get(trackNumber).isEmpty();
+        return !mFilesMap.get(trackNumber.intValue() - 1).isEmpty();
     }
 
-    public void removeFile(Integer trackNumber) {
-        mFilesMap.put(trackNumber, "");
-        // // TODO: 02/06/2017 instantly clean up temp file?
+    public void deleteFile(Integer trackNumber) {
+        FileManager.deleteFile(mFilesMap.get(trackNumber.intValue() - 1));
+        mFilesMap.put(trackNumber.intValue() -1, "");
     }
 
     public void loadAudioMap(Map<Integer, String> audioMap) {
@@ -96,13 +96,17 @@ public class MultiAudioRecorder {
     }
 
     public void play(Integer trackNumber) {
-        stop();
+        if (inUse()) {
+            stop();
+        }
         startPlaying(mFilesMap.get(trackNumber.intValue() - 1));
         mInUse = true;
     }
 
     public void record(Integer trackNumber) {
-        stop();
+        if (inUse()) {
+            stop();
+        }
         Integer mapNumber = trackNumber.intValue() - 1;
         try {
             String path = mFilesMap.get(mapNumber);
