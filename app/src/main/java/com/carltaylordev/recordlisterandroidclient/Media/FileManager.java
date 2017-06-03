@@ -87,11 +87,8 @@ public class FileManager {
 
     public File writeJpegToDisc(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
         File file = new File (FileManager.createDirectory(appDirPath), "image_" + imageName + "_" + randomNumber() + ".jpg");
-        if (file.exists ()) {
-            throw new Exception("Duplicate file name found");
-        }
 
-        FileOutputStream out = new FileOutputStream(file);
+        FileOutputStream out = new FileOutputStream(file, false);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
         out.flush();
         out.close();
@@ -102,12 +99,9 @@ public class FileManager {
 
     public File copyAudioClipFromPathToDirectory(String path, String appDirPath, String clipName) throws Exception {
         File file = new File (FileManager.createDirectory(appDirPath), "audio_clip_" + clipName + "_" + randomNumber() + ".aac");
-        if (file.exists ()) {
-            throw new Exception("Duplicate file name found");
-        }
 
         InputStream is = new FileInputStream(path);
-        OutputStream os = new FileOutputStream(file.getAbsolutePath());
+        OutputStream os = new FileOutputStream(file.getAbsolutePath(), false);
         byte[] buffer = new byte[1024];
         int length;
         while ((length = is.read(buffer)) > 0) {
