@@ -47,7 +47,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
      */
 
     private void setupMultiAudioRecorder() {
-        mRecorder = new MultiAudioRecorder(this);
+        mRecorder = new MultiAudioRecorder(this, 10);
     }
 
     private void setupButtons(View view) {

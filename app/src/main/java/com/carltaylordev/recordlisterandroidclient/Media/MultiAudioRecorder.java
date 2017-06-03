@@ -34,10 +34,10 @@ public class MultiAudioRecorder {
 
     private boolean mInUse = false;
 
-    public MultiAudioRecorder(Interface activity) {
+    public MultiAudioRecorder(Interface activity, int numberOfTracks) {
         mInterface = activity;
 
-        for (int i = 0; i < 11; i++) {
+        for (int i = 1; i < numberOfTracks + 1; i++) {
             mFilesMap.put(new Integer(i), "");
         }
     }
