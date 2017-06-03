@@ -6,13 +6,17 @@ import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -37,7 +41,7 @@ public class FileManager {
         return getRootExternalPath() + "/pictures/";
     }
 
-    public static String getRootSoundClipsPath() {
+    public static String getRootAudioClipsPath() {
         return getRootExternalPath() + "/sound_clips/";
     }
 
@@ -71,14 +75,16 @@ public class FileManager {
         return file;
     }
 
-    public File writeJpegToDisc(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
+    private int randomNumber() {
         Random generator = new Random();
         int randNumber = 10000;
-        randNumber = generator.nextInt(randNumber);
+        return generator.nextInt(randNumber);
+    }
 
-        File file = new File (FileManager.createDirectory(appDirPath), "image_" + imageName + "_" + randNumber + ".jpg");
+    public File writeJpegToDisc(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
+        File file = new File (FileManager.createDirectory(appDirPath), "image_" + imageName + "_" + randomNumber() + ".jpg");
         if (file.exists ()) {
-            throw new Exception("Duplicate file found");
+            throw new Exception("Duplicate file name found");
         }
 
         FileOutputStream out = new FileOutputStream(file);
@@ -87,6 +93,25 @@ public class FileManager {
         out.close();
 
         updateMediaScannerWithFile(file);
+        return file;
+    }
+
+    public File copyAudioClipFromPathToDirectory(String path, String appDirPath, String clipName) throws Exception {
+        File file = new File (FileManager.createDirectory(appDirPath), "audio_clip_" + clipName + "_" + randomNumber() + ".aac");
+        if (file.exists ()) {
+            throw new Exception("Duplicate file name found");
+        }
+
+        InputStream is = new FileInputStream(path);
+        OutputStream os = new FileOutputStream(file.getAbsolutePath());
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = is.read(buffer)) > 0) {
+            os.write(buffer, 0, length);
+        }
+        is.close();
+        os.close();
+
         return file;
     }
 

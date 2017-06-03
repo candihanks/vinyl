@@ -83,12 +83,14 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
 
     @Override
     public void updateSession(RecordSessionManager manager) {
-        // // TODO: 02/06/2017 gather tracks from recorder
+        manager.setAudio(mRecorder.getRecordedMap());
     }
 
     @Override
     public void updateUI(RecordSessionManager manager) {
-        // TODO: 02/06/2017 load tracks into recorder
+        if (manager.getAudio() != null) {
+            mRecorder.loadAudioMap(manager.getAudio());
+        }
     }
 
     /**

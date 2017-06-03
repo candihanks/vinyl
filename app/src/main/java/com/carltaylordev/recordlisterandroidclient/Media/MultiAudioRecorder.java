@@ -7,7 +7,10 @@ import com.carltaylordev.recordlisterandroidclient.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static android.media.MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED;
 
@@ -37,7 +40,7 @@ public class MultiAudioRecorder {
     public MultiAudioRecorder(Interface activity, int numberOfTracks) {
         mInterface = activity;
 
-        for (int i = 1; i < numberOfTracks + 1; i++) {
+        for (int i = 0; i < numberOfTracks; i++) {
             mFilesMap.put(new Integer(i), "");
         }
     }
@@ -66,9 +69,22 @@ public class MultiAudioRecorder {
         // // TODO: 02/06/2017 instantly clean up temp file?
     }
 
-    public HashMap<Integer, String> getRecorded() {
-        // // TODO: 02/06/2017 only pass back with non blank strings?
-        return mFilesMap;
+    public void loadAudioMap(Map<Integer, String> audioMap) {
+        for (int i = 0; i < audioMap.size(); i++) {
+            mFilesMap.put(new Integer(i), audioMap.get(i));
+        }
+    }
+
+    public Map<Integer, String> getRecordedMap() {
+        HashMap<Integer, String> recorded = new HashMap();
+        for (int i = 0; i < mFilesMap.size(); i++) {
+            String path = mFilesMap.get(new Integer(i));
+            if (path != null && !path.isEmpty()) {
+                recorded.put(i, path);
+            }
+        }
+        Map<Integer, String> immutableMap = Collections.unmodifiableMap(new LinkedHashMap<>(recorded));
+        return immutableMap;
     }
 
     /**
@@ -81,22 +97,23 @@ public class MultiAudioRecorder {
 
     public void play(Integer trackNumber) {
         stop();
-        startPlaying(mFilesMap.get(trackNumber));
+        startPlaying(mFilesMap.get(trackNumber.intValue() - 1));
         mInUse = true;
     }
 
     public void record(Integer trackNumber) {
         stop();
+        Integer mapNumber = trackNumber.intValue() - 1;
         try {
-            String path = mFilesMap.get(trackNumber);
+            String path = mFilesMap.get(mapNumber);
             if (path.isEmpty()) {
                 File tempFile = FileManager.createTempFileOnDisc(".aac");
-                mFilesMap.put(trackNumber, tempFile.getAbsolutePath());
+                mFilesMap.put(mapNumber, tempFile.getAbsolutePath());
             }
         } catch (Exception e) {
             Logger.logMessage("Problem creating temp file: " + e.toString());
         }
-        startRecording(mFilesMap.get(trackNumber));
+        startRecording(mFilesMap.get(mapNumber));
         mInUse = true;
     }
 

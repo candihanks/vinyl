@@ -28,7 +28,7 @@ public class RealmRecord extends RealmObject {
     private String price;
 
     private RealmList<RealmImage>images;
-    // todo: sound clip relationship
+    private RealmList<RealmAudioClip> audioClips;
 
     public String toJson() {
         Gson gson = new GsonBuilder().create();
@@ -125,5 +125,13 @@ public class RealmRecord extends RealmObject {
 
     public void setImages(RealmList<RealmImage> images) {
         this.images = images;
+    }
+
+    public RealmList<RealmAudioClip> getAudioClips() {
+        return audioClips;
+    }
+
+    public void setAudioClips(RealmList<RealmAudioClip> audioClips) {
+        this.audioClips = audioClips;
     }
 }

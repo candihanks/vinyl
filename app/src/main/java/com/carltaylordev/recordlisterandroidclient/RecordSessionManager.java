@@ -6,6 +6,7 @@ import android.content.Context;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
+import com.carltaylordev.recordlisterandroidclient.models.RealmAudioClip;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
@@ -13,6 +14,8 @@ import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -35,8 +38,11 @@ public class RecordSessionManager {
     }
 
     private ArrayList<ImageItem> mImageCacheList = new ArrayList<>();
+    private HashMap<Integer, String> mAudioMap = new HashMap<>();
+
     private RealmRecord mRealmRecord;
     private Realm mRealm;
+
     private UpdateInterface mUpdateUpdateInterface;
     private ErrorInterface mErrorInterface;
     private Context mContext;
@@ -52,25 +58,8 @@ public class RecordSessionManager {
     }
 
     /**
-     * Associated Data
+     * Test Data
      */
-
-    private void loadAssociatedData() {
-        mImageCacheList.clear();
-        try {
-            for (RealmImage image : mRealmRecord.getImages()) {
-                try {
-                    mImageCacheList.add(image.convertToImageItem());
-                } catch (FileNotFoundException e) {
-                    mErrorInterface.showErrorMessage("Error loading images for record");
-                    break;
-                }
-            }
-        } catch (NullPointerException e) {
-            Logger.logMessage("No Images For Record");
-        }
-        mImageCacheList.add(ImageItem.placeHolderImage(mContext));
-    }
 
     public void createTestData() {
         RealmResults<RealmRecord> savedRecords = mRealm.where(RealmRecord.class).findAll();
@@ -95,6 +84,44 @@ public class RecordSessionManager {
         mRealmRecord.setEbayCategory(results.first());
 
         mUpdateUpdateInterface.updateUI(this);
+    }
+
+    /**
+     * Associated Data
+     */
+
+    private void loadAssociatedData() {
+        loadAssociatedPictures();
+        loadAssociatedAudioClips();
+    }
+
+    private void loadAssociatedPictures() {
+        mImageCacheList.clear();
+        try {
+            for (RealmImage image : mRealmRecord.getImages()) {
+                try {
+                    mImageCacheList.add(image.convertToImageItem());
+                } catch (FileNotFoundException e) {
+                    mErrorInterface.showErrorMessage("Error loading images for record");
+                    break;
+                }
+            }
+        } catch (NullPointerException e) {
+            Logger.logMessage("No Images For Record");
+        }
+        mImageCacheList.add(ImageItem.placeHolderImage(mContext));
+    }
+
+    private void loadAssociatedAudioClips() {
+        int counter = 0;
+        try {
+            for (RealmAudioClip audioClip : mRealmRecord.getAudioClips()) {
+                mAudioMap.put(new Integer(counter), audioClip.getPath());
+                counter ++;
+            }
+        } catch (NullPointerException e) {
+            Logger.logMessage("No Sound Clips For Record");
+        }
     }
 
     /**
@@ -127,6 +154,10 @@ public class RecordSessionManager {
 
     public ArrayList<ImageItem> getImages() {
         return mImageCacheList;
+    }
+
+    public Map<Integer, String> getAudio() {
+        return mAudioMap;
     }
 
     public String getArtist() {
@@ -177,6 +208,12 @@ public class RecordSessionManager {
 
     public void setImages(ArrayList<ImageItem> images) {
         mImageCacheList = images;
+    }
+
+    public void setAudio(Map<Integer, String> audio) {
+        for (Map.Entry entry : audio.entrySet()) {
+            mAudioMap.put((Integer)entry.getKey(), (String)entry.getValue());
+        }
     }
 
     public void setArtist(String artist) {
@@ -314,7 +351,7 @@ public class RecordSessionManager {
     }
 
     /**
-     * Save
+     * Saving
      */
 
     public void save() {
@@ -323,41 +360,75 @@ public class RecordSessionManager {
         mRealm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-
                 realm.copyToRealmOrUpdate(mRealmRecord);
-                RealmList<RealmImage> realmImages = new RealmList<>();
-
-                int counter = 1;
-
-                for (ImageItem imageItem : mImageCacheList) {
-                    if (imageItem.isPlaceHolder()) {
-                        continue;
-                    }
-                    try {
-                        // Write to app storage
-                        File imageFile = fileManager.writeJpegToDisc(imageItem.getImage(),
-                                FileManager.getRootPicturesPath(),
-                                cleanStringForFileName(mRealmRecord.getListingTitle()));
-
-                        // Add to Realm
-                        RealmImage realmImage = mRealm.copyToRealm(new RealmImage());
-                        realmImage.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter));
-                        realmImage.setPath(imageFile.getPath());
-                        realmImages.add(realmImage);
-
-                        // Delete temp image
-                        FileManager.deleteFile(imageItem.getPath());
-
-                    } catch (Exception e) {
-                        mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
-                    }
-
-                    counter ++;
+                writeOutAndAttachPictures(fileManager);
+                if (mAudioMap != null) {
+                    writeOutAndAttachAudioClips(fileManager);
                 }
-
-                mRealmRecord.setImages(realmImages);
                 realm.copyToRealmOrUpdate(mRealmRecord);
             }
         });
+    }
+
+    private void writeOutAndAttachPictures(FileManager fileManager) {
+        RealmList<RealmImage> realmImages = new RealmList<>();
+
+        int counter = 1;
+
+        for (ImageItem imageItem : mImageCacheList) {
+            if (imageItem.isPlaceHolder()) {
+                continue;
+            }
+            try {
+                // Write to app storage
+                File imageFile = fileManager.writeJpegToDisc(imageItem.getImage(),
+                        FileManager.getRootPicturesPath(),
+                        cleanStringForFileName(mRealmRecord.getListingTitle()));
+
+                // Add to Realm
+                RealmImage realmImage = mRealm.copyToRealm(new RealmImage());
+                realmImage.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter));
+                realmImage.setPath(imageFile.getPath());
+                realmImages.add(realmImage);
+
+                // Delete temp image
+                FileManager.deleteFile(imageItem.getPath());
+
+            } catch (Exception e) {
+                mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
+            }
+
+            counter ++;
+        }
+
+        mRealmRecord.setImages(realmImages);
+    }
+
+    private void writeOutAndAttachAudioClips(FileManager fileManager) {
+        RealmList<RealmAudioClip> realmAudioClips = new RealmList<>();
+
+        for (int i = 0; i < mAudioMap.size(); i ++) {
+            String path = mAudioMap.get(new Integer(i));
+            try {
+                // Write to app storage
+                File soundCLipFile = fileManager.copyAudioClipFromPathToDirectory(path,
+                        FileManager.getRootAudioClipsPath(),
+                        cleanStringForFileName(mRealmRecord.getListingTitle()));
+
+                // Add to Realm
+                RealmAudioClip realmAudioClip = mRealm.copyToRealm(new RealmAudioClip());
+                realmAudioClip.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(i));
+                realmAudioClip.setPath(soundCLipFile.getPath());
+                realmAudioClips.add(realmAudioClip);
+
+                // Delete temp image
+                FileManager.deleteFile(path);
+
+            } catch (Exception e) {
+                mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
+            }
+        }
+
+        mRealmRecord.setAudioClips(realmAudioClips);
     }
 }
