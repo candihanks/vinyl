@@ -211,6 +211,7 @@ public class RecordSessionManager {
     }
 
     public void setAudio(Map<Integer, String> audio) {
+        mAudioMap = new HashMap<>();
         for (Map.Entry entry : audio.entrySet()) {
             mAudioMap.put((Integer)entry.getKey(), (String)entry.getValue());
         }
