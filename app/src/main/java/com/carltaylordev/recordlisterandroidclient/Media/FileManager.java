@@ -33,37 +33,46 @@ public class FileManager {
         this.mContext = mContext;
     }
 
-    public static String getRootExternalPath() {
-        return Environment.getExternalStorageDirectory().toString() + "/record_lister/";
-    }
+    /**
+     * Paths
+     */
 
+    public static String getRootExternalPath() { return Environment.getExternalStorageDirectory().toString() + "/record_lister/"; }
     public static String getRootPicturesPath() {
         return getRootExternalPath() + "/pictures/";
     }
-
     public static String getRootAudioClipsPath() {
         return getRootExternalPath() + "/sound_clips/";
     }
-
     public static String getRootTempPath() {
         return getRootExternalPath() + "/temp/";
     }
 
-    public static boolean deleteFile(String filePath) {
+    /**
+     * Deletion
+     */
+
+    public static boolean deleteFileAtPath(String filePath) {
         File file = new File(filePath);
-        boolean success = file.delete();
-        return success;
+        return file.delete();
     }
+
+    public void recursivelyDeleteFileAndChildren(File file) {
+        if (file.isDirectory())
+            for (String child : file.list()) {
+                recursivelyDeleteFileAndChildren(new File(file, child));
+            }
+        file.delete();
+    }
+
+    /**
+     * Creation
+     */
 
     public static File createDirectory(String path) {
         File appDir = new File(path);
         appDir.mkdirs();
         return appDir;
-    }
-
-    public static Bitmap decodeImageFromPath(String path) {
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
-        return bitmap;
     }
 
     public static File createTempFileOnDisc(String fileExtension) throws IOException {
@@ -75,11 +84,6 @@ public class FileManager {
         return file;
     }
 
-    private int randomNumber() {
-        Random generator = new Random();
-        int randNumber = 10000;
-        return generator.nextInt(randNumber);
-    }
 
     public File writeJpegToDisc(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
         File file = new File (FileManager.createDirectory(appDirPath), "image_" + imageName + "_" + randomNumber() + ".jpg");
@@ -113,6 +117,22 @@ public class FileManager {
         os.close();
 
         return file;
+    }
+
+    /**
+     * Helpers
+     */
+
+    private int randomNumber() {
+        Random generator = new Random();
+        int randNumber = 10000;
+        return generator.nextInt(randNumber);
+    }
+
+
+    public static Bitmap decodeImageFromPath(String path) {
+        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        return bitmap;
     }
 
     private void updateMediaScannerWithFile(File file) {
