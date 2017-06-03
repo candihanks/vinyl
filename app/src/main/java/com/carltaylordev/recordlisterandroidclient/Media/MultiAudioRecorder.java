@@ -36,9 +36,15 @@ public class MultiAudioRecorder {
     private Interface mInterface;
 
     private boolean mInUse = false;
+    private int mUiStartIndex;
 
-    public MultiAudioRecorder(Interface activity, int numberOfTracks) {
+    public MultiAudioRecorder(Interface activity, int numberOfTracks, int uiStartIndex) {
+        /**
+         *  uiStartIndex: in case the UI (numberPicker) is not 0 indexed, we need to subtract this
+         *  value each time we access mFilesMap.
+         */
         mInterface = activity;
+        mUiStartIndex = uiStartIndex;
 
         for (int i = 0; i < numberOfTracks; i++) {
             mFilesMap.put(new Integer(i), "");
@@ -60,13 +66,18 @@ public class MultiAudioRecorder {
      *  File Management
      */
 
+    private Integer indexOffset(Integer trackNumber) {
+        return  trackNumber.intValue() - mUiStartIndex;
+    }
+
+
     public Boolean audioFileExists(Integer trackNumber) {
-        return !mFilesMap.get(trackNumber.intValue() - 1).isEmpty();
+        return !mFilesMap.get(indexOffset(trackNumber)).isEmpty();
     }
 
     public void deleteFile(Integer trackNumber) {
         FileManager.deleteFile(mFilesMap.get(trackNumber.intValue() - 1));
-        mFilesMap.put(trackNumber.intValue() -1, "");
+        mFilesMap.put(indexOffset(trackNumber), "");
     }
 
     public void loadAudioMap(Map<Integer, String> audioMap) {
@@ -99,7 +110,7 @@ public class MultiAudioRecorder {
         if (inUse()) {
             stop();
         }
-        startPlaying(mFilesMap.get(trackNumber.intValue() - 1));
+        startPlaying(mFilesMap.get(indexOffset(trackNumber)));
         mInUse = true;
     }
 
@@ -107,7 +118,7 @@ public class MultiAudioRecorder {
         if (inUse()) {
             stop();
         }
-        Integer mapNumber = trackNumber.intValue() - 1;
+        Integer mapNumber = indexOffset(trackNumber);
         try {
             String path = mFilesMap.get(mapNumber);
             if (path.isEmpty()) {
