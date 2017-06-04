@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -362,20 +363,25 @@ public class RecordSessionManager {
             @Override
             public void execute(Realm realm) {
                 realm.copyToRealmOrUpdate(mRealmRecord);
-                writeOutAndAttachPictures(fileManager);
-                if (mAudioMap != null) {
-                    writeOutAndAttachAudioClips(fileManager);
+                try {
+                    writeOutAndAttachPictures(fileManager, realm, mRealmRecord);
+                    if (mAudioMap != null) {
+                        writeOutAndAttachAudioClips(fileManager, realm, mRealmRecord);
+                    }
+                    realm.copyToRealmOrUpdate(mRealmRecord);
+                } catch (Exception e) {
+                    mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
+                    realm.cancelTransaction();
                 }
-                realm.copyToRealmOrUpdate(mRealmRecord);
             }
         });
     }
 
-    private void writeOutAndAttachPictures(FileManager fileManager) {
+    private void writeOutAndAttachPictures(FileManager fileManager, Realm realm, RealmRecord record) throws Exception {
         try {
             // Remove all existing pics
             // // TODO: 03/06/2017 this is NOT deleting them from the DB
-            RealmList<RealmImage> existingImages = mRealmRecord.getImages();
+            RealmList<RealmImage> existingImages = record.getImages();
             existingImages.clear();
         } catch (Exception e) {
             Logger.logMessage(e.toString());
@@ -389,35 +395,30 @@ public class RecordSessionManager {
             if (imageItem.isPlaceHolder()) {
                 continue;
             }
-            try {
-                // Write to app storage
-                File imageFile = fileManager.writeJpegToDisc(imageItem.getImage(),
-                        FileManager.getRootPicturesPath(),
-                        cleanStringForFileName(mRealmRecord.getListingTitle()));
+            // Write to app storage
+            File imageFile = fileManager.writeJpegToDisc(imageItem.getImage(),
+                    FileManager.getRootPicturesPath(),
+                    cleanStringForFileName(record.getListingTitle()));
 
-                // Add to Realm
-                RealmImage realmImage = mRealm.copyToRealm(new RealmImage());
-                realmImage.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter));
-                realmImage.setPath(imageFile.getPath());
-                newImages.add(realmImage);
+            // Add to Realm
+            RealmImage realmImage = realm.copyToRealm(new RealmImage());
+            realmImage.setTitle(cleanStringOfUnwantedSpace(record.getListingTitle()) + "_" + Integer.toString(counter));
+            realmImage.setPath(imageFile.getPath());
+            newImages.add(realmImage);
 
-                // Delete temp image
-                FileManager.deleteFileAtPath(imageItem.getPath());
-
-            } catch (Exception e) {
-                mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
-            }
+            // Delete original image path
+            FileManager.deleteFileAtPath(imageItem.getPath());
 
             counter ++;
         }
 
-        mRealmRecord.setImages(newImages);
+        record.setImages(newImages);
     }
 
-    private void writeOutAndAttachAudioClips(FileManager fileManager) {
+    private void writeOutAndAttachAudioClips(FileManager fileManager, Realm realm, RealmRecord record) throws Exception {
         try {
             // Delete all existing clips
-            RealmList<RealmAudioClip> existingClips = mRealmRecord.getAudioClips();
+            RealmList<RealmAudioClip> existingClips = record.getAudioClips();
             for (RealmAudioClip existingClip : existingClips) {
                 try {
                     existingClip.deleteFromRealm();
@@ -438,27 +439,22 @@ public class RecordSessionManager {
             if (path == null || path.isEmpty()) {
                 continue;
             }
-            try {
-                // Write to app storage
-                File soundCLipFile = fileManager.copyAudioClipFromPathToDirectory(path,
-                        FileManager.getRootAudioClipsPath(),
-                        cleanStringForFileName(mRealmRecord.getListingTitle()));
+            // Write to app storage
+            File soundCLipFile = fileManager.copyAudioClipFromPathToDirectory(path,
+                    FileManager.getRootAudioClipsPath(),
+                    cleanStringForFileName(record.getListingTitle()));
 
-                // Add to Realm
-                RealmAudioClip realmAudioClip = mRealm.copyToRealm(new RealmAudioClip());
-                realmAudioClip.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(i));
-                realmAudioClip.setPath(soundCLipFile.getPath());
-                newAudioClips.add(realmAudioClip);
+            // Add to Realm
+            RealmAudioClip realmAudioClip = realm.copyToRealm(new RealmAudioClip());
+            realmAudioClip.setTitle(cleanStringOfUnwantedSpace(record.getListingTitle()) + "_" + Integer.toString(i));
+            realmAudioClip.setPath(soundCLipFile.getPath());
+            newAudioClips.add(realmAudioClip);
 
-                // Delete temp image
-                FileManager.deleteFileAtPath(path);
-
-            } catch (Exception e) {
-                mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
-            }
+            // Delete original audio file path
+            FileManager.deleteFileAtPath(path);
         }
 
         // Set New Clips
-        mRealmRecord.setAudioClips(newAudioClips);
+        record.setAudioClips(newAudioClips);
     }
 }
