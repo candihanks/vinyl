@@ -48,6 +48,11 @@ public class FileManager {
         return getRootExternalPath() + "/temp/";
     }
 
+    public boolean fileExistsAtPath(String path) {
+        File file = new File(path);
+        return file.exists();
+    }
+
     /**
      * Deletion
      */
@@ -99,7 +104,7 @@ public class FileManager {
 
     public File copyAudioClipFromPathToDirectory(String path, String appDirPath, String clipName) throws Exception {
         File file = new File (FileManager.createDirectory(appDirPath), "audio_clip_" + clipName + "_" + randomNumber() + ".aac");
-
+        
         InputStream is = new FileInputStream(path);
         OutputStream os = new FileOutputStream(file.getAbsolutePath(), false);
         byte[] buffer = new byte[1024];
@@ -118,9 +123,12 @@ public class FileManager {
      */
 
     private int randomNumber() {
-        Random generator = new Random();
-        int randNumber = 10000;
-        return generator.nextInt(randNumber);
+        long seconds = System.currentTimeMillis() / 1000l;
+        Random generator = new Random(seconds);
+        int randNumber = 10000000;
+        int next = generator.nextInt(randNumber);
+        Logger.logMessage("Random Num Generated: " + next);
+        return next;
     }
 
 
