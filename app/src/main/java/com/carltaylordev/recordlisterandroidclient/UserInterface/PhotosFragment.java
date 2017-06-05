@@ -26,7 +26,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by carl on 30/05/2017.
  */
 
-public class PhotosFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface {
+public class PhotosFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateUiInterface {
 
     static final int REQUEST_IMAGE_CAPTURE = 1001;
 
@@ -123,11 +123,6 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     /**
      *  RecordSessionManager Interface
      */
-
-    @Override
-    public void updateSession(RecordSessionManager manager) {
-//        manager.setImages(mGridAdapter.getItems());
-    }
 
     @Override
     public void updateUI(RecordSessionManager manager) {

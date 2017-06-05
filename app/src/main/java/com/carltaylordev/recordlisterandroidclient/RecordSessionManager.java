@@ -26,8 +26,11 @@ import io.realm.RealmResults;
 
 public class RecordSessionManager {
 
-    public interface UpdateInterface {
+    public interface UpdateSessionInterface {
         void updateSession(RecordSessionManager sessionManager);
+    }
+
+    public interface UpdateUiInterface {
         void updateUI(RecordSessionManager sessionManager);
     }
 
@@ -41,15 +44,17 @@ public class RecordSessionManager {
     private RealmRecord mRealmRecord;
     private Realm mRealm;
 
-    private UpdateInterface mUpdateUpdateInterface;
+    private UpdateSessionInterface mUpdateUpdateSessionInterface;
+    private UpdateUiInterface mUpdateUiInterface;
     private ErrorInterface mErrorInterface;
     private Context mContext;
 
     public RecordSessionManager(RealmRecord realmRecord, Realm realm, Activity activity) {
         mRealmRecord = realmRecord;
         mRealm = realm;
-        mUpdateUpdateInterface = (UpdateInterface) activity;
-        mErrorInterface = (ErrorInterface)activity;
+        mUpdateUpdateSessionInterface = (UpdateSessionInterface) activity;
+        mUpdateUiInterface = (UpdateUiInterface) activity;
+        mErrorInterface = (ErrorInterface) activity;
         mContext = activity;
 
         loadAssociatedData();
@@ -66,7 +71,7 @@ public class RecordSessionManager {
             mRealmRecord = mRealm.copyFromRealm(savedRecords.get(savedRecords.size() - 1));
             mRealmRecord.setListingTitle("Test Listing Do Not Buy");
             loadAssociatedData();
-            mUpdateUpdateInterface.updateUI(this);
+            mUpdateUiInterface.updateUI(this);
             return;
         }
 
@@ -82,7 +87,7 @@ public class RecordSessionManager {
         RealmResults<EbayCategory>results = getAllCategories();
         mRealmRecord.setEbayCategory(results.first());
 
-        mUpdateUpdateInterface.updateUI(this);
+        mUpdateUiInterface.updateUI(this);
     }
 
     /**
@@ -243,11 +248,11 @@ public class RecordSessionManager {
      */
 
     public void captureCurrentState() {
-        mUpdateUpdateInterface.updateSession(this);
+        mUpdateUpdateSessionInterface.updateSession(this);
     }
 
     public void reloadCurrentRecord() {
-        mUpdateUpdateInterface.updateUI(this);
+        mUpdateUiInterface.updateUI(this);
     }
 
     /**
@@ -255,7 +260,7 @@ public class RecordSessionManager {
      */
 
     public BoolResponse recordIsValid() {
-        mUpdateUpdateInterface.updateSession(this);
+        mUpdateUpdateSessionInterface.updateSession(this);
 
         String message = "";
         boolean valid = true;
@@ -286,7 +291,7 @@ public class RecordSessionManager {
     }
 
     public BoolResponse canBuildListingTitle() {
-        mUpdateUpdateInterface.updateSession(this);
+        mUpdateUpdateSessionInterface.updateSession(this);
         String title = mRealmRecord.getTitle();
         return new BoolResponse(!title.isEmpty(), "Add 'Title' to use this feature");
     }
@@ -296,7 +301,7 @@ public class RecordSessionManager {
      */
 
     public String buildListingTitle() {
-        mUpdateUpdateInterface.updateSession(this);
+        mUpdateUpdateSessionInterface.updateSession(this);
 
         String artist =  mRealmRecord.getArtist();
         String title = mRealmRecord.getTitle();
@@ -345,7 +350,7 @@ public class RecordSessionManager {
      */
 
     public void save() {
-        mUpdateUpdateInterface.updateSession(this);
+        mUpdateUpdateSessionInterface.updateSession(this);
         FileManager fileManager = new FileManager(mContext);
 
         mRealm.beginTransaction();

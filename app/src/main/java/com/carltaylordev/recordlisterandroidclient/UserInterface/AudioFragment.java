@@ -12,7 +12,8 @@ import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 
 
-public class AudioFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface, MultiAudioRecorder.Interface {
+public class AudioFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateSessionInterface,
+        RecordSessionManager.UpdateUiInterface, MultiAudioRecorder.Interface {
 
     private Button mRecordButton;
     private Button mPlayButton;

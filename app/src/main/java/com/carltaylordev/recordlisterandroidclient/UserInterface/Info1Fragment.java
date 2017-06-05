@@ -18,7 +18,8 @@ import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
  * Created by carl on 29/05/2017.
  */
 
-public class Info1Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateInterface {
+public class Info1Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateSessionInterface,
+        RecordSessionManager.UpdateUiInterface {
 
     Spinner mStyleCatSpinner;
 
@@ -93,7 +94,7 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
     }
 
     /**
-     *  RecordSessionManager Interface
+     *  RecordSessionManager Interfaces
      */
 
     @Override
