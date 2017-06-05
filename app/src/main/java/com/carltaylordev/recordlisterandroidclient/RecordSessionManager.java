@@ -5,14 +5,12 @@ import android.content.Context;
 
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
-import com.carltaylordev.recordlisterandroidclient.models.ImageProxy;
 import com.carltaylordev.recordlisterandroidclient.models.RealmAudioClip;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -199,10 +197,6 @@ public class RecordSessionManager {
             mImages.add(RealmImage.placeHolderImage(mContext));
         }
         reloadCurrentRecord();
-    }
-
-    public void setImages(ArrayList<ImageProxy> images) {
-//        mImages = images;
     }
 
     public void setAudio(Map<Integer, String> audio) {
@@ -395,45 +389,6 @@ public class RecordSessionManager {
         }
 
         return imagesToAttach;
-    }
-
-
-    private void writeOutAndAttachPictures(FileManager fileManager, Realm realm, RealmRecord record) throws Exception {
-        try {
-            // Remove all existing pics
-            // // TODO: 03/06/2017 this is NOT deleting them from the DB
-            RealmList<RealmImage> existingImages = record.getImages();
-            existingImages.clear();
-        } catch (Exception e) {
-            Logger.logMessage(e.toString());
-        }
-
-//        // Add New
-//        RealmList<RealmImage> newImages = new RealmList<>();
-//        int counter = 1;
-//
-//        for (ImageProxy imageProxy : mImages) {
-//            if (imageProxy.isPlaceHolder()) {
-//                continue;
-//            }
-//            // Write to app storage
-//            File imageFile = fileManager.writeJpegToDisc(imageProxy.getImage(),
-//                    FileManager.getRootPicturesPath(),
-//                    cleanStringForFileName(record.getListingTitle()));
-//
-//            // Add to Realm
-//            RealmImage realmImage = realm.copyToRealm(new RealmImage());
-//            realmImage.setmTitle(cleanStringOfUnwantedSpace(record.getListingTitle()) + "_" + Integer.toString(counter));
-//            realmImage.setPath(imageFile.getPath());
-//            newImages.add(realmImage);
-//
-//            // Delete original image path
-//            FileManager.deleteFileAtPath(imageProxy.getPath());
-//
-//            counter ++;
-//        }
-//
-//        record.setImages(newImages);
     }
 
     private void writeOutAndAttachAudioClips(FileManager fileManager, Realm realm, RealmRecord record) throws Exception {

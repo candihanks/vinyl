@@ -1,7 +1,6 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,14 +14,11 @@ import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
-import com.carltaylordev.recordlisterandroidclient.models.ImageProxy;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import io.realm.RealmList;
 
 import static android.app.Activity.RESULT_OK;
 
