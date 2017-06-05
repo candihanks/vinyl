@@ -14,12 +14,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.carltaylordev.recordlisterandroidclient.R;
-import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
+import com.carltaylordev.recordlisterandroidclient.models.ImageProxy;
+import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class GridViewAdapter extends ArrayAdapter<ImageItem> {
+import io.realm.RealmList;
+
+public class GridViewAdapter extends ArrayAdapter<RealmImage> {
 
     static class ViewHolder {
         TextView imageTitle;
@@ -28,16 +30,16 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem> {
 
     private Context context;
     private int layoutResourceId;
-    private ArrayList<ImageItem> data = new ArrayList<>();
+    private RealmList<RealmImage> data;
 
-    public GridViewAdapter(Context context, int layoutResourceId, ArrayList<ImageItem> data) {
+    public GridViewAdapter(Context context, int layoutResourceId, RealmList<RealmImage> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
     }
 
-    public ArrayList<ImageItem> getItems() {
+    public RealmList<RealmImage> getItems() {
         return data;
     }
 
@@ -59,7 +61,7 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem> {
         }
 
 
-        ImageItem item = data.get(position);
+        RealmImage item = data.get(position);
         holder.imageTitle.setText(item.getTitle());
         holder.image.setImageBitmap(item.getImage());
         return row;

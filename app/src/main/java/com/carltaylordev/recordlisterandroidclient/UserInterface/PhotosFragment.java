@@ -15,11 +15,14 @@ import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
-import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
+import com.carltaylordev.recordlisterandroidclient.models.ImageProxy;
+import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import io.realm.RealmList;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -68,7 +71,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      */
 
     void setupGridView(View view, ListingActivity activity) {
-        ArrayList<ImageItem> images = activity.mRecordSessionManager.getImages();
+        RealmList<RealmImage> images = activity.mRecordSessionManager.getImages();
         mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
         mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
         mGridView.setAdapter(mGridAdapter);
@@ -114,7 +117,11 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             ListingActivity activity = (ListingActivity) getActivity();
             RecordSessionManager manager = activity.mRecordSessionManager;
-            manager.setImageAtIndex(new ImageItem(BitmapFactory.decodeFile(mLastCreatedTempFileLocation),
+
+            // instantly save image?
+
+
+            manager.setImageAtIndex(new ImageProxy(BitmapFactory.decodeFile(mLastCreatedTempFileLocation),
                     "New Image",
                     false,
                     mLastCreatedTempFileLocation),
@@ -128,7 +135,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
 
     @Override
     public void updateSession(RecordSessionManager manager) {
-        manager.setImages(mGridAdapter.getItems());
+//        manager.setImages(mGridAdapter.getItems());
     }
 
     @Override

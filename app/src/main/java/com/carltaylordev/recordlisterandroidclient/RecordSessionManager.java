@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
-import com.carltaylordev.recordlisterandroidclient.models.ImageItem;
+import com.carltaylordev.recordlisterandroidclient.models.ImageProxy;
 import com.carltaylordev.recordlisterandroidclient.models.RealmAudioClip;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -38,7 +37,7 @@ public class RecordSessionManager {
         void showErrorMessage(String message);
     }
 
-    private ArrayList<ImageItem> mImageCacheList = new ArrayList<>();
+    private RealmList<RealmImage> mImages = new RealmList<>();
     private HashMap<Integer, String> mAudioMap = new HashMap<>();
 
     private RealmRecord mRealmRecord;
@@ -93,24 +92,15 @@ public class RecordSessionManager {
 
     private void loadAssociatedData() {
         loadAssociatedPictures();
-        loadAssociatedAudioClips();
+//        loadAssociatedAudioClips();
     }
 
     private void loadAssociatedPictures() {
-        mImageCacheList.clear();
-        try {
-            for (RealmImage image : mRealmRecord.getImages()) {
-                try {
-                    mImageCacheList.add(image.convertToImageItem());
-                } catch (FileNotFoundException e) {
-                    mErrorInterface.showErrorMessage("Error loading images for record");
-                    break;
-                }
-            }
-        } catch (NullPointerException e) {
-            Logger.logMessage("No Images For Record");
+        mImages = mRealmRecord.getImages();
+        if (mImages == null) {
+            mImages = new RealmList<>();
         }
-        mImageCacheList.add(ImageItem.placeHolderImage(mContext));
+        mImages.add(RealmImage.placeHolderImage(mContext));
     }
 
     private void loadAssociatedAudioClips() {
@@ -153,8 +143,8 @@ public class RecordSessionManager {
         return list;
     }
 
-    public ArrayList<ImageItem> getImages() {
-        return mImageCacheList;
+    public RealmList<RealmImage> getImages() {
+        return mImages;
     }
 
     public Map<Integer, String> getAudio() {
@@ -197,18 +187,18 @@ public class RecordSessionManager {
      * Set
      */
 
-    public void setImageAtIndex(ImageItem imageItem, int index) {
-        ImageItem selectedImage = mImageCacheList.get(index);
-        mImageCacheList.set(index, imageItem);
-        // If we replaced a placeholder image, we need to append a new one
-        if (selectedImage.isPlaceHolder()) {
-            mImageCacheList.add(ImageItem.placeHolderImage(mContext));
-        }
-        reloadCurrentRecord();
+    public void setImageAtIndex(ImageProxy imageProxy, int index) {
+//        ImageProxy selectedImage = mImages.get(index);
+//        mImages.set(index, imageProxy);
+//        // If we replaced a placeholder image, we need to append a new one
+//        if (selectedImage.isPlaceHolder()) {
+//            mImages.add(ImageProxy.placeHolderImage(mContext));
+//        }
+//        reloadCurrentRecord();
     }
 
-    public void setImages(ArrayList<ImageItem> images) {
-        mImageCacheList = images;
+    public void setImages(ArrayList<ImageProxy> images) {
+//        mImages = images;
     }
 
     public void setAudio(Map<Integer, String> audio) {
@@ -287,8 +277,8 @@ public class RecordSessionManager {
             valid = false;
         }
 
-        if (mImageCacheList.size() == 1) {
-            ImageItem onlyImage = mImageCacheList.get(0);
+        if (mImages.size() == 1) {
+            RealmImage onlyImage = mImages.get(0);
             if (onlyImage.isPlaceHolder()) {
                 message += "At least 1 Image\n";
                 valid = false;
@@ -387,32 +377,32 @@ public class RecordSessionManager {
             Logger.logMessage(e.toString());
         }
 
-        // Add New
-        RealmList<RealmImage> newImages = new RealmList<>();
-        int counter = 1;
-
-        for (ImageItem imageItem : mImageCacheList) {
-            if (imageItem.isPlaceHolder()) {
-                continue;
-            }
-            // Write to app storage
-            File imageFile = fileManager.writeJpegToDisc(imageItem.getImage(),
-                    FileManager.getRootPicturesPath(),
-                    cleanStringForFileName(record.getListingTitle()));
-
-            // Add to Realm
-            RealmImage realmImage = realm.copyToRealm(new RealmImage());
-            realmImage.setTitle(cleanStringOfUnwantedSpace(record.getListingTitle()) + "_" + Integer.toString(counter));
-            realmImage.setPath(imageFile.getPath());
-            newImages.add(realmImage);
-
-            // Delete original image path
-            FileManager.deleteFileAtPath(imageItem.getPath());
-
-            counter ++;
-        }
-
-        record.setImages(newImages);
+//        // Add New
+//        RealmList<RealmImage> newImages = new RealmList<>();
+//        int counter = 1;
+//
+//        for (ImageProxy imageProxy : mImages) {
+//            if (imageProxy.isPlaceHolder()) {
+//                continue;
+//            }
+//            // Write to app storage
+//            File imageFile = fileManager.writeJpegToDisc(imageProxy.getImage(),
+//                    FileManager.getRootPicturesPath(),
+//                    cleanStringForFileName(record.getListingTitle()));
+//
+//            // Add to Realm
+//            RealmImage realmImage = realm.copyToRealm(new RealmImage());
+//            realmImage.setTitle(cleanStringOfUnwantedSpace(record.getListingTitle()) + "_" + Integer.toString(counter));
+//            realmImage.setPath(imageFile.getPath());
+//            newImages.add(realmImage);
+//
+//            // Delete original image path
+//            FileManager.deleteFileAtPath(imageProxy.getPath());
+//
+//            counter ++;
+//        }
+//
+//        record.setImages(newImages);
     }
 
     private void writeOutAndAttachAudioClips(FileManager fileManager, Realm realm, RealmRecord record) throws Exception {
