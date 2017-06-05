@@ -64,6 +64,7 @@ public class RecordSessionManager {
     public void createTestData() {
         RealmResults<RealmRecord> savedRecords = mRealm.where(RealmRecord.class).findAll();
         if (savedRecords.size() > 0) {
+            // get last record
             mRealmRecord = mRealm.copyFromRealm(savedRecords.get(savedRecords.size() - 1));
             mRealmRecord.setListingTitle("Test Listing Do Not Buy");
             loadAssociatedData();
@@ -99,6 +100,8 @@ public class RecordSessionManager {
         mImages = mRealmRecord.getImages();
         if (mImages == null) {
             mImages = new RealmList<>();
+        } else {
+            RealmImage.rehydrateList(mImages);
         }
         mImages.add(RealmImage.placeHolderImage(mContext));
     }
@@ -143,8 +146,9 @@ public class RecordSessionManager {
         return list;
     }
 
-    public RealmList<RealmImage> getImages() {
-        return mImages;
+    public ArrayList<RealmImage> getImages() {
+        ArrayList<RealmImage> copy = new ArrayList<>(mImages);
+        return copy;
     }
 
     public Map<Integer, String> getAudio() {
@@ -348,24 +352,51 @@ public class RecordSessionManager {
 
     public void save() {
         mUpdateUpdateInterface.updateSession(this);
-        final FileManager fileManager = new FileManager(mContext);
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(mRealmRecord);
-                try {
-                    writeOutAndAttachPictures(fileManager, realm, mRealmRecord);
-                    if (mAudioMap != null) {
-                        writeOutAndAttachAudioClips(fileManager, realm, mRealmRecord);
-                    }
-                    realm.copyToRealmOrUpdate(mRealmRecord);
-                } catch (Exception e) {
-                    mErrorInterface.showErrorMessage("Could not save record: " + e.toString());
-                    realm.cancelTransaction();
-                }
-            }
-        });
+        FileManager fileManager = new FileManager(mContext);
+
+        mRealm.beginTransaction();
+        mRealm.copyToRealmOrUpdate(mRealmRecord);
+        try {
+            mRealmRecord.setImages(saveImages(fileManager));
+            mRealm.copyToRealmOrUpdate(mRealmRecord);
+        } catch (Exception e) {
+            mRealm.cancelTransaction();
+            mErrorInterface.showErrorMessage("Problem saving record: " + e.toString());
+        }
+
+        mRealm.commitTransaction();
     }
+
+    private RealmList<RealmImage> saveImages(FileManager fileManager) throws Exception {
+        int counter = 0;
+
+        RealmList<RealmImage> imagesToAttach = new RealmList<>();
+
+        for (RealmImage image : mImages) {
+            if (image.isPlaceHolder()) {
+                continue;
+            }
+            // Redo title as user may have changed it
+            image.setTitle(cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter));
+            if (!image.isDirty()) {
+                // Its not a new image
+                imagesToAttach.add(image);
+                mRealm.copyToRealmOrUpdate(image);
+                continue;
+            }
+            // Its a new image
+            File imageFile = fileManager.writeJpegToDisc(image.getImage(),
+                    FileManager.getRootPicturesPath(),
+                    image.getUuid());
+            image.setPath(imageFile.getAbsolutePath());
+
+            mRealm.copyToRealmOrUpdate(image);
+            imagesToAttach.add(image);
+        }
+
+        return imagesToAttach;
+    }
+
 
     private void writeOutAndAttachPictures(FileManager fileManager, Realm realm, RealmRecord record) throws Exception {
         try {

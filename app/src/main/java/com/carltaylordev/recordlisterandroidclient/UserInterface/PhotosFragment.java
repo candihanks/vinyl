@@ -71,7 +71,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      */
 
     void setupGridView(View view, ListingActivity activity) {
-        RealmList<RealmImage> images = activity.mRecordSessionManager.getImages();
+        ArrayList<RealmImage> images = activity.mRecordSessionManager.getImages();
         mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
         mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
         mGridView.setAdapter(mGridAdapter);
@@ -135,8 +135,10 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
 
     @Override
     public void updateUI(RecordSessionManager manager) {
-        mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, manager.getImages());
-        mGridView.invalidateViews();
+        ArrayList<RealmImage> copy = manager.getImages();
+        mGridAdapter.clear();
+        mGridAdapter.addAll(copy);
+        mGridAdapter.notifyDataSetChanged();
     }
 }
 

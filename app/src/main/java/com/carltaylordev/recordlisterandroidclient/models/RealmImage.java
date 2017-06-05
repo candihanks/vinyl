@@ -4,13 +4,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.util.Log;
 
+import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.UUID;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
@@ -30,17 +34,30 @@ public class RealmImage extends RealmObject {
     @Ignore
     private Bitmap thumb;
     @Ignore
-    private Boolean isDirty;
+    private Boolean isDirty = false;
     @Ignore
-    private Boolean isPlaceHolder;
+    private Boolean isPlaceHolder = false;
 
     public RealmImage() {}
 
-    public RealmImage(String title, String path) {
+    public RealmImage(String title, String tempPath) {
         this.title = title;
-        // // TODO: 05/06/2017 do we need to add full size image here?
-        thumb = convertToThumb(BitmapFactory.decodeFile(path));
-        isPlaceHolder = false;
+        image = BitmapFactory.decodeFile(tempPath);
+        thumb = convertToThumb(image);
+        if (tempPath != null) {
+            isDirty = true;
+        }
+    }
+
+    public static void rehydrateList(RealmList<RealmImage> list) {
+        for (RealmImage image : list) {
+            image.rehydrate();
+        }
+    }
+
+    public void rehydrate() {
+        image = BitmapFactory.decodeFile(path);
+        thumb = convertToThumb(image);
     }
 
     public static RealmImage placeHolderImage(Context context) {
@@ -56,15 +73,13 @@ public class RealmImage extends RealmObject {
 
     public void delete() {
         // can instantly delete when user long presses OR wait for save()?
-        // delete backing data
+        // check if exists in realm
+        // if so delete from there, if not just remove from array
         // delete self?
     }
 
-    public void save() {
-        // save backing data
-    }
-
     public Bitmap getImage() {
+        // needed for uploads to server
         return image;
     }
 
@@ -72,28 +87,16 @@ public class RealmImage extends RealmObject {
         return isPlaceHolder;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = image;
-    }
-
     public Bitmap getThumb() {
         return thumb;
     }
 
-    public void setThumb(Bitmap thumb) {
-        this.thumb = thumb;
-    }
-
-    public Boolean getDirty() {
-        return isDirty;
-    }
-
-    public void setDirty(Boolean dirty) {
-        isDirty = dirty;
-    }
-
     public String getUuid() {
         return uuid;
+    }
+
+    public boolean isDirty() {
+        return isDirty;
     }
 
     public String getTitle() {

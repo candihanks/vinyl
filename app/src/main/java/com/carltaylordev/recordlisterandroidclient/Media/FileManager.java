@@ -6,8 +6,6 @@ import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
 
@@ -62,10 +60,10 @@ public class FileManager {
         return file.delete();
     }
 
-    public void recursivelyDeleteFileAndChildren(File file) {
+    public void recursivelyDeleteFolderAndChildren(File file) throws NullPointerException {
         if (file.isDirectory())
             for (String child : file.list()) {
-                recursivelyDeleteFileAndChildren(new File(file, child));
+                recursivelyDeleteFolderAndChildren(new File(file, child));
             }
         file.delete();
     }
@@ -91,9 +89,9 @@ public class FileManager {
 
 
     public File writeJpegToDisc(Bitmap bitmap, String appDirPath, String imageName) throws Exception {
-        File file = new File (FileManager.createDirectory(appDirPath), "image_" + imageName + "_" + randomNumber() + ".jpg");
+        File file = new File (FileManager.createDirectory(appDirPath), "image_" + imageName + ".jpg");
 
-        FileOutputStream out = new FileOutputStream(file, false);
+        FileOutputStream out = new FileOutputStream(file);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
         out.flush();
         out.close();

@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 
+import java.util.ArrayList;
+
 import io.realm.RealmList;
 
 public class GridViewAdapter extends ArrayAdapter<RealmImage> {
@@ -27,17 +29,13 @@ public class GridViewAdapter extends ArrayAdapter<RealmImage> {
 
     private Context context;
     private int layoutResourceId;
-    private RealmList<RealmImage> data;
+    private ArrayList<RealmImage> data;
 
-    public GridViewAdapter(Context context, int layoutResourceId, RealmList<RealmImage> data) {
+    public GridViewAdapter(Context context, int layoutResourceId, ArrayList<RealmImage> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
-    }
-
-    public RealmList<RealmImage> getItems() {
-        return data;
     }
 
     @Override
@@ -56,7 +54,6 @@ public class GridViewAdapter extends ArrayAdapter<RealmImage> {
         } else {
             holder = (ViewHolder) row.getTag();
         }
-
 
         RealmImage item = data.get(position);
         holder.imageTitle.setText(item.getTitle());
