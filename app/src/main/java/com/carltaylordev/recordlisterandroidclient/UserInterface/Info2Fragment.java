@@ -13,6 +13,7 @@ import android.widget.Spinner;
 
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
+import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 public class Info2Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateSessionInterface, RecordSessionManager.UpdateUiInterface {
 
@@ -106,21 +107,23 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
 
     @Override
     public void updateSession(RecordSessionManager manager) {
-        manager.setComments(mCommentsEditText.getText().toString());
-        manager.setMediaCondition(mRecordConditionSpinner.toString());
-        manager.setCoverCondition(mCoverConditionSpinner.toString());
-        manager.setPrice(mPriceEditText.getText().toString());
+        RealmRecord record = manager.getRecord();
+        record.setComments(mCommentsEditText.getText().toString());
+        record.setMediaCondition(mRecordConditionSpinner.toString());
+        record.setCoverCondition(mCoverConditionSpinner.toString());
+        record.setPrice(mPriceEditText.getText().toString());
     }
 
     @Override
     public void updateUI(RecordSessionManager manager) {
-        mCommentsEditText.setText(manager.getComments());
+        RealmRecord record = manager.getRecord();
+        mCommentsEditText.setText(record.getComments());
 
         ArrayAdapter recordConditionAdapter = (ArrayAdapter)mRecordConditionSpinner.getAdapter();
         ArrayAdapter coverConditionAdapter = (ArrayAdapter)mCoverConditionSpinner.getAdapter();
-        mRecordConditionSpinner.setSelection(recordConditionAdapter.getPosition(manager.getMediaCondition()));
-        mCoverConditionSpinner.setSelection(coverConditionAdapter.getPosition(manager.getCoverCondition()));
+        mRecordConditionSpinner.setSelection(recordConditionAdapter.getPosition(record.getMediaCondition()));
+        mCoverConditionSpinner.setSelection(coverConditionAdapter.getPosition(record.getCoverCondition()));
 
-        mPriceEditText.setText(manager.getPrice());
+        mPriceEditText.setText(record.getPrice());
     }
 }

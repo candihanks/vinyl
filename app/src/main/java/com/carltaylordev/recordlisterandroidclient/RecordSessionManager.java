@@ -158,36 +158,8 @@ public class RecordSessionManager {
         return mAudioMap;
     }
 
-    public String getArtist() {
-        return mRealmRecord.getArtist();
-    }
-
-    public String getTitle() {
-        return mRealmRecord.getTitle();
-    }
-
-    public String getLabel() {
-        return mRealmRecord.getLabel();
-    }
-
-    public String getMediaCondition() {
-        return mRealmRecord.getMediaCondition();
-    }
-
-    public String getCoverCondition() {
-        return mRealmRecord.getCoverCondition();
-    }
-
-    public String getComments() {
-        return mRealmRecord.getComments();
-    }
-
-    public String getPrice() {
-        return mRealmRecord.getPrice();
-    }
-
-    public String getListingTitle() {
-        return mRealmRecord.getListingTitle();
+    public RealmRecord getRecord() {
+        return mRealmRecord;
     }
 
     /**
@@ -209,38 +181,6 @@ public class RecordSessionManager {
         for (Map.Entry entry : audio.entrySet()) {
             mAudioMap.put((Integer)entry.getKey(), (String)entry.getValue());
         }
-    }
-
-    public void setArtist(String artist) {
-        mRealmRecord.setArtist(artist);
-    }
-
-    public void setTitle(String title) {
-        mRealmRecord.setTitle(title);
-    }
-
-    public void setLabel(String label) {
-        mRealmRecord.setLabel(label);
-    }
-
-    public void setMediaCondition(String condition) {
-        mRealmRecord.setMediaCondition(condition);
-    }
-
-    public void setCoverCondition(String condition) {
-        mRealmRecord.setCoverCondition(condition);
-    }
-
-    public void setComments(String comments) {
-        mRealmRecord.setComments(comments);
-    }
-
-    public void setPrice(String price) {
-        mRealmRecord.setPrice(price);
-    }
-
-    public void setEbayCategory(EbayCategory ebayCategory) {
-        mRealmRecord.setEbayCategory(ebayCategory);
     }
 
     /**

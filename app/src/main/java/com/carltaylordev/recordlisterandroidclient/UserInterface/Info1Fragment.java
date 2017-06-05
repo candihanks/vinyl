@@ -13,6 +13,7 @@ import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
+import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 /**
  * Created by carl on 29/05/2017.
@@ -99,17 +100,19 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
 
     @Override
     public void updateSession(RecordSessionManager manager) {
-        manager.setArtist(mArtistEditText.getText().toString());
-        manager.setTitle(mTitleEditText.getText().toString());
-        manager.setLabel(mLabelEditText.getText().toString());
-        manager.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
+        RealmRecord record = manager.getRecord();
+        record.setArtist(mArtistEditText.getText().toString());
+        record.setTitle(mTitleEditText.getText().toString());
+        record.setLabel(mLabelEditText.getText().toString());
+        record.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
     }
 
     @Override
     public void updateUI(RecordSessionManager manager) {
-        mArtistEditText.setText(manager.getArtist());
-        mTitleEditText.setText(manager.getTitle());
-        mLabelEditText.setText(manager.getLabel());
-        mListingTitleEditText.setText(manager.getListingTitle());
+        RealmRecord record = manager.getRecord();
+        mArtistEditText.setText(record.getArtist());
+        mTitleEditText.setText(record.getTitle());
+        mLabelEditText.setText(record.getLabel());
+        mListingTitleEditText.setText(record.getListingTitle());
     }
 }
