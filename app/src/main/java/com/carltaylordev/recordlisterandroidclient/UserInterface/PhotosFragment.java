@@ -1,9 +1,11 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +68,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      *  Setup
      */
 
-    void setupGridView(View view, ListingActivity activity) {
+    void setupGridView(View view, final ListingActivity activity) {
         ArrayList<RealmImage> images = activity.mRecordSessionManager.getImages();
         mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
         mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
@@ -78,12 +80,23 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         });
         mGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int gridPosition, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int gridPosition, long id) {
                 RealmImage image = mGridAdapter.getItem(gridPosition);
                 if (!image.isPlaceHolder()) {
-                    removeImageAtIndex(gridPosition);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setMessage("Are you sure?")
+                            .setTitle("Delete Image")
+                            .setNegativeButton("No", null)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    removeImageAtIndex(gridPosition);
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
-                return false;
+                return true;
             }
         });
     }

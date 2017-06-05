@@ -176,11 +176,18 @@ public class RecordSessionManager {
     public void removeImageAtIndex(int index) {
         RealmImage selectedImage = mImages.get(index);
         mImages.remove(index);
+        try {
+            FileManager.deleteFileAtPath(selectedImage.getPath());
+        } catch (NullPointerException e) {
+            Logger.logMessage("No pic at path: " + e.toString());
+        }
 
         RealmImage managedImage = mRealm.where(RealmImage.class).equalTo("uuid", selectedImage.getUuid()).findFirst();
-        mRealm.beginTransaction();
-        managedImage.deleteFromRealm();
-        mRealm.commitTransaction();
+        if (managedImage != null) {
+            mRealm.beginTransaction();
+            managedImage.deleteFromRealm();
+            mRealm.commitTransaction();
+        }
 
         reloadCurrentRecord();
     }

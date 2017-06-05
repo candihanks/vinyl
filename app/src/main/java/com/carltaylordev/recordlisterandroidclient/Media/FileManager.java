@@ -55,7 +55,7 @@ public class FileManager {
      * Deletion
      */
 
-    public static boolean deleteFileAtPath(String filePath) {
+    public static boolean deleteFileAtPath(String filePath) throws NullPointerException {
         File file = new File(filePath);
         return file.delete();
     }
