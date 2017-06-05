@@ -42,9 +42,9 @@ public class RealmImage extends RealmObject {
 
     public RealmImage(String title, String tempPath) {
         this.title = title;
-        image = BitmapFactory.decodeFile(tempPath);
-        thumb = convertToThumb(image);
+        thumb = convertToThumb(BitmapFactory.decodeFile(tempPath));
         if (tempPath != null) {
+            path = tempPath;
             isDirty = true;
         }
     }
@@ -56,8 +56,8 @@ public class RealmImage extends RealmObject {
     }
 
     public void rehydrate() {
-        image = BitmapFactory.decodeFile(path);
-        thumb = convertToThumb(image);
+        Bitmap temp = BitmapFactory.decodeFile(path);
+        thumb = convertToThumb(temp);
     }
 
     public static RealmImage placeHolderImage(Context context) {
@@ -71,15 +71,10 @@ public class RealmImage extends RealmObject {
         return ThumbnailUtils.extractThumbnail(bitmap, 100, 100);
     }
 
-    public void delete() {
-        // can instantly delete when user long presses OR wait for save()?
-        // check if exists in realm
-        // if so delete from there, if not just remove from array
-        // delete self?
-    }
-
     public Bitmap getImage() {
-        // needed for uploads to server
+        if (image == null) {
+            image = BitmapFactory.decodeFile(path);
+        }
         return image;
     }
 
