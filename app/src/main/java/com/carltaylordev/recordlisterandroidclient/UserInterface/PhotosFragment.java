@@ -68,18 +68,28 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
 
     void setupGridView(View view, ListingActivity activity) {
         ArrayList<RealmImage> images = activity.mRecordSessionManager.getImages();
-        mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
         mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
+        mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
         mGridView.setAdapter(mGridAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int gridPosition, long id) {
                 captureImage(gridPosition);
             }
         });
+        mGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int gridPosition, long id) {
+                RealmImage image = mGridAdapter.getItem(gridPosition);
+                if (!image.isPlaceHolder()) {
+                    removeImageAtIndex(gridPosition);
+                }
+                return false;
+            }
+        });
     }
 
     /**
-     *  Image Capture
+     *  Image Capture / Deletion
      */
 
     private void captureImage(int gridPosition) {
@@ -111,13 +121,18 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-
             RealmImage image = new RealmImage("New Image", mLastCreatedTempFileLocation);
 
             ListingActivity activity = (ListingActivity) getActivity();
             RecordSessionManager manager = activity.mRecordSessionManager;
             manager.setImageAtIndex(image, mLastSelectedGridPosition);
         }
+    }
+
+    private void removeImageAtIndex(int index) {
+        ListingActivity activity = (ListingActivity) getActivity();
+        RecordSessionManager manager = activity.mRecordSessionManager;
+        manager.removeImageAtIndex(index);
     }
 
     /**
@@ -132,5 +147,3 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         mGridAdapter.notifyDataSetChanged();
     }
 }
-
-

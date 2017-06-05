@@ -60,6 +60,11 @@ public class RecordSessionManager {
         loadAssociatedData();
     }
 
+    private void loadAssociatedData() {
+        loadAssociatedPictures();
+//        loadAssociatedAudioClips();
+    }
+
     /**
      * Test Data
      */
@@ -88,25 +93,6 @@ public class RecordSessionManager {
         mRealmRecord.setEbayCategory(results.first());
 
         mUpdateUiInterface.updateUI(this);
-    }
-
-    /**
-     * Associated Data
-     */
-
-    private void loadAssociatedData() {
-        loadAssociatedPictures();
-//        loadAssociatedAudioClips();
-    }
-
-    private void loadAssociatedPictures() {
-        mImages = mRealmRecord.getImages();
-        if (mImages == null) {
-            mImages = new RealmList<>();
-        } else {
-            RealmImage.rehydrateList(mImages);
-        }
-        mImages.add(RealmImage.placeHolderImage(mContext));
     }
 
     private void loadAssociatedAudioClips() {
@@ -163,8 +149,19 @@ public class RecordSessionManager {
     }
 
     /**
-     * Set
+     * Image Management
      */
+
+    private void loadAssociatedPictures() {
+        mImages = mRealmRecord.getImages();
+        if (mImages == null) {
+            mImages = new RealmList<>();
+        } else {
+            RealmImage.rehydrateList(mImages);
+        }
+        mImages.add(RealmImage.placeHolderImage(mContext));
+    }
+
 
     public void setImageAtIndex(RealmImage newImage, int index) {
         RealmImage currentImage = mImages.get(index);
@@ -175,6 +172,22 @@ public class RecordSessionManager {
         }
         reloadCurrentRecord();
     }
+
+    public void removeImageAtIndex(int index) {
+        RealmImage selectedImage = mImages.get(index);
+        mImages.remove(index);
+
+        RealmImage managedImage = mRealm.where(RealmImage.class).equalTo("uuid", selectedImage.getUuid()).findFirst();
+        mRealm.beginTransaction();
+        managedImage.deleteFromRealm();
+        mRealm.commitTransaction();
+
+        reloadCurrentRecord();
+    }
+
+    /**
+     * Audio Management
+     */
 
     public void setAudio(Map<Integer, String> audio) {
         mAudioMap = new HashMap<>();
