@@ -187,14 +187,14 @@ public class RecordSessionManager {
      * Set
      */
 
-    public void setImageAtIndex(ImageProxy imageProxy, int index) {
-//        ImageProxy selectedImage = mImages.get(index);
-//        mImages.set(index, imageProxy);
-//        // If we replaced a placeholder image, we need to append a new one
-//        if (selectedImage.isPlaceHolder()) {
-//            mImages.add(ImageProxy.placeHolderImage(mContext));
-//        }
-//        reloadCurrentRecord();
+    public void setImageAtIndex(RealmImage newImage, int index) {
+        RealmImage currentImage = mImages.get(index);
+        mImages.set(index, newImage);
+        // If we replaced a placeholder image, we need to append a new one
+        if (currentImage.isPlaceHolder()) {
+            mImages.add(RealmImage.placeHolderImage(mContext));
+        }
+        reloadCurrentRecord();
     }
 
     public void setImages(ArrayList<ImageProxy> images) {
@@ -392,7 +392,7 @@ public class RecordSessionManager {
 //
 //            // Add to Realm
 //            RealmImage realmImage = realm.copyToRealm(new RealmImage());
-//            realmImage.setTitle(cleanStringOfUnwantedSpace(record.getListingTitle()) + "_" + Integer.toString(counter));
+//            realmImage.setmTitle(cleanStringOfUnwantedSpace(record.getListingTitle()) + "_" + Integer.toString(counter));
 //            realmImage.setPath(imageFile.getPath());
 //            newImages.add(realmImage);
 //

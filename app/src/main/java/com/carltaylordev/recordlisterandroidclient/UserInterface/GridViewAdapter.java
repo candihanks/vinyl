@@ -14,10 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.carltaylordev.recordlisterandroidclient.R;
-import com.carltaylordev.recordlisterandroidclient.models.ImageProxy;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
-
-import java.util.ArrayList;
 
 import io.realm.RealmList;
 
@@ -63,7 +60,7 @@ public class GridViewAdapter extends ArrayAdapter<RealmImage> {
 
         RealmImage item = data.get(position);
         holder.imageTitle.setText(item.getTitle());
-        holder.image.setImageBitmap(item.getImage());
+        holder.image.setImageBitmap(item.getThumb());
         return row;
     }
 }

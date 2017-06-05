@@ -3,6 +3,7 @@ package com.carltaylordev.recordlisterandroidclient.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
@@ -33,20 +34,24 @@ public class RealmImage extends RealmObject {
     @Ignore
     private Boolean isPlaceHolder;
 
-
     public RealmImage() {}
 
     public RealmImage(String title, String path) {
-        // create when user presses save()
+        this.title = title;
+        // // TODO: 05/06/2017 do we need to add full size image here?
+        thumb = convertToThumb(BitmapFactory.decodeFile(path));
+        isPlaceHolder = false;
     }
 
     public static RealmImage placeHolderImage(Context context) {
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.magic_wand);
-        // ^ create thumb size
         RealmImage realmImage = new RealmImage("Tap To Add", null);
-        realmImage.image = bitmap;
+        realmImage.thumb = convertToThumb(BitmapFactory.decodeResource(context.getResources(), R.drawable.magic_wand));
         realmImage.isPlaceHolder = true;
         return realmImage;
+    }
+
+    private static Bitmap convertToThumb(Bitmap bitmap) {
+        return ThumbnailUtils.extractThumbnail(bitmap, 100, 100);
     }
 
     public void delete() {
@@ -89,11 +94,6 @@ public class RealmImage extends RealmObject {
 
     public String getUuid() {
         return uuid;
-    }
-
-    public ImageProxy convertToImageItem() throws FileNotFoundException {
-        Bitmap bitmap = FileManager.decodeImageFromPath(path);
-        return new ImageProxy(bitmap, title, false, path);
     }
 
     public String getTitle() {

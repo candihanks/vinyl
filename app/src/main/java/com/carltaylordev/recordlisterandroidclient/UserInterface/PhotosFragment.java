@@ -115,17 +115,12 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+            RealmImage image = new RealmImage("New Image", mLastCreatedTempFileLocation);
+
             ListingActivity activity = (ListingActivity) getActivity();
             RecordSessionManager manager = activity.mRecordSessionManager;
-
-            // instantly save image?
-
-
-            manager.setImageAtIndex(new ImageProxy(BitmapFactory.decodeFile(mLastCreatedTempFileLocation),
-                    "New Image",
-                    false,
-                    mLastCreatedTempFileLocation),
-                    mLastSelectedGridPosition);
+            manager.setImageAtIndex(image, mLastSelectedGridPosition);
         }
     }
 
