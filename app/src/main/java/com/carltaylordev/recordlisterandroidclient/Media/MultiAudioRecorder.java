@@ -8,10 +8,6 @@ import com.carltaylordev.recordlisterandroidclient.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static android.media.MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED;
 
@@ -42,7 +38,7 @@ public class MultiAudioRecorder {
         mInterface = activity;
 
         for (int i = 0; i < numberOfTracks; i++) {
-            mTracks.add(AudioTrack.emptyTrack());
+            mTracks.add(AudioTrack.createEmptyTrack());
         }
     }
 
@@ -64,7 +60,8 @@ public class MultiAudioRecorder {
     public Boolean audioFileExists(int index) {
         try {
             AudioTrack track = mTracks.get(index);
-            return track.getFilePath() != null;
+            boolean exists = track.getFilePath() != null;
+            return exists;
         } catch (Exception e) {
             return false;
         }
@@ -74,8 +71,10 @@ public class MultiAudioRecorder {
         AudioTrack track = mTracks.get(index);
         try {
             FileManager.deleteFileAtPath(track.getFilePath());
-        } catch (NullPointerException e) {}
-        track.setFilePath(null);
+        } catch (NullPointerException e) {
+            Logger.logMessage(e.toString());
+        }
+        mTracks.set(index, AudioTrack.createEmptyTrack());
     }
 
     public ArrayList<AudioTrack> getTracks() {

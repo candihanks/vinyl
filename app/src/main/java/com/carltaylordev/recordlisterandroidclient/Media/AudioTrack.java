@@ -16,7 +16,7 @@ public class AudioTrack {
             this.mUuid = uuid;
         }
 
-        public static AudioTrack emptyTrack() {
+        public static AudioTrack createEmptyTrack() {
             return new AudioTrack("Empty", null, null);
         }
 

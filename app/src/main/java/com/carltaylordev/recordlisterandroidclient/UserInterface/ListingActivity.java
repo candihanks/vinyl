@@ -106,7 +106,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     @Override
     protected void onResume() {
         super.onResume();
-        mRecordSessionManager.reloadCurrentRecord();
+        mRecordSessionManager.refreshUi();
     }
 
 

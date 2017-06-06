@@ -3,6 +3,7 @@ package com.carltaylordev.recordlisterandroidclient;
 import android.app.Activity;
 import android.content.Context;
 
+import com.carltaylordev.recordlisterandroidclient.Media.AudioTrack;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 import com.carltaylordev.recordlisterandroidclient.models.RealmAudioClip;
@@ -12,8 +13,6 @@ import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -39,7 +38,7 @@ public class RecordSessionManager {
     }
 
     private RealmList<RealmImage> mImages = new RealmList<>();
-    private HashMap<Integer, String> mAudioMap = new HashMap<>();
+    private ArrayList<AudioTrack> mAudioTracks = new ArrayList<>();
 
     private RealmRecord mRealmRecord;
     private Realm mRealm;
@@ -62,7 +61,7 @@ public class RecordSessionManager {
 
     private void loadAssociatedData() {
         loadAssociatedPictures();
-//        loadAssociatedAudioClips();
+        loadAssociatedAudioClips();
     }
 
     /**
@@ -93,18 +92,6 @@ public class RecordSessionManager {
         mRealmRecord.setEbayCategory(results.first());
 
         mUpdateUiInterface.updateUI(this);
-    }
-
-    private void loadAssociatedAudioClips() {
-        int counter = 0;
-        try {
-            for (RealmAudioClip audioClip : mRealmRecord.getAudioClips()) {
-                mAudioMap.put(new Integer(counter), audioClip.getPath());
-                counter ++;
-            }
-        } catch (NullPointerException e) {
-            Logger.logMessage("No Sound Clips For Record");
-        }
     }
 
     /**
@@ -140,8 +127,8 @@ public class RecordSessionManager {
         return copy;
     }
 
-    public Map<Integer, String> getAudio() {
-        return mAudioMap;
+    public ArrayList<AudioTrack> getAudio() {
+        return mAudioTracks;
     }
 
     public RealmRecord getRecord() {
@@ -170,7 +157,7 @@ public class RecordSessionManager {
         if (currentImage.isPlaceHolder()) {
             mImages.add(RealmImage.placeHolderImage(mContext));
         }
-        reloadCurrentRecord();
+        refreshUi();
     }
 
     public void removeImageAtIndex(int index) {
@@ -189,18 +176,35 @@ public class RecordSessionManager {
             mRealm.commitTransaction();
         }
 
-        reloadCurrentRecord();
+        refreshUi();
     }
 
     /**
      * Audio Management
      */
 
-    public void setAudio(Map<Integer, String> audio) {
-        mAudioMap = new HashMap<>();
-        for (Map.Entry entry : audio.entrySet()) {
-            mAudioMap.put((Integer)entry.getKey(), (String)entry.getValue());
+    private void loadAssociatedAudioClips() {
+        // Load 10 audio tracks from a combination of saved and blank
+        try {
+            mAudioTracks.clear();
+            for (RealmAudioClip audioClip : mRealmRecord.getAudioClips()) {
+                AudioTrack track = new AudioTrack(audioClip.getTitle(), audioClip.getPath(), audioClip.getUuid());
+                mAudioTracks.add(track);
+            }
+            if (mAudioTracks.size() < 10) {
+                for (int i = mAudioTracks.size(); i < 10; i++) {
+                    mAudioTracks.add(AudioTrack.createEmptyTrack());
+                }
+            }
+        } catch (NullPointerException e) {
+            for (int i = 0; i < 10; i++) {
+                mAudioTracks.add(AudioTrack.createEmptyTrack());
+            }
         }
+    }
+
+    public void setAudio(ArrayList<AudioTrack> tracks) {
+        mAudioTracks = tracks;
     }
 
     /**
@@ -211,7 +215,7 @@ public class RecordSessionManager {
         mUpdateUpdateSessionInterface.updateSession(this);
     }
 
-    public void reloadCurrentRecord() {
+    public void refreshUi() {
         mUpdateUiInterface.updateUI(this);
     }
 
@@ -306,7 +310,7 @@ public class RecordSessionManager {
     }
 
     /**
-     * Saving
+     * Saving to Realm
      */
 
     public void save() {
@@ -317,13 +321,14 @@ public class RecordSessionManager {
         mRealm.copyToRealmOrUpdate(mRealmRecord);
         try {
             mRealmRecord.setImages(saveImages(fileManager));
+            removeDeletedAudioTracksFromRealm();
+            mRealmRecord.setAudioClips(saveAudioClips(fileManager));
             mRealm.copyToRealmOrUpdate(mRealmRecord);
+            mRealm.commitTransaction();
         } catch (Exception e) {
             mRealm.cancelTransaction();
             mErrorInterface.showErrorMessage("Problem saving record: " + e.toString());
         }
-
-        mRealm.commitTransaction();
     }
 
     private RealmList<RealmImage> saveImages(FileManager fileManager) throws Exception {
@@ -356,46 +361,65 @@ public class RecordSessionManager {
         return imagesToAttach;
     }
 
-    private void writeOutAndAttachAudioClips(FileManager fileManager, Realm realm, RealmRecord record) throws Exception {
+    private void removeDeletedAudioTracksFromRealm() {
         try {
-            // Delete all existing clips
-            RealmList<RealmAudioClip> existingClips = record.getAudioClips();
+            RealmList<RealmAudioClip> existingClips = mRealmRecord.getAudioClips();
             for (RealmAudioClip existingClip : existingClips) {
-                try {
+                boolean match = false;
+                for (AudioTrack track : mAudioTracks) {
+                    if (track.getUuid() != null && track.getUuid().equals(existingClip.getUuid())) {
+                        // Our RealmAudioClip still exists in mAudioTracks, lets keep it.
+                        match = true;
+                        continue;
+                    }
+                }
+                if (match == false) {
+                    // Our RealmAudioClip  is no longer in mAudioTracks, so lets delete it
                     existingClip.deleteFromRealm();
-                } catch (Exception e) {
-                    Logger.logMessage(e.toString());
                 }
             }
-            existingClips.clear();
         } catch (Exception e) {
             Logger.logMessage(e.toString());
         }
+    }
 
-        // Add New
-        RealmList<RealmAudioClip> newAudioClips = new RealmList<>();
-
-        for (int i = 0; i < mAudioMap.size(); i ++) {
-            String path = mAudioMap.get(new Integer(i));
-            if (path == null || path.isEmpty()) {
+    private RealmList<RealmAudioClip> saveAudioClips(FileManager fileManager) throws Exception {
+        RealmList<RealmAudioClip> audioClipsToAttach = new RealmList<>();
+        int counter = 0;
+        for (AudioTrack track : mAudioTracks) {
+            if (track.getFilePath() == null) {
+                // Track not recorded into
                 continue;
             }
+
+            String title = cleanStringOfUnwantedSpace(mRealmRecord.getListingTitle()) + "_" + Integer.toString(counter);
+
+            RealmAudioClip existing = mRealm.where(RealmAudioClip.class).equalTo(RealmAudioClip.PRIMARY_KEY, track.getUuid()).findFirst();
+            if (existing != null) {
+                // Redo title as user may have changed it
+                existing.setTitle(title);
+                mRealm.copyToRealmOrUpdate(existing);
+                audioClipsToAttach.add(existing);
+                continue;
+            }
+
+            //** Brand new RealmAudioClip **//
+
             // Write to app storage
-            File soundCLipFile = fileManager.copyAudioClipFromPathToDirectory(path,
+            File soundCLipFile = fileManager.copyAudioClipFromPathToDirectory(track.getFilePath(),
                     FileManager.getRootAudioClipsPath(),
-                    cleanStringForFileName(record.getListingTitle()));
+                    cleanStringForFileName(mRealmRecord.getListingTitle()));
 
             // Add to Realm
-            RealmAudioClip realmAudioClip = realm.copyToRealm(new RealmAudioClip());
-            realmAudioClip.setTitle(cleanStringOfUnwantedSpace(record.getListingTitle()) + "_" + Integer.toString(i));
+            RealmAudioClip realmAudioClip = mRealm.copyToRealm(new RealmAudioClip());
+            realmAudioClip.setTitle(title);
             realmAudioClip.setPath(soundCLipFile.getPath());
-            newAudioClips.add(realmAudioClip);
+            audioClipsToAttach.add(realmAudioClip);
 
-            // Delete original audio file path
-            FileManager.deleteFileAtPath(path);
+            // Delete temp audio file path
+            FileManager.deleteFileAtPath(track.getFilePath());
         }
 
-        // Set New Clips
-        record.setAudioClips(newAudioClips);
+        return audioClipsToAttach;
     }
 }
