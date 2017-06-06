@@ -276,10 +276,10 @@ public class RecordSessionManager {
 
         if (!artist.isEmpty()) {
             titleString += cleanStringOfUnwantedSpace(artist);
+            titleString += " - ";
         }
 
         if (!title.isEmpty()) {
-            titleString += " - ";
             titleString += cleanStringOfUnwantedSpace(title);
         }
 
