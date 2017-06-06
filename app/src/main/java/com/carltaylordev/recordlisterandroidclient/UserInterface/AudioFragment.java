@@ -42,7 +42,9 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.audio_fragment, container, false);
+
         setupMultiAudioRecorder();
         setupButtons(rootView);
         setupNumberPicker(rootView);
