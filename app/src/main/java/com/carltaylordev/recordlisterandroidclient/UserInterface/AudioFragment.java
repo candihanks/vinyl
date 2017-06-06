@@ -46,7 +46,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
         setupMultiAudioRecorder();
         setupButtons(rootView);
         setupNumberPicker(rootView);
-        setButtonStateForTrack(1);
+        setButtonStateForIndex(0);
         return rootView;
     }
 
@@ -55,7 +55,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
      */
 
     private void setupMultiAudioRecorder() {
-        mRecorder = new MultiAudioRecorder(this, NUMBER_OF_AUDIO_TRACKS, 1);
+        mRecorder = new MultiAudioRecorder(this, NUMBER_OF_AUDIO_TRACKS);
     }
 
     private void setupButtons(View view) {
@@ -66,7 +66,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
                 if (mRecorder.inUse()) {
                     mRecorder.stop();
                 } else {
-                    mRecorder.record(mNumberPicker.getValue());
+                    mRecorder.record(numberPickerIndexOffset());
                 }
             }
         });
@@ -78,7 +78,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
                 if (mRecorder.inUse()) {
                     mRecorder.stop();
                 } else {
-                    mRecorder.play(mNumberPicker.getValue());
+                    mRecorder.play(numberPickerIndexOffset());
                 }
             }
         });
@@ -90,8 +90,8 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
                 if (mRecorder.inUse()) {
                     mRecorder.stop();
                 }
-                mRecorder.deleteFile(mNumberPicker.getValue());
-                setButtonStateForTrack(mNumberPicker.getValue());
+                mRecorder.deleteTrack(numberPickerIndexOffset());
+                setButtonStateForIndex(numberPickerIndexOffset());
             }
         });
     }
@@ -105,13 +105,13 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 mRecorder.stop();
-                setButtonStateForTrack(newVal);
+                setButtonStateForIndex(newVal);
             }
         });
     }
 
-    private void setButtonStateForTrack(int track) {
-        boolean trackExists = mRecorder.audioFileExists(track);
+    private void setButtonStateForIndex(int index) {
+        boolean trackExists = mRecorder.audioFileExists(index);
         if (trackExists) {
             mPlayButton.setVisibility(View.VISIBLE);
             mDeleteButton.setVisibility(View.VISIBLE);
@@ -122,21 +122,25 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
         mRecordButton.setVisibility(View.VISIBLE);
     }
 
+    private int numberPickerIndexOffset() {
+        return mNumberPicker.getValue() - 1;
+    }
+
     /**
      *  RecordSessionManager Interface
      */
 
     @Override
     public void updateSession(RecordSessionManager manager) {
-        manager.setAudio(mRecorder.getRecordedMap());
+        manager.setAudio(mRecorder.getTracks());
     }
 
     @Override
     public void updateUI(RecordSessionManager manager) {
         if (manager.getAudio() != null) {
-            mRecorder.loadAudioMap(manager.getAudio());
+            mRecorder.setTracks(manager.getAudio());
         }
-        setButtonStateForTrack(mNumberPicker.getValue());
+        setButtonStateForIndex(numberPickerIndexOffset());
     }
 
     /**
@@ -153,7 +157,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
     @Override
     public void didFinishPlaying() {
         mPlayButton.setText("Play");
-        setButtonStateForTrack(mNumberPicker.getValue());
+        setButtonStateForIndex(numberPickerIndexOffset());
     }
 
     @Override
@@ -166,13 +170,13 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
     @Override
     public void didFinishRecording() {
         mRecordButton.setText("Record");
-        setButtonStateForTrack(mNumberPicker.getValue());
+        setButtonStateForIndex(numberPickerIndexOffset());
     }
 
     @Override
     public void didError(String message) {
         mRecorder.stop();
-        setButtonStateForTrack(mNumberPicker.getValue());
+        setButtonStateForIndex(numberPickerIndexOffset());
         ListingActivity activity = (ListingActivity)getActivity();
         activity.showAlert("Error:", message);
     }

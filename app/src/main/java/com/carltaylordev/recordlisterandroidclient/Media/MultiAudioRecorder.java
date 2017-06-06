@@ -7,6 +7,7 @@ import com.carltaylordev.recordlisterandroidclient.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,7 +29,7 @@ public class MultiAudioRecorder {
         void didError(String message);
     }
 
-    private HashMap<Integer, String> mFilesMap = new HashMap<>();
+    private ArrayList<AudioTrack> mTracks = new ArrayList<>();
 
     private MediaRecorder mRecorder = null;
     private MediaPlayer mPlayer = null;
@@ -36,18 +37,12 @@ public class MultiAudioRecorder {
     private Interface mInterface;
 
     private boolean mInUse = false;
-    private int mUiStartIndex;
 
-    public MultiAudioRecorder(Interface activity, int numberOfTracks, int uiStartIndex) {
-        /**
-         *  uiStartIndex: in case the UI (numberPicker) is not 0 indexed, we need to subtract this
-         *  value each time we access mFilesMap.
-         */
+    public MultiAudioRecorder(Interface activity, int numberOfTracks) {
         mInterface = activity;
-        mUiStartIndex = uiStartIndex;
 
         for (int i = 0; i < numberOfTracks; i++) {
-            mFilesMap.put(new Integer(i), "");
+            mTracks.add(AudioTrack.emptyTrack());
         }
     }
 
@@ -63,37 +58,33 @@ public class MultiAudioRecorder {
     }
 
     /**
-     *  File Management
+     *  Track Management
      */
 
-    private Integer indexOffset(Integer trackNumber) {
-        return  trackNumber.intValue() - mUiStartIndex;
-    }
-
-
-    public Boolean audioFileExists(Integer trackNumber) {
-        return !mFilesMap.get(indexOffset(trackNumber)).isEmpty();
-    }
-
-    public void deleteFile(Integer trackNumber) {
-        FileManager.deleteFileAtPath(mFilesMap.get(trackNumber.intValue() - 1));
-        mFilesMap.put(indexOffset(trackNumber), "");
-    }
-
-    public void loadAudioMap(Map<Integer, String> audioMap) {
-        for (int i = 0; i < audioMap.size(); i++) {
-            mFilesMap.put(new Integer(i), audioMap.get(i));
+    public Boolean audioFileExists(int index) {
+        try {
+            AudioTrack track = mTracks.get(index);
+            track.getFilePath();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
-    public Map<Integer, String> getRecordedMap() {
-        HashMap<Integer, String> recorded = new HashMap();
-        for (int i = 0; i < mFilesMap.size(); i++) {
-            String path = mFilesMap.get(new Integer(i));
-            recorded.put(i, path);
-        }
-        Map<Integer, String> immutableMap = Collections.unmodifiableMap(new LinkedHashMap<>(recorded));
-        return immutableMap;
+    public void deleteTrack(Integer index) {
+        AudioTrack track = mTracks.get(index);
+        try {
+            FileManager.deleteFileAtPath(track.getFilePath());
+        } catch (NullPointerException e) {}
+        track.setFilePath(null);
+    }
+
+    public ArrayList<AudioTrack> getTracks() {
+        return mTracks;
+    }
+
+    public void setTracks(ArrayList<AudioTrack> tracks) {
+        mTracks = tracks;
     }
 
     /**
@@ -104,29 +95,28 @@ public class MultiAudioRecorder {
         return mInUse;
     }
 
-    public void play(Integer trackNumber) {
+    public void play(int index) {
         if (inUse()) {
             stop();
         }
-        startPlaying(mFilesMap.get(indexOffset(trackNumber)));
+        startPlaying(mTracks.get(index));
         mInUse = true;
     }
 
-    public void record(Integer trackNumber) {
+    public void record(int index) {
         if (inUse()) {
             stop();
         }
-        Integer mapNumber = indexOffset(trackNumber);
+        AudioTrack track = mTracks.get(index);
         try {
-            String path = mFilesMap.get(mapNumber);
-            if (path.isEmpty()) {
+            if (track.getFilePath() == null) {
                 File tempFile = FileManager.createTempFileOnDisc(".aac");
-                mFilesMap.put(mapNumber, tempFile.getAbsolutePath());
+                track.setFilePath(tempFile.getAbsolutePath());
             }
         } catch (Exception e) {
             Logger.logMessage("Problem creating temp file: " + e.toString());
         }
-        startRecording(mFilesMap.get(mapNumber));
+        startRecording(track);
         mInUse = true;
     }
 
@@ -150,7 +140,7 @@ public class MultiAudioRecorder {
         mInUse = false;
     }
 
-    private void startPlaying(String inputFile) {
+    private void startPlaying(AudioTrack track) {
         if (mPlayer == null) {
             mPlayer = new MediaPlayer();
         } else {
@@ -183,7 +173,7 @@ public class MultiAudioRecorder {
         });
 
         try {
-            mPlayer.setDataSource(inputFile);
+            mPlayer.setDataSource(track.getFilePath());
             mPlayer.prepare();
         } catch (IOException e) {
             mInUse = false;
@@ -191,7 +181,7 @@ public class MultiAudioRecorder {
         }
     }
 
-    private void startRecording(String outputFile) {
+    private void startRecording(AudioTrack track) {
         if (mRecorder == null) {
             mRecorder = new MediaRecorder();
         } else {
@@ -223,7 +213,7 @@ public class MultiAudioRecorder {
                 }
             });
 
-            mRecorder.setOutputFile(outputFile);
+            mRecorder.setOutputFile(track.getFilePath());
             mRecorder.prepare();
             mRecorder.start();
             mInterface.didStartRecording();
