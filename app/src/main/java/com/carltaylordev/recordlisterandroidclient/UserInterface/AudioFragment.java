@@ -105,7 +105,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 mRecorder.stop();
-                setButtonStateForIndex(newVal);
+                setButtonStateForIndex(numberPickerIndexOffset());
             }
         });
     }
