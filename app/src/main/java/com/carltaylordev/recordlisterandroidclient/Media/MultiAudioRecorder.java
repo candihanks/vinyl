@@ -25,14 +25,16 @@ public class MultiAudioRecorder {
         void didError(String message);
     }
 
-    private ArrayList<AudioTrack> mTracks = new ArrayList<>();
-
     private MediaRecorder mRecorder = null;
     private MediaPlayer mPlayer = null;
 
     private Interface mInterface;
-
+    private ArrayList<AudioTrack> mTracks = new ArrayList<>();
     private boolean mInUse = false;
+
+    /**
+     *  LifeCycle
+     */
 
     public MultiAudioRecorder(Interface activity, int numberOfTracks) {
         mInterface = activity;
@@ -54,7 +56,7 @@ public class MultiAudioRecorder {
     }
 
     /**
-     *  Track Management
+     *  Public Track Management
      */
 
     public Boolean audioFileExists(int index) {
@@ -77,16 +79,16 @@ public class MultiAudioRecorder {
         mTracks.set(index, AudioTrack.createEmptyTrack());
     }
 
-    public ArrayList<AudioTrack> getTracks() {
-        return mTracks;
-    }
-
     public void setTracks(ArrayList<AudioTrack> tracks) {
         mTracks = tracks;
     }
 
+    public ArrayList<AudioTrack> getTracks() {
+        return mTracks;
+    }
+
     /**
-     *  Audio Controls
+     *  Public Audio Controls
      */
 
     public Boolean inUse() {
@@ -137,6 +139,10 @@ public class MultiAudioRecorder {
         }
         mInUse = false;
     }
+
+    /**
+     *  Internal Play/Record Audio
+     */
 
     private void startPlaying(AudioTrack track) {
         if (mPlayer == null) {
