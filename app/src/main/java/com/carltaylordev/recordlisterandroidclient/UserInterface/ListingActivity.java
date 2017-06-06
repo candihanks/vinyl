@@ -72,14 +72,14 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
     @Override
     protected void onPause() {
-        super.onPause();
         mRecordSessionManager.captureCurrentState();
+        super.onPause();
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
         mRecordSessionManager.refreshUi();
+        super.onResume();
     }
 
 
@@ -88,7 +88,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case REQUEST_PERMISSIONS:
-                permissionsAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                permissionsAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
         if (!permissionsAccepted) {
@@ -110,8 +110,6 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
