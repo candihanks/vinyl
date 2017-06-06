@@ -25,6 +25,7 @@ import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
+import com.carltaylordev.recordlisterandroidclient.SetupSingleton;
 import com.carltaylordev.recordlisterandroidclient.mock.data.MockData;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
@@ -52,29 +53,6 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-
-    /**
-     * Initial Setup
-     */
-
-    private Realm setupRealm() {
-        Realm.init(this);
-        Realm realm = Realm.getDefaultInstance();
-        return realm;
-    }
-
-    private void setupMockData(Realm realm) {
-        MockData mockDataSetUp = new MockData(realm);
-        mockDataSetUp.setUp();
-    }
-
-    private void clearTempDir() {
-        FileManager manager = new FileManager(this);
-        try {
-            manager.recursivelyDeleteFolderAndChildren(new File(FileManager.getRootTempPath()));
-        } catch (NullPointerException e) {}
-    }
-
     /**
      * Activity LifeCycle
      */
@@ -84,9 +62,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listing_activity);
 
-        Realm realm = setupRealm();
-        setupMockData(realm);
-        clearTempDir();
+        SetupSingleton.setup(this);
 
         requestPermissions();
 
