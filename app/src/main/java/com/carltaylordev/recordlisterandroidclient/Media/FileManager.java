@@ -129,12 +129,6 @@ public class FileManager {
         return next;
     }
 
-
-    public static Bitmap decodeImageFromPath(String path) {
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
-        return bitmap;
-    }
-
     private void updateMediaScannerWithFile(File file) {
         MediaScannerConnection.scanFile(mContext, new String[] { file.toString() }, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
