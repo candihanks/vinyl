@@ -35,7 +35,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class ListingActivity extends AppCompatActivity implements RecordSessionManager.UpdateSessionInterface,
+public class ListingActivity extends BaseActivity implements RecordSessionManager.UpdateSessionInterface,
         RecordSessionManager.ErrorInterface, RecordSessionManager.UpdateUiInterface {
 
     public static final String EXTRA_KEY_UUID = "EXTRA_KEY_UUID";
@@ -186,30 +186,12 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     }
 
     /**
-     * Helpers
-     */
-
-    public List<Fragment> getActiveFragments() {
-        ArrayList<Fragment> ret = new ArrayList<>();
-        for(WeakReference<Fragment> ref : mFragList) {
-            Fragment f = ref.get();
-            if(f != null) {
-                if(f.isVisible()) {
-                    ret.add(f);
-                }
-            }
-        }
-        return ret;
-    }
-
-
-    /**
      * RecordSessionManager Interfaces
      */
 
     @Override
     public void updateSession(RecordSessionManager sessionManager) {
-        List<Fragment> fragments = getActiveFragments();
+        List<Fragment> fragments = super.getActiveFragments(mFragList);
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.UpdateSessionInterface) {
                 ((RecordSessionManager.UpdateSessionInterface) frag).updateSession(sessionManager);
@@ -221,7 +203,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
     @Override
     public void updateUI(RecordSessionManager sessionManager) {
-        List<Fragment> fragments = getActiveFragments();
+        List<Fragment> fragments = super.getActiveFragments(mFragList);
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.UpdateUiInterface) {
                 ((RecordSessionManager.UpdateUiInterface) frag).updateUI(sessionManager);
@@ -233,27 +215,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
     @Override
     public void showErrorMessage(String message) {
-        showAlert("Error", message);
-    }
-
-    /**
-     * User Notifications
-     */
-
-    void showAlert(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message)
-                .setTitle(title);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    void showSnackBar(View view, String message) {
-        Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-    }
-
-    void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        super.showAlert("Error", message);
     }
 
     /**
