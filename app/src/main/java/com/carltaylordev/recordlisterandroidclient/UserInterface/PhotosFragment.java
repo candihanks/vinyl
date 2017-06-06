@@ -33,7 +33,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     static final int REQUEST_IMAGE_CAPTURE = 1001;
 
     private GridView mGridView;
-    private GridViewAdapter mGridAdapter;
+    private PhotosGridViewAdapter mGridAdapter;
 
     private int mLastSelectedGridPosition;
     private String mLastCreatedTempFileLocation;
@@ -70,7 +70,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
 
     void setupGridView(View view, final ListingActivity activity) {
         ArrayList<RealmImage> images = activity.mRecordSessionManager.getImages();
-        mGridAdapter = new GridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
+        mGridAdapter = new PhotosGridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
         mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
         mGridView.setAdapter(mGridAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

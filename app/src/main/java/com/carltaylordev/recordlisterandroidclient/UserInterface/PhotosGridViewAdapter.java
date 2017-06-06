@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import io.realm.RealmList;
 
-public class GridViewAdapter extends ArrayAdapter<RealmImage> {
+public class PhotosGridViewAdapter extends ArrayAdapter<RealmImage> {
 
     static class ViewHolder {
         TextView imageTitle;
@@ -31,7 +31,7 @@ public class GridViewAdapter extends ArrayAdapter<RealmImage> {
     private int layoutResourceId;
     private ArrayList<RealmImage> data;
 
-    public GridViewAdapter(Context context, int layoutResourceId, ArrayList<RealmImage> data) {
+    public PhotosGridViewAdapter(Context context, int layoutResourceId, ArrayList<RealmImage> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
