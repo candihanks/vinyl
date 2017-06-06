@@ -230,24 +230,24 @@ public class RecordSessionManager {
         boolean valid = true;
 
         if (mRealmRecord.getTitle().isEmpty()) {
-            message += "Title\n";
+            message += "* Title\n";
             valid = false;
         }
 
         if (mRealmRecord.getListingTitle() == null || mRealmRecord.getListingTitle().isEmpty()) {
-            message += "Listing title\n";
+            message += "* Listing title\n";
             valid = false;
         }
 
         if (mRealmRecord.getPrice().isEmpty()) {
-            message += "Price\n";
+            message += "* Price\n";
             valid = false;
         }
 
         if (mImages.size() == 1) {
             RealmImage onlyImage = mImages.get(0);
             if (onlyImage.isPlaceHolder()) {
-                message += "At least 1 Image\n";
+                message += "* At least 1 Image\n";
                 valid = false;
             }
         }
@@ -374,7 +374,7 @@ public class RecordSessionManager {
                     }
                 }
                 if (match == false) {
-                    // Our RealmAudioClip  is no longer in mAudioTracks, so lets delete it
+                    // Our RealmAudioClip is no longer in mAudioTracks, so lets delete it
                     existingClip.deleteFromRealm();
                 }
             }
