@@ -22,15 +22,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
-import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.SetupSingleton;
-import com.carltaylordev.recordlisterandroidclient.mock.data.MockData;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +151,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BoolResponse response = mRecordSessionManager.recordIsValid();
+                BoolResponse response = mRecordSessionManager.sessionIsValid();
                 if (response.isTrue()) {
                     mRecordSessionManager.save();
                     showSnackBar(view, "Record Saved");

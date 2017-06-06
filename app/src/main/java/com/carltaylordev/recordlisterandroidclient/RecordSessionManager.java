@@ -223,7 +223,7 @@ public class RecordSessionManager {
      * Validation
      */
 
-    public BoolResponse recordIsValid() {
+    public BoolResponse sessionIsValid() {
         mUpdateUpdateSessionInterface.updateSession(this);
 
         String message = "";
