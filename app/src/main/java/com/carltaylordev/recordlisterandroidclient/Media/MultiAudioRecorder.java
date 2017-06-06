@@ -64,8 +64,7 @@ public class MultiAudioRecorder {
     public Boolean audioFileExists(int index) {
         try {
             AudioTrack track = mTracks.get(index);
-            track.getFilePath();
-            return true;
+            return track.getFilePath() != null;
         } catch (Exception e) {
             return false;
         }
