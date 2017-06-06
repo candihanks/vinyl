@@ -1,6 +1,7 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -37,6 +38,8 @@ import io.realm.Realm;
 public class ListingActivity extends AppCompatActivity implements RecordSessionManager.UpdateSessionInterface,
         RecordSessionManager.ErrorInterface, RecordSessionManager.UpdateUiInterface {
 
+    public static final String EXTRA_KEY_UUID = "EXTRA_KEY_UUID";
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     List<WeakReference<Fragment>> mFragList = new ArrayList<>();
@@ -63,7 +66,7 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
 
         requestPermissions();
 
-        mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), this);
+        mRecordSessionManager = new RecordSessionManager(getRecord(), Realm.getDefaultInstance(), this);
 
         setupViewPager();
         setupSaveFab();
@@ -126,6 +129,18 @@ public class ListingActivity extends AppCompatActivity implements RecordSessionM
     /**
      * Setup
      */
+
+    private RealmRecord getRecord() {
+        Intent intent = getIntent();
+        String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
+
+        Realm realm = Realm.getDefaultInstance();
+        RealmRecord record = realm.where(RealmRecord.class).equalTo(RealmRecord.PRIMARY_KEY, uuid).findFirst();
+        if (record == null) {
+            record = new RealmRecord();
+        }
+        return record;
+    }
 
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSIONS);

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -14,6 +15,10 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class RealmRecord extends RealmObject {
+
+    @Ignore
+    public static final String PRIMARY_KEY = "uuid";
+
     @PrimaryKey
     private String uuid = UUID.randomUUID().toString();
     private String artist;
