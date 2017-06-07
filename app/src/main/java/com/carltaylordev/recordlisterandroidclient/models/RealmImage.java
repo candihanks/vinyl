@@ -58,8 +58,8 @@ public class RealmImage extends RealmObject {
     }
 
     public void rehydrate() {
-        Bitmap temp = BitmapFactory.decodeFile(path);
-        thumb = convertToThumb(temp);
+        Bitmap tempThumb = BitmapFactory.decodeFile(path);
+        thumb = convertToThumb(tempThumb);
     }
 
     public static RealmImage placeHolderImage(Context context) {
