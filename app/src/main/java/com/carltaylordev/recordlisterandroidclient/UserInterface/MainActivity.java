@@ -1,12 +1,13 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import com.carltaylordev.recordlisterandroidclient.R;
+import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.ListingActivity;
+import com.carltaylordev.recordlisterandroidclient.UserInterface.SavedListings.SavedListingsActivity;
 
 public class MainActivity extends BaseActivity {
 
@@ -34,11 +35,28 @@ public class MainActivity extends BaseActivity {
                 createNewListing();
             }
         });
+
+        Button savedListingsButton = (Button)findViewById(R.id.saved_listings_button);
+        savedListingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewSavedListings();
+            }
+        });
     }
+
+    /**
+     * Intents
+     */
 
     private void createNewListing() {
         Intent intent = new Intent(this, ListingActivity.class);
         intent.putExtra(ListingActivity.EXTRA_KEY_UUID, "");
+        startActivity(intent);
+    }
+
+    private void viewSavedListings() {
+        Intent intent = new Intent(this, SavedListingsActivity.class);
         startActivity(intent);
     }
 }

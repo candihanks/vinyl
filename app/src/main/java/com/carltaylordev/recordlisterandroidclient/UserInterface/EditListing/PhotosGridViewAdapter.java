@@ -1,4 +1,4 @@
-package com.carltaylordev.recordlisterandroidclient.UserInterface;
+package com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing;
 
 /**
  * Created by carl on 31/05/2017.

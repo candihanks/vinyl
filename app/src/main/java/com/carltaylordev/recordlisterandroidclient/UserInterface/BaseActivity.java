@@ -38,7 +38,7 @@ public class BaseActivity extends AppCompatActivity {
      * User Notifications
      */
 
-    void showAlert(String title, String message) {
+   public void showAlert(String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)
                 .setTitle(title);
@@ -46,11 +46,11 @@ public class BaseActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    void showSnackBar(View view, String message) {
+    public void showSnackBar(View view, String message) {
         Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
-    void showToast(String message) {
+    public  void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

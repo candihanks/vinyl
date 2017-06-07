@@ -1,4 +1,4 @@
-package com.carltaylordev.recordlisterandroidclient.UserInterface;
+package com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -4,7 +4,7 @@
 
     <uses-feature
         android:name="android.hardware.camera2"
-        android:required="false"></uses-feature>
+        android:required="false" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -17,11 +17,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".UserInterface.ListingActivity"
+            android:name=".UserInterface.EditListing.ListingActivity"
             android:label="@string/listing_activity_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity
             android:name=".UserInterface.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -29,9 +28,14 @@
             android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".UserInterface.SavedListings.SavedListingsActivity"
+            android:label="@string/title_activity_saved_listings"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
