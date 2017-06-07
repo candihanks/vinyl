@@ -19,6 +19,8 @@ import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
+import static android.R.drawable.ic_menu_save;
+
 /**
  * Created by carl on 31/05/2017.
  */
@@ -61,8 +63,8 @@ public class RealmImage extends RealmObject {
     }
 
     public static RealmImage placeHolderImage(Context context) {
-        RealmImage realmImage = new RealmImage("Tap To Add", null);
-        realmImage.thumb = convertToThumb(BitmapFactory.decodeResource(context.getResources(), R.drawable.magic_wand));
+        RealmImage realmImage = new RealmImage("", null);
+        realmImage.thumb = convertToThumb(BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_menu_camera));
         realmImage.isPlaceHolder = true;
         return realmImage;
     }
