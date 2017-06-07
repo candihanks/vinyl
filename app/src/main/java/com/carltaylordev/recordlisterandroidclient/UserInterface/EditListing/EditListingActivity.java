@@ -20,7 +20,6 @@ import android.view.View;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
-import com.carltaylordev.recordlisterandroidclient.SetupSingleton;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
@@ -60,7 +59,7 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
 
         requestPermissions();
 
-        mRecordSessionManager = new RecordSessionManager(getRecord(), Realm.getDefaultInstance(), this);
+        mRecordSessionManager = new RecordSessionManager(getRecordFromIntent(), Realm.getDefaultInstance(), this);
 
         setupViewPager();
         setupSaveFab();
@@ -124,7 +123,7 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
      * Setup
      */
 
-    private RealmRecord getRecord() {
+    private RealmRecord getRecordFromIntent() {
         Intent intent = getIntent();
         String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
 
@@ -132,6 +131,9 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
         RealmRecord record = realm.where(RealmRecord.class).equalTo(RealmRecord.PRIMARY_KEY, uuid).findFirst();
         if (record == null) {
             record = new RealmRecord();
+        } else {
+            // Create working copy so we can manipulate outside write transactions
+            record = realm.copyFromRealm(record);
         }
         return record;
     }

@@ -1,5 +1,6 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface.SavedListings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,7 @@ import android.view.View;
 
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
+import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
@@ -18,7 +20,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
-public class SavedListingsActivity extends BaseActivity {
+public class SavedListingsActivity extends BaseActivity implements RecyclerAdapter.RecordHolder.Interface {
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
@@ -51,12 +53,23 @@ public class SavedListingsActivity extends BaseActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mAdapter = new RecyclerAdapter(records);
+        mAdapter = new RecyclerAdapter(records, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     RealmResults<RealmRecord> getSavedRecords(Realm realm) {
         RealmResults<RealmRecord> records = realm.where(RealmRecord.class).findAll();
         return records;
+    }
+
+    /**
+     * Interface
+     */
+
+    @Override
+    public void editRecord(String uuid) {
+        Intent intent = new Intent(this, EditListingActivity.class);
+        intent.putExtra(EditListingActivity.EXTRA_KEY_UUID, uuid);
+        startActivity(intent);
     }
 }

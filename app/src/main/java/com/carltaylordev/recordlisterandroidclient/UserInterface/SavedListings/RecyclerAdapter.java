@@ -1,5 +1,7 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface.SavedListings;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +11,11 @@ import android.widget.TextView;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
+import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
+
+import java.lang.ref.WeakReference;
 
 import io.realm.RealmResults;
 
@@ -26,9 +31,14 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
 
     public static class RecordHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        public interface Interface {
+            void editRecord(String uuid);
+        }
+
         private ImageView mImageView;
         private TextView mTitleTextView;
         private RealmRecord mRecord;
+        private Interface mInterface;
 
         public RecordHolder(View view) {
             super(view);
@@ -37,8 +47,9 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
             view.setOnClickListener(this);
         }
 
-        public void bindRecord(RealmRecord record) {
+        public void bindRecord(RealmRecord record, Interface adapterInterface) {
             mRecord = record;
+            mInterface = adapterInterface;
 
             RealmImage image = mRecord.getImages().get(0);
             if (image.getThumb() == null) {
@@ -52,7 +63,7 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
         @Override
         public void onClick(View v) {
             Logger.logMessage("RecyclerViewClicked");
-            // // TODO: 07/06/2017 launch edit listing activity with UUID
+            mInterface.editRecord(mRecord.getUuid());
         }
     }
 
@@ -61,9 +72,11 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
      */
 
     private RealmResults<RealmRecord> mRecords;
+    private RecordHolder.Interface mInterface;
 
-    public RecyclerAdapter(RealmResults<RealmRecord> records) {
+    public RecyclerAdapter(RealmResults<RealmRecord> records, Activity activity) {
         mRecords = records;
+        mInterface = (RecordHolder.Interface) activity;
     }
 
     @Override
@@ -76,11 +89,13 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
     @Override
     public void onBindViewHolder(RecordHolder holder, int position) {
         RealmRecord record = mRecords.get(position);
-        holder.bindRecord(record);
+        holder.bindRecord(record, mInterface);
     }
 
     @Override
     public int getItemCount() {
         return mRecords.size();
     }
+
+
 }
