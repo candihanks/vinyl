@@ -100,9 +100,9 @@ public class FileManager {
         return file;
     }
 
-    public File copyAudioClipFromPathToDirectory(String path, String appDirPath, String clipName) throws Exception {
-        File file = new File (FileManager.createDirectory(appDirPath), "audio_clip_" + clipName + "_" + randomNumber() + ".aac");
-        
+    public File copyFileFromPathToDirectory(String path, String appDirPath, String fileName) throws Exception {
+        File file = new File (FileManager.createDirectory(appDirPath), "" + randomNumber() + "_" + fileName);
+
         InputStream is = new FileInputStream(path);
         OutputStream os = new FileOutputStream(file.getAbsolutePath(), false);
         byte[] buffer = new byte[1024];
