@@ -5,7 +5,18 @@
     android:layout_height="match_parent"
     tools:context="com.carltaylordev.recordlisterandroidclient.UserInterface.ListingActivity">
 
+    <TextView
+        android:layout_marginTop="@dimen/minor_margin"
+        style="@style/SpinnerLabelStyle"
+        android:text="Category"/>
+
+    <Spinner
+        android:id="@+id/spinner_ebay_cats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></Spinner>
+
     <EditText
+        android:layout_marginTop="@dimen/minor_margin"
         android:id="@+id/edit_text_artist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,22 +34,19 @@
         android:layout_height="wrap_content"
         android:hint="Label"/>
 
-    <Spinner
-        android:id="@+id/spinner_ebay_cats"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Spinner>
 
     <ImageButton
+        android:layout_marginTop="@dimen/minor_margin"
         android:id="@+id/image_button_concat"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
         android:src="@drawable/magic_wand"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
 
     <EditText
         android:id="@+id/edit_text_listing_title"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_width="match_parent"
         android:hint="Listing Title"/>
 
 </LinearLayout>

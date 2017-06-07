@@ -5,16 +5,19 @@
     android:layout_height="match_parent"
     tools:context="com.carltaylordev.recordlisterandroidclient.UserInterface.Info2Fragment">
 
-    <EditText
-        android:id="@+id/edit_text_comments"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Optional Comments"/>
+    <TextView
+        android:layout_marginTop="@dimen/minor_margin"
+        style="@style/SpinnerLabelStyle"
+        android:text="Record Condition"/>
 
     <Spinner
         android:id="@+id/spinner_record_condition"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></Spinner>
+
+    <TextView
+        style="@style/SpinnerLabelStyle"
+        android:text="Cover Condition"/>
 
     <Spinner
         android:id="@+id/spinner_cover_condition"
@@ -22,11 +25,19 @@
         android:layout_height="wrap_content"></Spinner>
 
     <EditText
+        android:layout_marginTop="@dimen/minor_margin"
         android:id="@+id/edit_text_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Price"
-        android:inputType="numberDecimal"
-        />
+        android:inputType="numberDecimal"/>
+
+    <EditText
+        android:id="@+id/edit_text_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Comments"/>
+
+
 
 </LinearLayout>
