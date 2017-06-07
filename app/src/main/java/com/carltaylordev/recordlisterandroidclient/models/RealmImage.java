@@ -62,6 +62,11 @@ public class RealmImage extends RealmObject {
         thumb = convertToThumb(tempThumb);
     }
 
+    public void freeUpMemory() {
+        image.recycle();
+        image = null;
+    }
+
     public static RealmImage placeHolderImage(Context context) {
         RealmImage realmImage = new RealmImage("", null);
         realmImage.thumb = convertToThumb(BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_menu_camera));

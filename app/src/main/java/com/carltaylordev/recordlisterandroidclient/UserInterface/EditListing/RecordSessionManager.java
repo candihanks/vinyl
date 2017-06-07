@@ -354,6 +354,7 @@ public class RecordSessionManager {
                     FileManager.getRootPicturesPath(),
                     image.getUuid());
             image.setPath(imageFile.getAbsolutePath());
+            image.freeUpMemory();
 
             mRealm.copyToRealmOrUpdate(image);
             imagesToAttach.add(image);
