@@ -112,7 +112,7 @@ public class RecordSessionManager {
         list.add("Good Plus (G+)");
         list.add("Good (G)");
         list.add("Fair (F)");
-        list.add("Poor (P),");
+        list.add("Poor (P)");
         return list;
     }
 
