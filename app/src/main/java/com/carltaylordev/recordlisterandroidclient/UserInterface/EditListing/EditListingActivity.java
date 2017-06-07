@@ -22,6 +22,7 @@ import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
+import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 import java.lang.ref.WeakReference;
@@ -59,17 +60,19 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
 
         requestPermissions();
 
-        mRecordSessionManager = new RecordSessionManager(getRecordFromIntent(), Realm.getDefaultInstance(), this);
-
         setupViewPager();
         setupSaveFab();
         setupTestFab();
+
+        if (mRecordSessionManager == null) {
+            mRecordSessionManager = new RecordSessionManager(getRecordFromIntent(), Realm.getDefaultInstance(), this);
+        }
     }
 
     @Override
-    protected void onPause() {
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         mRecordSessionManager.captureCurrentState();
-        super.onPause();
     }
 
     @Override
@@ -88,7 +91,7 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
                 break;
         }
         if (!permissionsAccepted) {
-            showAlert("Oops", "You need to accept the Permissions");
+            showAlert("Oops", "You need to accept the permissions else we can't record audio or take pics");
             requestPermissions();
         }
     }
@@ -130,12 +133,12 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
         Realm realm = Realm.getDefaultInstance();
         RealmRecord record = realm.where(RealmRecord.class).equalTo(RealmRecord.PRIMARY_KEY, uuid).findFirst();
         if (record == null) {
-            record = new RealmRecord();
+            return new RealmRecord();
         } else {
             // Create working copy so we can manipulate outside write transactions
-            record = realm.copyFromRealm(record);
+            RealmRecord workingCopy = realm.copyFromRealm(record);
+            return workingCopy;
         }
-        return record;
     }
 
     private void requestPermissions() {
@@ -191,8 +194,6 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.UpdateSessionInterface) {
                 ((RecordSessionManager.UpdateSessionInterface) frag).updateSession(sessionManager);
-            } else {
-                Logger.logMessage("Fragment does not implement 'updateSession' interface");
             }
         }
     }
@@ -203,8 +204,6 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
         for (Fragment frag : fragments) {
             if (frag instanceof RecordSessionManager.UpdateUiInterface) {
                 ((RecordSessionManager.UpdateUiInterface) frag).updateUI(sessionManager);
-            } else {
-                Logger.logMessage("Fragment does not implement 'updateUI' interface");
             }
         }
     }
