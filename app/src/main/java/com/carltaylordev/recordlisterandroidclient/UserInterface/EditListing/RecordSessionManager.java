@@ -49,8 +49,8 @@ public class RecordSessionManager {
     private ErrorInterface mErrorInterface;
     private Context mContext;
 
-    public RecordSessionManager(RealmRecord realmRecord, Realm realm, Activity activity) {
-        mRealmRecord = realmRecord;
+    public RecordSessionManager(RealmRecord record, Realm realm, Activity activity) {
+        mRealmRecord = record;
         mRealm = realm;
         mUpdateUpdateSessionInterface = (UpdateSessionInterface) activity;
         mUpdateUiInterface = (UpdateUiInterface) activity;
@@ -76,7 +76,7 @@ public class RecordSessionManager {
             mRealmRecord = mRealm.copyFromRealm(savedRecords.get(savedRecords.size() - 1));
             mRealmRecord.setListingTitle("Test Listing Do Not Buy");
             loadAssociatedData();
-            mUpdateUiInterface.updateUI(this);
+            refreshUi();
             return;
         }
 
@@ -92,7 +92,7 @@ public class RecordSessionManager {
         RealmResults<EbayCategory>results = getAllCategories();
         mRealmRecord.setEbayCategory(results.first());
 
-        mUpdateUiInterface.updateUI(this);
+        refreshUi();
     }
 
     /**
@@ -236,7 +236,7 @@ public class RecordSessionManager {
         }
 
         if (mRealmRecord.getListingTitle() == null || mRealmRecord.getListingTitle().isEmpty()) {
-            message += "* Listing title\n";
+            message += "* Listing Title\n";
             valid = false;
         }
 
