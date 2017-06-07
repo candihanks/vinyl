@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".UserInterface.EditListing.ListingActivity"
+            android:name=".UserInterface.EditListing.EditListingActivity"
             android:label="@string/listing_activity_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden"></activity>

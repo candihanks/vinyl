@@ -179,7 +179,7 @@ public class AudioFragment extends android.support.v4.app.Fragment implements Re
     public void didError(String message) {
         mRecorder.stop();
         setButtonStateForIndex(numberPickerIndexOffset());
-        ListingActivity activity = (ListingActivity)getActivity();
+        EditListingActivity activity = (EditListingActivity)getActivity();
         activity.showAlert("Error:", message);
     }
 }

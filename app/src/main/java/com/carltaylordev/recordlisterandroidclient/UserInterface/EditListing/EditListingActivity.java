@@ -32,7 +32,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class ListingActivity extends BaseActivity implements RecordSessionManager.UpdateSessionInterface,
+public class EditListingActivity extends BaseActivity implements RecordSessionManager.UpdateSessionInterface,
         RecordSessionManager.ErrorInterface, RecordSessionManager.UpdateUiInterface {
 
     public static final String EXTRA_KEY_UUID = "EXTRA_KEY_UUID";
@@ -57,7 +57,7 @@ public class ListingActivity extends BaseActivity implements RecordSessionManage
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.listing_activity);
+        setContentView(R.layout.edit_listing_activity);
 
         SetupSingleton.setup(this);
 

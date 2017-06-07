@@ -42,7 +42,7 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.info_2_fragment, container, false);
 
-        ListingActivity activity = (ListingActivity)getActivity();
+        EditListingActivity activity = (EditListingActivity)getActivity();
 
         setupEditTexts(rootView);
         setupSpinners(rootView, activity);
@@ -87,7 +87,7 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
 
     }
 
-    void setupSpinners(View view, ListingActivity activity) {
+    void setupSpinners(View view, EditListingActivity activity) {
         ArrayAdapter<String> recordConditionAdapter = new ArrayAdapter<>(activity,
                 android.R.layout.simple_spinner_item, activity.mRecordSessionManager.getRecordConditions());
         recordConditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

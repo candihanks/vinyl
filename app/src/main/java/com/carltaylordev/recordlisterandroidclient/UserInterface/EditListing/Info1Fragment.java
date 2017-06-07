@@ -49,7 +49,7 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.info_1_fragment, container, false);
 
-        ListingActivity activity = (ListingActivity)getActivity();
+        EditListingActivity activity = (EditListingActivity)getActivity();
 
         setupEditTexts(rootView);
         setupSpinner(rootView, activity);
@@ -62,7 +62,7 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
      *  Setup
      */
 
-    void setupSpinner(View view, ListingActivity activity) {
+    void setupSpinner(View view, EditListingActivity activity) {
         ArrayAdapter<EbayCategory> spinnerArrayAdapter = new ArrayAdapter<>(activity,
                 android.R.layout.simple_spinner_item, activity.mRecordSessionManager.getAllCategories());
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -83,7 +83,7 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ListingActivity activity = (ListingActivity)getActivity();
+                EditListingActivity activity = (EditListingActivity)getActivity();
                 BoolResponse response = activity.mRecordSessionManager.canBuildListingTitle();
                 if (response.isTrue()) {
                     mListingTitleEditText.setText(activity.mRecordSessionManager.buildListingTitle());

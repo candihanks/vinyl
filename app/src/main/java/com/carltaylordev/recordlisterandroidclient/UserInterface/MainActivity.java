@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.carltaylordev.recordlisterandroidclient.R;
-import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.ListingActivity;
+import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.SavedListings.SavedListingsActivity;
 
 public class MainActivity extends BaseActivity {
@@ -50,8 +50,8 @@ public class MainActivity extends BaseActivity {
      */
 
     private void createNewListing() {
-        Intent intent = new Intent(this, ListingActivity.class);
-        intent.putExtra(ListingActivity.EXTRA_KEY_UUID, "");
+        Intent intent = new Intent(this, EditListingActivity.class);
+        intent.putExtra(EditListingActivity.EXTRA_KEY_UUID, "");
         startActivity(intent);
     }
 

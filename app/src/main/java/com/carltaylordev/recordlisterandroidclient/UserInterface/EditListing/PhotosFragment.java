@@ -58,7 +58,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.photos_fragment, container, false);
 
-        ListingActivity activity = (ListingActivity)getActivity();
+        EditListingActivity activity = (EditListingActivity)getActivity();
         setupGridView(rootView, activity);
 
         return rootView;
@@ -68,7 +68,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      *  Setup
      */
 
-    void setupGridView(View view, final ListingActivity activity) {
+    void setupGridView(View view, final EditListingActivity activity) {
         ArrayList<RealmImage> images = activity.mRecordSessionManager.getImages();
         mGridAdapter = new PhotosGridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
         mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
@@ -106,7 +106,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      */
 
     private void captureImage(int gridPosition) {
-        ListingActivity activity = (ListingActivity) getActivity();
+        EditListingActivity activity = (EditListingActivity) getActivity();
         mLastSelectedGridPosition = gridPosition;
 
         FileManager fileManager = new FileManager(activity);
@@ -136,14 +136,14 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             RealmImage image = new RealmImage("New Image", mLastCreatedTempFileLocation);
 
-            ListingActivity activity = (ListingActivity) getActivity();
+            EditListingActivity activity = (EditListingActivity) getActivity();
             RecordSessionManager manager = activity.mRecordSessionManager;
             manager.setImageAtIndex(image, mLastSelectedGridPosition);
         }
     }
 
     private void removeImageAtIndex(int index) {
-        ListingActivity activity = (ListingActivity) getActivity();
+        EditListingActivity activity = (EditListingActivity) getActivity();
         RecordSessionManager manager = activity.mRecordSessionManager;
         manager.removeImageAtIndex(index);
     }
