@@ -349,7 +349,7 @@ public class RecordSessionManager {
                 mRealm.copyToRealmOrUpdate(image);
                 continue;
             }
-            // Its a new image
+            // Its a new image, lets compress it and write to disc
             File imageFile = fileManager.writeJpegToDisc(image.getImage(),
                     FileManager.getRootPicturesPath(),
                     image.getUuid());
@@ -407,9 +407,9 @@ public class RecordSessionManager {
             //** Brand new RealmAudioClip **//
 
             // Write to app storage
-            File soundCLipFile = fileManager.copyAudioClipFromPathToDirectory(track.getFilePath(),
+            File soundCLipFile = fileManager.copyFileFromPathToDirectory(track.getFilePath(),
                     FileManager.getRootAudioClipsPath(),
-                    cleanStringForFileName(mRealmRecord.getListingTitle()));
+                    cleanStringForFileName(mRealmRecord.getListingTitle() + ".aac"));
 
             // Add to Realm
             RealmAudioClip realmAudioClip = mRealm.copyToRealm(new RealmAudioClip());
