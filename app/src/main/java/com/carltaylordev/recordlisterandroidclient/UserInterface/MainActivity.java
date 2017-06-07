@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.carltaylordev.recordlisterandroidclient.R;
+import com.carltaylordev.recordlisterandroidclient.SetupSingleton;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.SavedListings.SavedListingsActivity;
 
@@ -18,6 +19,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SetupSingleton.setup(this);
 
         setContentView(R.layout.main_activity);
         setupButtons();

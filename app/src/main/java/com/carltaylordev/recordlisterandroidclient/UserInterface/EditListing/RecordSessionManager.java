@@ -1,8 +1,9 @@
-package com.carltaylordev.recordlisterandroidclient;
+package com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing;
 
 import android.app.Activity;
 import android.content.Context;
 
+import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.Media.AudioTrack;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;

@@ -20,7 +20,6 @@ import android.view.View;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
-import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 import com.carltaylordev.recordlisterandroidclient.SetupSingleton;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
@@ -58,8 +57,6 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_listing_activity);
-
-        SetupSingleton.setup(this);
 
         requestPermissions();
 

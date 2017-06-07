@@ -9,7 +9,6 @@ import android.widget.NumberPicker;
 
 import com.carltaylordev.recordlisterandroidclient.Media.MultiAudioRecorder;
 import com.carltaylordev.recordlisterandroidclient.R;
-import com.carltaylordev.recordlisterandroidclient.RecordSessionManager;
 
 
 public class AudioFragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateSessionInterface,
