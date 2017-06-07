@@ -2,7 +2,6 @@ package com.carltaylordev.recordlisterandroidclient.Media;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;

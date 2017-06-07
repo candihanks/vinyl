@@ -1,7 +1,5 @@
 package com.carltaylordev.recordlisterandroidclient.mock.data;
 
-import android.content.Context;
-
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 
 import java.util.HashMap;

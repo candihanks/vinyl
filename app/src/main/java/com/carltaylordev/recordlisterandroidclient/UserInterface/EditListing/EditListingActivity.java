@@ -18,11 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
-import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 import java.lang.ref.WeakReference;

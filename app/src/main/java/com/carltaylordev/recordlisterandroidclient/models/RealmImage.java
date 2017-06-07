@@ -4,22 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
-import android.util.Log;
 
-import com.carltaylordev.recordlisterandroidclient.Logger;
-import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
-import com.carltaylordev.recordlisterandroidclient.R;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.UUID;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
-
-import static android.R.drawable.ic_menu_save;
 
 /**
  * Created by carl on 31/05/2017.

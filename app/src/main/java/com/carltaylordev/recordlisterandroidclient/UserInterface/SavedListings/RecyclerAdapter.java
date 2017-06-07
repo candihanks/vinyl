@@ -1,7 +1,6 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface.SavedListings;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +10,8 @@ import android.widget.TextView;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
-import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
-
-import java.lang.ref.WeakReference;
 
 import io.realm.RealmResults;
 
