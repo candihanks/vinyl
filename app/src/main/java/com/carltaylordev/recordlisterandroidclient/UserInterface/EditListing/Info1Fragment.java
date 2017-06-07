@@ -103,6 +103,7 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
         record.setArtist(mArtistEditText.getText().toString());
         record.setTitle(mTitleEditText.getText().toString());
         record.setLabel(mLabelEditText.getText().toString());
+        record.setListingTitle(mListingTitleEditText.getText().toString());
         record.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
     }
 
