@@ -358,6 +358,8 @@ public class RecordSessionManager {
 
             mRealm.copyToRealmOrUpdate(image);
             imagesToAttach.add(image);
+
+            counter ++;
         }
 
         return imagesToAttach;
