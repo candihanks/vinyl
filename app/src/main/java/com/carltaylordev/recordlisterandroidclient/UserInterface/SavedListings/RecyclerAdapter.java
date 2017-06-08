@@ -13,6 +13,8 @@ import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
+import org.w3c.dom.Text;
+
 import io.realm.RealmResults;
 
 /**
@@ -33,6 +35,7 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
 
         private ImageView mImageView;
         private TextView mTitleTextView;
+        private TextView mPriceTextView;
         private RealmRecord mRecord;
         private Interface mInterface;
 
@@ -40,6 +43,7 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
             super(view);
             mImageView = (ImageView) view.findViewById(R.id.record_image);
             mTitleTextView = (TextView) view.findViewById(R.id.record_listing_title);
+            mPriceTextView = (TextView) view.findViewById(R.id.record_price);
             view.setOnClickListener(this);
         }
 
@@ -54,11 +58,11 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
 
             mImageView.setImageBitmap(image.getThumb());
             mTitleTextView.setText(mRecord.getListingTitle());
+            mPriceTextView.setText(mRecord.getPrice());
         }
 
         @Override
         public void onClick(View v) {
-            Logger.logMessage("RecyclerViewClicked");
             mInterface.editRecord(mRecord.getUuid());
         }
     }
@@ -92,6 +96,4 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
     public int getItemCount() {
         return mRecords.size();
     }
-
-
 }
