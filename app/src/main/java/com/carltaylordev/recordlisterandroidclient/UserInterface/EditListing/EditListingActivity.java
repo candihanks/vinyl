@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -19,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
@@ -49,6 +49,14 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
+    Handler mRecordLoadedHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+          hideProgressDialog();
+          refreshUi();
+        }
+    };
+
     /**
      * Activity LifeCycle
      */
@@ -67,18 +75,9 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
         Intent intent = getIntent();
         final String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
         if (!uuid.isEmpty()) {
-            showProgressDialog("Loading Record");
+            super.showProgressDialog("Loading Record");
         }
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable(){
-            @Override
-            public void run(){
-                // allows progress dialog to get into run loop
-                startSession(getRecordForUuid(uuid));
-                hideProgressDialog();
-            }
-        }, 100);
+        loadSessionOnBackgroundThread(uuid);
     }
 
     @Override
@@ -196,10 +195,20 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
      * Session Management
      */
 
-    private void startSession(RealmRecord record) {
-        if (mRecordSessionManager == null) {
-            mRecordSessionManager = new RecordSessionManager(record, Realm.getDefaultInstance(), this);
-        }
+    private void loadSessionOnBackgroundThread(String uuid) {
+        final Realm realm = Realm.getDefaultInstance();
+        final RealmRecord record = getRecordForUuid(uuid);
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mRecordSessionManager = new RecordSessionManager(record, realm, EditListingActivity.this);
+                mRecordLoadedHandler.sendEmptyMessage(0);
+            }
+        };
+
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
 
     private void captureSessionState() {
