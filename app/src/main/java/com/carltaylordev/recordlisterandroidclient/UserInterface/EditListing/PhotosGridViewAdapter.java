@@ -6,6 +6,7 @@ package com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,6 @@ import io.realm.RealmList;
 public class PhotosGridViewAdapter extends ArrayAdapter<RealmImage> {
 
     static class ViewHolder {
-        TextView imageTitle;
         ImageView image;
     }
 
@@ -48,7 +48,6 @@ public class PhotosGridViewAdapter extends ArrayAdapter<RealmImage> {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
-            holder.imageTitle = (TextView) row.findViewById(R.id.text);
             holder.image = (ImageView) row.findViewById(R.id.image);
             row.setTag(holder);
         } else {
@@ -56,8 +55,10 @@ public class PhotosGridViewAdapter extends ArrayAdapter<RealmImage> {
         }
 
         RealmImage item = data.get(position);
-        holder.imageTitle.setText(item.getTitle());
         holder.image.setImageBitmap(item.getThumb());
+        if (item.isPlaceHolder()) {
+            holder.image.setBackgroundColor(ContextCompat.getColor(context, R.color.background_primary));
+        }
         return row;
     }
 }
