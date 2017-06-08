@@ -59,26 +59,32 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
         mPriceEditText.setFilters(new InputFilter[] {
                 new DigitsKeyListener(Boolean.FALSE, Boolean.TRUE) {
                     int beforeDecimal = 5, afterDecimal = 2;
-
                     @Override
                     public CharSequence filter(CharSequence source, int start, int end,
                                                Spanned dest, int dstart, int dend) {
-                        String temp = mPriceEditText.getText() + source.toString();
+                        if (mPriceEditText.getText().toString().equals(source.toString())) {
+                            // the value has not changed
+                            return super.filter(source, start, end, dest, dstart, dend);
+                        }
 
-                        if (temp.equals(".")) {
+                        String combinedOldAndNewValue = mPriceEditText.getText() + source.toString();
+                        if (combinedOldAndNewValue.equals(".")) {
+                            // create the 0 automatically for the user
                             return "0.";
                         }
-                        else if (temp.toString().indexOf(".") == -1) {
+                        else if (combinedOldAndNewValue.toString().indexOf(".") == -1) {
                             // no decimal point placed yet
-                            if (temp.length() > beforeDecimal) {
+                            if (combinedOldAndNewValue.length() > beforeDecimal) {
                                 return "";
                             }
                         } else {
-                            temp = temp.substring(temp.indexOf(".") + 1);
-                            if (temp.length() > afterDecimal) {
+                            combinedOldAndNewValue = combinedOldAndNewValue.substring(combinedOldAndNewValue.indexOf(".") + 1);
+                            if (combinedOldAndNewValue.length() > afterDecimal) {
+                                // we are past 2 decimal places so return nothing
                                 return "";
                             }
                         }
+                        // Passes our checks so let it through
                         return super.filter(source, start, end, dest, dstart, dend);
                     }
                 }
