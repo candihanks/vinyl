@@ -3,6 +3,7 @@ package com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
@@ -63,29 +65,33 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
         setupTestFab();
 
         Intent intent = getIntent();
-        String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
+        final String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
         if (!uuid.isEmpty()) {
-            super.showProgressDialog("Loading Record");
+            showProgressDialog("Loading Record");
         }
 
-        if (mRecordSessionManager == null) {
-            mRecordSessionManager = new RecordSessionManager(getRecordForUuid(uuid), Realm.getDefaultInstance(), this);
-            super.hideProgressDialog();
-        }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                // allows progress dialog to get into run loop
+                startSession(getRecordForUuid(uuid));
+                hideProgressDialog();
+            }
+        }, 100);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mRecordSessionManager.captureCurrentState();
+        captureSessionState();
     }
 
     @Override
     protected void onResume() {
-        mRecordSessionManager.refreshUi();
+        refreshUi();
         super.onResume();
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -184,6 +190,28 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
                 mRecordSessionManager.createTestData();
             }
         });
+    }
+
+    /**
+     * Session Management
+     */
+
+    private void startSession(RealmRecord record) {
+        if (mRecordSessionManager == null) {
+            mRecordSessionManager = new RecordSessionManager(record, Realm.getDefaultInstance(), this);
+        }
+    }
+
+    private void captureSessionState() {
+        try {
+            mRecordSessionManager.captureCurrentState();
+        } catch (NullPointerException e) {}
+    }
+
+    private void refreshUi() {
+        try {
+            mRecordSessionManager.refreshUi();
+        } catch (NullPointerException e) {}
     }
 
     /**

@@ -68,7 +68,12 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
      */
 
     void setupGridView(View view, final EditListingActivity activity) {
-        ArrayList<RealmImage> images = activity.mRecordSessionManager.getImages();
+        ArrayList<RealmImage> images;
+        try {
+            images = activity.mRecordSessionManager.getImages();
+        } catch (NullPointerException e) {
+            images = new ArrayList<>();
+        }
         mGridAdapter = new PhotosGridViewAdapter(getActivity(), R.layout.photo_item_layout, images);
         mGridView = (GridView) view.findViewById(R.id.photo_grid_view);
         mGridView.setAdapter(mGridAdapter);
