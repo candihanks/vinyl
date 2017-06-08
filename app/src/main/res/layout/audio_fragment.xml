@@ -13,7 +13,7 @@
         tools:context="com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.AudioFragment">
 
         <Button
-            android:backgroundTint="@color/light_blue"
+            android:backgroundTint="@color/button_background"
             android:textColor="@color/background_primary"
             android:id="@+id/record_button"
             android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:text="Record"/>
 
         <Button
-            android:backgroundTint="@color/light_blue"
+            android:backgroundTint="@color/button_background"
             android:textColor="@color/background_primary"
             android:id="@+id/play_button"
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:text="Play"/>
 
         <Button
-            android:backgroundTint="@color/light_blue"
+            android:backgroundTint="@color/button_background"
             android:textColor="@color/background_primary"
             android:id="@+id/delete_button"
             android:layout_width="match_parent"

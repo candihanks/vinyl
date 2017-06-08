@@ -3,6 +3,7 @@
     <color name="primary">@color/light_blue</color>
     <color name="primaryDark">@color/blue</color>
     <color name="accent">@color/blue</color>
+    <color name="button_background">@color/light_blue</color>
     <color name="background_primary">@color/white</color>
 
     <color name="white">#ffffff</color>
