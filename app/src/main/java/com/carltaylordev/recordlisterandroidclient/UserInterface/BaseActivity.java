@@ -1,5 +1,6 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface;
 
+import android.app.ProgressDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +18,8 @@ import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
 
+    private ProgressDialog mProgressDialog;
+
     /**
      * Helpers
      */
@@ -32,6 +35,25 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
         return active;
+    }
+
+    /**
+     * Progress
+     */
+
+    public void showProgressDialog(String message) {
+        mProgressDialog= new ProgressDialog(this);
+        mProgressDialog.setMessage(message);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        try {
+            mProgressDialog.hide();
+            mProgressDialog = null;
+        } catch (NullPointerException e) {}
     }
 
     /**

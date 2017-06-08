@@ -62,8 +62,15 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
         setupSaveFab();
         setupTestFab();
 
+        Intent intent = getIntent();
+        String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
+        if (!uuid.isEmpty()) {
+            super.showProgressDialog("Loading Record");
+        }
+
         if (mRecordSessionManager == null) {
-            mRecordSessionManager = new RecordSessionManager(getRecordFromIntent(), Realm.getDefaultInstance(), this);
+            mRecordSessionManager = new RecordSessionManager(getRecordForUuid(uuid), Realm.getDefaultInstance(), this);
+            super.hideProgressDialog();
         }
     }
 
@@ -124,10 +131,7 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
      * Setup
      */
 
-    private RealmRecord getRecordFromIntent() {
-        Intent intent = getIntent();
-        String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
-
+    private RealmRecord getRecordForUuid(String uuid) {
         Realm realm = Realm.getDefaultInstance();
         RealmRecord record = realm.where(RealmRecord.class).equalTo(RealmRecord.PRIMARY_KEY, uuid).findFirst();
         if (record == null) {
