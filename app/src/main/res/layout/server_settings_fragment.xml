@@ -8,12 +8,28 @@
         style="@style/MinorLabelStyle"
         android:text="Base URL:" />
 
-    <EditText
-        android:layout_marginTop="15dp"
-        android:id="@+id/base_url_edit_text"
+    <LinearLayout
+        android:weightSum="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="http://www."
-        />
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_weight="0.75"
+            android:maxLines="1"
+            android:inputType="textWebEmailAddress"
+            android:layout_marginTop="15dp"
+            android:id="@+id/base_url_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="http://"/>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_weight="0.25"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Save"/>
+
+    </LinearLayout>
 
 </FrameLayout>
