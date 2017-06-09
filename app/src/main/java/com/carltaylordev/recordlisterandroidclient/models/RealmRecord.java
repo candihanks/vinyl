@@ -1,8 +1,18 @@
 package com.carltaylordev.recordlisterandroidclient.models;
 
+import com.carltaylordev.recordlisterandroidclient.Logger;
+import com.carltaylordev.recordlisterandroidclient.Media.Base64Helpers;
+import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import io.realm.RealmList;
@@ -18,6 +28,8 @@ public class RealmRecord extends RealmObject {
 
     @Ignore
     public static final String PRIMARY_KEY = "uuid";
+    @Ignore
+    public static final String UPLOADED = "uploaded";
 
     @PrimaryKey
     private String uuid = UUID.randomUUID().toString();
@@ -31,13 +43,44 @@ public class RealmRecord extends RealmObject {
     private String listingTitle;
     private EbayCategory ebayCategory;
     private String price;
+    private Boolean uploaded = false;
 
     private RealmList<RealmImage>images;
     private RealmList<RealmAudioClip> audioClips;
 
-    public String toJson() {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(this);
+    public JSONObject toJSON() throws JSONException{
+        JSONObject json = new JSONObject();
+        json.put("artist", artist);
+        json.put("title", title);
+        json.put("label", label);
+        json.put("record_condition", mediaCondition);
+        json.put("cover_condition", coverCondition);
+        json.put("notes", comments);
+        json.put("price", price);
+        json.put("listing_category", "");
+
+        // Images
+        ArrayList<String> base64Images = new ArrayList<>();
+        for (RealmImage image: getImages()) {
+            try {
+                base64Images.add(Base64Helpers.getFileAsBase64(image.getPath()));
+            } catch (FileNotFoundException e) {
+                Logger.logMessage("hmmm should not be images missing");
+            }
+        }
+        json.put("pictures", base64Images);
+
+        try {
+            // SoundClips
+            ArrayList<String> base64SoundClips = new ArrayList<>();
+            for (RealmAudioClip audioClip : getAudioClips()) {
+                try {
+                    base64SoundClips.add(Base64Helpers.getFileAsBase64(audioClip.getPath()));
+                } catch (FileNotFoundException e) {}
+            }
+            json.put("sound_clips", base64SoundClips);
+        } catch (NullPointerException e) {}
+        return json;
     }
 
     public String getUuid() {
@@ -138,5 +181,13 @@ public class RealmRecord extends RealmObject {
 
     public void setAudioClips(RealmList<RealmAudioClip> audioClips) {
         this.audioClips = audioClips;
+    }
+
+    public Boolean hasBeenUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(Boolean uploaded) {
+        this.uploaded = uploaded;
     }
 }
