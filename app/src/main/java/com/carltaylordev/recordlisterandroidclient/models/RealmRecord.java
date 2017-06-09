@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,14 +58,23 @@ public class RealmRecord extends RealmObject {
         json.put("cover_condition", coverCondition);
         json.put("notes", comments);
         json.put("price", price);
+        
+        // // TODO: 09/06/2017 these are not in our UI / DB yet 
         json.put("listing_category", "");
+        json.put("number_of_12s", 1);
+        json.put("format", "45");
+        json.put("condition_id", "3000"); // Used
+        json.put("auction_type", "BIN");
+        json.put("listing_duration", "Days_30");
+        json.put("reserve_price", "0");
+        json.put("quantity", "1");
 
         // Images
         ArrayList<String> base64Images = new ArrayList<>();
         for (RealmImage image: getImages()) {
             try {
                 base64Images.add(Base64Helpers.getFileAsBase64(image.getPath()));
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 Logger.logMessage("hmmm should not be images missing");
             }
         }
@@ -76,7 +86,7 @@ public class RealmRecord extends RealmObject {
             for (RealmAudioClip audioClip : getAudioClips()) {
                 try {
                     base64SoundClips.add(Base64Helpers.getFileAsBase64(audioClip.getPath()));
-                } catch (FileNotFoundException e) {}
+                } catch (IOException e) {}
             }
             json.put("sound_clips", base64SoundClips);
         } catch (NullPointerException e) {}

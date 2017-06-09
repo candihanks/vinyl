@@ -1,10 +1,10 @@
 package com.carltaylordev.recordlisterandroidclient.Media;
 
 import android.util.Base64;
+import android.util.Base64OutputStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -14,21 +14,21 @@ import java.io.InputStream;
 
 public class Base64Helpers {
 
-    public static String getFileAsBase64(String path) throws FileNotFoundException {
+    public static String getFileAsBase64(String path) throws IOException {
         InputStream inputStream = new FileInputStream(path);
-        byte[] bytes;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Base64OutputStream base64OutputStream = new Base64OutputStream(output, Base64.DEFAULT);
+
         byte[] buffer = new byte[8192];
         int bytesRead;
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                output.write(buffer, 0, bytesRead);
+            while ((bytesRead = inputStream.read(buffer)) > -1) {
+                base64OutputStream.write(buffer, 0, bytesRead);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            inputStream.close();
+            base64OutputStream.close();
         }
-        bytes = output.toByteArray();
-        String encodedString = Base64.encodeToString(bytes, Base64.DEFAULT);
-        return encodedString;
+        return base64OutputStream.toString();
     }
 }
