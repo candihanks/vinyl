@@ -1,41 +1,55 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.Info2Fragment">
 
-    <TextView
-        android:layout_marginTop="@dimen/minor_margin"
-        style="@style/SpinnerLabelStyle"
-        android:text="Record Condition"/>
-
-    <Spinner
-        android:id="@+id/spinner_record_condition"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Spinner>
+        android:layout_height="wrap_content">
 
-    <TextView
-        style="@style/SpinnerLabelStyle"
-        android:text="Cover Condition"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:scrollbars="vertical">
 
-    <Spinner
-        android:id="@+id/spinner_cover_condition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Spinner>
+            <TextView
+                style="@style/SpinnerLabelStyle"
+                android:layout_marginTop="@dimen/minor_margin"
+                android:text="Record Condition" />
 
-    <EditText
-        android:layout_marginTop="@dimen/minor_margin"
-        android:id="@+id/edit_text_price"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Price"
-        android:inputType="numberDecimal"/>
+            <Spinner
+                android:id="@+id/spinner_record_condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></Spinner>
 
-    <EditText
-        android:id="@+id/edit_text_comments"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Comments"/>
+            <TextView
+                style="@style/SpinnerLabelStyle"
+                android:text="Cover Condition" />
+
+            <Spinner
+                android:id="@+id/spinner_cover_condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></Spinner>
+
+            <EditText
+                android:id="@+id/edit_text_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/minor_margin"
+                android:hint="Price"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/edit_text_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Comments" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

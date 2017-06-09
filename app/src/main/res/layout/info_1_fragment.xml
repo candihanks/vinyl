@@ -1,52 +1,69 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity">
 
-    <TextView
-        android:layout_marginTop="@dimen/minor_margin"
-        style="@style/SpinnerLabelStyle"
-        android:text="Category"/>
 
-    <Spinner
-        android:id="@+id/spinner_ebay_cats"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Spinner>
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:layout_marginTop="@dimen/minor_margin"
-        android:id="@+id/edit_text_artist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Artist"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:scrollbars="vertical">
 
-    <EditText
-        android:id="@+id/edit_text_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Title"/>
+            <TextView
+                style="@style/SpinnerLabelStyle"
+                android:layout_marginTop="@dimen/minor_margin"
+                android:text="Category" />
 
-    <EditText
-        android:id="@+id/edit_text_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Label"/>
+            <Spinner
+                android:id="@+id/spinner_ebay_cats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></Spinner>
+
+            <EditText
+                android:id="@+id/edit_text_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/minor_margin"
+                android:hint="Artist" />
+
+            <EditText
+                android:id="@+id/edit_text_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Title" />
+
+            <EditText
+                android:id="@+id/edit_text_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Label" />
 
 
-    <ImageButton
-        android:layout_marginTop="@dimen/minor_margin"
-        android:id="@+id/image_button_concat"
-        android:src="@drawable/magic_wand"
-        android:scaleType="fitCenter"
-        android:layout_width="50dp"
-        android:layout_height="50dp"/>
+            <ImageButton
+                android:id="@+id/image_button_concat"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/minor_margin"
+                android:scaleType="fitCenter"
+                android:src="@drawable/magic_wand" />
 
-    <EditText
-        android:id="@+id/edit_text_listing_title"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:hint="Listing Title"/>
+            <EditText
+                android:id="@+id/edit_text_listing_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Listing Title" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
+
+
