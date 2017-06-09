@@ -114,8 +114,8 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
     public void updateSession(RecordSessionManager manager) {
         RealmRecord record = manager.getRecord();
         record.setComments(mCommentsEditText.getText().toString());
-        record.setMediaCondition(mRecordConditionSpinner.toString());
-        record.setCoverCondition(mCoverConditionSpinner.toString());
+        record.setMediaCondition(mRecordConditionSpinner.getSelectedItem().toString());
+        record.setCoverCondition(mCoverConditionSpinner.getSelectedItem().toString());
         record.setPrice(mPriceEditText.getText().toString());
     }
 
