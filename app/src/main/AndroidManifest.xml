@@ -36,6 +36,12 @@
             android:name=".UserInterface.SavedListings.SavedListingsActivity"
             android:label="@string/title_activity_saved_listings"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity
+            android:name=".UserInterface.Settings.SettingsActivity"
+            android:label="Settings"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
     </application>
 
 </manifest>

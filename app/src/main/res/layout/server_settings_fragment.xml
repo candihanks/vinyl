@@ -1,0 +1,19 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.carltaylordev.recordlisterandroidclient.UserInterface.Settings.ServerSettingsFragment">
+
+    <TextView
+        style="@style/MinorLabelStyle"
+        android:text="Base URL:" />
+
+    <EditText
+        android:layout_marginTop="15dp"
+        android:id="@+id/base_url_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="http://www."
+        />
+
+</FrameLayout>
