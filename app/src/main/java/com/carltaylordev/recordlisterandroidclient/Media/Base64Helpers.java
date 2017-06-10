@@ -4,6 +4,7 @@ import android.util.Base64;
 import android.util.Base64OutputStream;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,20 +16,22 @@ import java.io.InputStream;
 public class Base64Helpers {
 
     public static String getFileAsBase64(String path) throws IOException {
-        InputStream inputStream = new FileInputStream(path);
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Base64OutputStream base64OutputStream = new Base64OutputStream(output, Base64.DEFAULT);
+        File file = new File(path);
+        InputStream inputStream;
+        String encodedFile;
 
-        byte[] buffer = new byte[8192];
+        inputStream = new FileInputStream(file.getAbsolutePath());
+        byte[] buffer = new byte[10240];
         int bytesRead;
-        try {
-            while ((bytesRead = inputStream.read(buffer)) > -1) {
-                base64OutputStream.write(buffer, 0, bytesRead);
-            }
-        } finally {
-            inputStream.close();
-            base64OutputStream.close();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Base64OutputStream output64 = new Base64OutputStream(output,
+                Base64.NO_WRAP);
+
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            output64.write(buffer, 0, bytesRead);
         }
-        return base64OutputStream.toString();
+        output64.close();
+        encodedFile = output.toString();
+        return encodedFile;
     }
 }

@@ -2,18 +2,12 @@ package com.carltaylordev.recordlisterandroidclient.models;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.Media.Base64Helpers;
-import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import io.realm.RealmList;
@@ -70,10 +64,10 @@ public class RealmRecord extends RealmObject {
         json.put("quantity", "1");
 
         // Images
-        ArrayList<String> base64Images = new ArrayList<>();
+        JSONArray base64Images = new JSONArray();
         for (RealmImage image: getImages()) {
             try {
-                base64Images.add(Base64Helpers.getFileAsBase64(image.getPath()));
+                base64Images.put(Base64Helpers.getFileAsBase64(image.getPath()));
             } catch (IOException e) {
                 Logger.logMessage("hmmm should not be images missing");
             }
@@ -82,10 +76,10 @@ public class RealmRecord extends RealmObject {
 
         try {
             // SoundClips
-            ArrayList<String> base64SoundClips = new ArrayList<>();
+            JSONArray base64SoundClips = new JSONArray();
             for (RealmAudioClip audioClip : getAudioClips()) {
                 try {
-                    base64SoundClips.add(Base64Helpers.getFileAsBase64(audioClip.getPath()));
+                    base64SoundClips.put(Base64Helpers.getFileAsBase64(audioClip.getPath()));
                 } catch (IOException e) {}
             }
             json.put("sound_clips", base64SoundClips);
