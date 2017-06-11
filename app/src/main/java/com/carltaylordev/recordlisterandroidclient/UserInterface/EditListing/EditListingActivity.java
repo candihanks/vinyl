@@ -82,12 +82,13 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         captureSessionState();
+        outState.putString(EXTRA_KEY_UUID, mRecordSessionManager.getRecord().getUuid());
     }
 
     @Override
     protected void onResume() {
-        refreshUi();
         super.onResume();
+        refreshUi();
     }
 
     @Override
@@ -106,8 +107,8 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
 
     @Override
     public void onAttachFragment (Fragment fragment) {
-        mFragList.add(new WeakReference(fragment));
         super.onAttachFragment(fragment);
+        mFragList.add(new WeakReference(fragment));
     }
 
     /**
