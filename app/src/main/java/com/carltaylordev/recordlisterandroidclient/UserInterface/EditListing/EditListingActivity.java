@@ -70,12 +70,14 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
         setupSaveFab();
         setupTestFab();
 
-        Intent intent = getIntent();
-        final String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
-        if (!uuid.isEmpty()) {
-            super.showProgressDialog("Loading Record");
+        if (mRecordSessionManager == null) {
+            Intent intent = getIntent();
+            final String uuid = intent.getStringExtra(EXTRA_KEY_UUID);
+            if (!uuid.isEmpty()) {
+                super.showProgressDialog("Loading Record");
+            }
+            loadSessionOnBackgroundThread(uuid);
         }
-        loadSessionOnBackgroundThread(uuid);
     }
 
     @Override
