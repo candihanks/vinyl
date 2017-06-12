@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +16,11 @@ import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 /**
@@ -36,6 +42,7 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
         private ImageView mImageView;
         private TextView mTitleTextView;
         private TextView mPriceTextView;
+        private CheckBox mCheckBox;
         private RealmRecord mRecord;
         private Interface mInterface;
 
@@ -44,7 +51,16 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
             mImageView = (ImageView) view.findViewById(R.id.record_image);
             mTitleTextView = (TextView) view.findViewById(R.id.record_listing_title);
             mPriceTextView = (TextView) view.findViewById(R.id.record_price);
+            mCheckBox = (CheckBox) view.findViewById(R.id.checkbox);
+            mCheckBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mRecord.setChecked(mCheckBox.isChecked());
+                }
+            });
             view.setOnClickListener(this);
+
+
         }
 
         public void bindRecord(RealmRecord record, Interface adapterInterface) {
@@ -71,10 +87,10 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
      * Adapter
      */
 
-    private RealmResults<RealmRecord> mRecords;
+    private List<RealmRecord> mRecords;
     private RecordHolder.Interface mInterface;
 
-    public RecyclerAdapter(RealmResults<RealmRecord> records, Activity activity) {
+    public RecyclerAdapter(List<RealmRecord> records, Activity activity) {
         mRecords = records;
         mInterface = (RecordHolder.Interface) activity;
     }
@@ -95,5 +111,15 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
     @Override
     public int getItemCount() {
         return mRecords.size();
+    }
+
+    public List<RealmRecord> getSelectedItems() {
+        List<RealmRecord> items = new ArrayList<>();
+        for (RealmRecord record : mRecords) {
+            if (record.isChecked()) {
+                items.add(record);
+            }
+        }
+        return items;
     }
 }

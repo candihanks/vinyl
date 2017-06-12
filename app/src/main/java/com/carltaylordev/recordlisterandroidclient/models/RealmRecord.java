@@ -26,6 +26,9 @@ public class RealmRecord extends RealmObject {
     @Ignore
     public static final String UPLOADED = "uploaded";
 
+    @Ignore
+    private boolean checked = false;
+
     @PrimaryKey
     private String uuid = UUID.randomUUID().toString();
     private String artist;
@@ -193,5 +196,13 @@ public class RealmRecord extends RealmObject {
 
     public void setUploaded(Boolean uploaded) {
         this.uploaded = uploaded;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 }

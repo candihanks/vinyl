@@ -8,12 +8,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class SavedListingsActivity extends BaseActivity implements RecyclerAdapter.RecordHolder.Interface {
@@ -51,8 +56,7 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_upload_selected) {
-
-            // upload on back thread
+            uploadSelectedRows();
             return true;
         }
 
@@ -63,7 +67,7 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
      * Setup
      */
 
-    void setupRecyclerView(RealmResults<RealmRecord> records) {
+    void setupRecyclerView(List<RealmRecord> records) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -71,18 +75,23 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    RealmResults<RealmRecord> getSavedRecords(Realm realm) {
+    List<RealmRecord> getSavedRecords(Realm realm) {
         RealmResults<RealmRecord> records = realm.where(RealmRecord.class).findAll();
-        return records;
+        List<RealmRecord> workingCopy = realm.copyFromRealm(records);
+        return workingCopy;
     }
-
 
     /**
      * Data Operations
      */
 
-    void getSelectedRows() {
-
+    void uploadSelectedRows() {
+        List<RealmRecord> records = mAdapter.getSelectedItems();
+        if (records.size() > 0) {
+            showProgressDialog("Uploading");
+        } else {
+            showToast("Select Records to Upload");
+        }
     }
 
     /**
