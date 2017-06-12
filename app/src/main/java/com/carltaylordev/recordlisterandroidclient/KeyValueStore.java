@@ -25,7 +25,7 @@ public class KeyValueStore {
     }
 
     public String getStringForKey(String key) {
-        String string = mPrefs.getString(key, null);
+        String string = mPrefs.getString(key, "");
         return string;
     }
 }
