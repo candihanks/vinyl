@@ -16,11 +16,14 @@ import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static android.R.attr.maxHeight;
+import static android.R.attr.maxWidth;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -106,7 +109,7 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     }
 
     /**
-     *  Image Capture / Deletion
+     *  Image Capture / Crop / Deletion
      */
 
     private void captureImage(int gridPosition) {
@@ -135,11 +138,20 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
         }
     }
 
+    private void cropImage(Uri sourceUri, Uri destinationUri) {
+        UCrop.of(sourceUri, destinationUri)
+                .withAspectRatio(1, 1)
+                .withMaxResultSize(1600, 1600)
+                .start(getActivity(), this);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Uri uri = Uri.fromFile(new File(mLastCreatedTempFileLocation));
+            cropImage(uri, uri);
+        } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
             RealmImage image = new RealmImage("New Image", mLastCreatedTempFileLocation);
-
             EditListingActivity activity = (EditListingActivity) getActivity();
             RecordSessionManager manager = activity.mRecordSessionManager;
             manager.setImageAtIndex(image, mLastSelectedGridPosition);
