@@ -18,11 +18,11 @@ public class SetupSingleton {
 
     private static SetupSingleton instance = null;
 
-    private SetupSingleton(Context context) {}
+    private SetupSingleton() {}
 
     public static SetupSingleton setup(Context context) {
         if (instance == null) {
-            instance = new SetupSingleton(context);
+            instance = new SetupSingleton();
             Realm realm = setupRealm(context);
             if (BuildConfig.DEBUG) {
                 setupMockData(realm);
