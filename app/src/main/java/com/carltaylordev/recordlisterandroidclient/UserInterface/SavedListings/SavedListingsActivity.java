@@ -8,20 +8,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.carltaylordev.recordlisterandroidclient.Logger;
+import com.carltaylordev.recordlisterandroidclient.KeyValueStore;
 import com.carltaylordev.recordlisterandroidclient.R;
+import com.carltaylordev.recordlisterandroidclient.Server.RecordUploadCoordinator;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity;
+import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 
-public class SavedListingsActivity extends BaseActivity implements RecyclerAdapter.RecordHolder.Interface {
+public class SavedListingsActivity extends BaseActivity implements RecyclerAdapter.RecordHolder.Interface, RecordUploadCoordinator.Interface {
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
@@ -43,7 +43,7 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         mRealm = Realm.getDefaultInstance();
         setupRecyclerView(getSavedRecords(mRealm));
 
-        // TODO: 07/06/2017 auto update list on delete? Callback from Realm?
+        // TODO: 07/06/2017 auto onUploadCountUpdate list on delete? Callback from Realm?
     }
 
     @Override
@@ -86,16 +86,25 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
      */
 
     void uploadSelectedRows() {
+        KeyValueStore keyValueStore = new KeyValueStore(this);
+        String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
+        if (baseUrl.isEmpty()) {
+            super.showAlert("Attention", "Please Set base url in Settings");
+            return;
+        }
+
         List<RealmRecord> records = mAdapter.getSelectedItems();
         if (records.size() > 0) {
-            showProgressDialog("Uploading");
+            super.showHorizontalProgressDialog("Uploading to server", records.size());
+            RecordUploadCoordinator coordinator = new RecordUploadCoordinator(baseUrl, records, mRealm, this, this);
+            coordinator.tryNextUpload();
         } else {
             showToast("Select Records to Upload");
         }
     }
 
     /**
-     * Interface
+     * RecyclerView Interface
      */
 
     @Override
@@ -103,5 +112,24 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         Intent intent = new Intent(this, EditListingActivity.class);
         intent.putExtra(EditListingActivity.EXTRA_KEY_UUID, uuid);
         startActivity(intent);
+    }
+
+    /**
+     * Record Upload Coordinator Interface
+     */
+
+    @Override
+    public void onUploadCountUpdate(int uploadCount) {
+        super.updateHorizontalProgressDialog(uploadCount);
+    }
+
+    @Override
+    public void onFinished(BoolResponse response) {
+        super.hideProgressDialog();
+        if (response.isTrue()) {
+            super.showToast(response.getUserMessage());
+        } else {
+            super.showAlert("Info:", response.getUserMessage());
+        }
     }
 }

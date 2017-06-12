@@ -1,32 +1,25 @@
 package com.carltaylordev.recordlisterandroidclient.Server;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.carltaylordev.recordlisterandroidclient.KeyValueStore;
 import com.carltaylordev.recordlisterandroidclient.Logger;
-import com.carltaylordev.recordlisterandroidclient.R;
+import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import io.realm.Realm;
 
@@ -36,34 +29,74 @@ import io.realm.Realm;
 
 public class RecordUploadCoordinator {
 
-    Realm mRealm;
-    Context mContext;
+    public static final int TIMEOUT_TIME_MILLIS = 30000;
 
-    public RecordUploadCoordinator(Context context) {
-        mRealm = Realm.getDefaultInstance();
-        mContext = context;
+    public interface Interface {
+        void onUploadCountUpdate(int uploadCount);
+        void onFinished(BoolResponse response);
     }
 
-    public void uploadAll() {
-        final RealmRecord record = mRealm.where(RealmRecord.class).equalTo(RealmRecord.UPLOADED, false).findFirst();
+    private int mSucceed = 0;
+    private int mFailed = 0;
+    private int mStartSize;
 
-        KeyValueStore keyValueStore = new KeyValueStore(mContext);
-        String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
-        String url = baseUrl + "list_item";
+    private Realm mRealm;
+    private Context mContext;
+    private String mBaseUrl;
+    private List<RealmRecord> mRecords;
+    private RequestQueue mQueue;
+    private RecordUploadCoordinator.Interface mInterface;
 
+    public RecordUploadCoordinator(String baseUrl,
+                                   List<RealmRecord> records,
+                                   Realm realm,
+                                   Context context,
+                                   RecordUploadCoordinator.Interface Interface) {
+        mRealm = realm;
+        mContext = context;
+        mRecords = records;
+        mBaseUrl = baseUrl;
+        mQueue = Volley.newRequestQueue(mContext);
+        mInterface = Interface;
+        mStartSize = records.size();
+    }
+
+    /**
+     * Volley Upload
+     */
+
+    public void tryNextUpload() {
+        mInterface.onUploadCountUpdate(mFailed + mSucceed);
+       if (mRecords.size() > 0) {
+           RealmRecord record = mRecords.get(0);
+           mRecords.remove(0);
+           upload(record);
+       } else {
+           if (mSucceed == mStartSize) {
+               mInterface.onFinished(new BoolResponse(true, "All Uploads Successful"));
+           } else {
+               mInterface.onFinished(new BoolResponse(false, String.format("Number of Uploads Failed: %s (%s) ", mFailed, mStartSize)));
+           }
+       }
+    }
+
+    private void upload(final RealmRecord record) {
+        String url = mBaseUrl + "add_item";
         try {
-            RequestQueue requestQueue = Volley.newRequestQueue(mContext);
             final String requestBody = record.toJSON().toString();
-
             StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
+                    updateRecordAsUploaded(record, true);
+                    mSucceed ++;
+                    tryNextUpload();
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
+                    updateRecordAsUploaded(record, false);
+                    mFailed ++;
+                    tryNextUpload();
                 }
             }) {
                 @Override
@@ -83,18 +116,30 @@ public class RecordUploadCoordinator {
 
                 @Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    String responseString = "";
                     if (response != null) {
-                        responseString = String.valueOf(response.statusCode);
-                        // todo: can get more details such as response.headers
+                        if (response.statusCode == 202) {
+                            return Response.success(response.toString(), HttpHeaderParser.parseCacheHeaders(response));
+                        }
                     }
-                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                    return Response.error(new VolleyError("Upload Failed"));
                 }
             };
 
-            requestQueue.add(stringRequest);
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEOUT_TIME_MILLIS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            mQueue.add(stringRequest);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Realm Update
+     */
+
+    private void updateRecordAsUploaded(RealmRecord record, boolean success) {
+        mRealm.beginTransaction();
+        record.setUploaded(success);
+        mRealm.commitTransaction();
     }
 }

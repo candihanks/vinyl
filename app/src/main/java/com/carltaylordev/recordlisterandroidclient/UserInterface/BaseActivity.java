@@ -77,6 +77,20 @@ public class BaseActivity extends AppCompatActivity {
         mProgressDialog.show();
     }
 
+    public void showHorizontalProgressDialog(String message, int max) {
+        mProgressDialog= new ProgressDialog(this);
+        mProgressDialog.setMessage(message);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressDialog.setMax(max);
+        mProgressDialog.show();
+    }
+
+    public void updateHorizontalProgressDialog(int update) {
+        try {
+            mProgressDialog.setProgress(update);
+        } catch (NullPointerException e) {}
+    }
+
     public void hideProgressDialog() {
         try {
             mProgressDialog.hide();
