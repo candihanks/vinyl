@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -137,9 +138,13 @@ public class PhotosFragment extends android.support.v4.app.Fragment implements R
     }
 
     private void cropImage(Uri sourceUri, Uri destinationUri) {
+        UCrop.Options options = new UCrop.Options();
+        options.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.primaryDark));
+        options.setToolbarColor(ContextCompat.getColor(getActivity(), R.color.primary));
         UCrop.of(sourceUri, destinationUri)
                 .withAspectRatio(1, 1)
                 .withMaxResultSize(1600, 1600)
+                .withOptions(options)
                 .start(getActivity(), this);
     }
 

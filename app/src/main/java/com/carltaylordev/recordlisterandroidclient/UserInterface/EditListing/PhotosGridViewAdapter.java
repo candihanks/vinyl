@@ -58,6 +58,8 @@ public class PhotosGridViewAdapter extends ArrayAdapter<RealmImage> {
         holder.image.setImageBitmap(item.getThumb());
         if (item.isPlaceHolder()) {
             holder.image.setBackgroundColor(ContextCompat.getColor(context, R.color.background_primary));
+        } else  {
+            holder.image.setBackground(ContextCompat.getDrawable(context, R.drawable.photo_item_background));
         }
         return row;
     }
