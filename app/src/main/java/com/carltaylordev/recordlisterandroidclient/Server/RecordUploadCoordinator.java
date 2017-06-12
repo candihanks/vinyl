@@ -15,6 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.carltaylordev.recordlisterandroidclient.KeyValueStore;
 import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
@@ -46,8 +47,9 @@ public class RecordUploadCoordinator {
     public void uploadAll() {
         final RealmRecord record = mRealm.where(RealmRecord.class).equalTo(RealmRecord.UPLOADED, false).findFirst();
 
-        String url ="http://10.0.2.2:8000/list_item";
-//        url = mContext.getString(R.string.base_url) + "list_item";
+        KeyValueStore keyValueStore = new KeyValueStore(mContext);
+        String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
+        String url = baseUrl + "list_item";
 
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(mContext);

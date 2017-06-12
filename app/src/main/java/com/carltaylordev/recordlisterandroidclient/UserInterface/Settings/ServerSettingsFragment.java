@@ -56,7 +56,7 @@ public class ServerSettingsFragment extends Fragment {
             public void onClick(View v) {
                 String url = baseUrlEditText.getText().toString();
                 if (Validator.isValidUrl(url)) {
-                    keyValueStore.setStringForKey(baseUrlEditText.getText().toString(), KeyValueStore.KEY_BASE_SERVER_URL);
+                    keyValueStore.setStringForKey(KeyValueStore.KEY_BASE_SERVER_URL, baseUrlEditText.getText().toString());
                     activity.showToast("Saved");
                 } else {
                     activity.showAlert("Oops", "URL not valid");

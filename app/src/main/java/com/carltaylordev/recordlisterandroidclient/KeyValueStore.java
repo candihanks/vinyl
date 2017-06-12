@@ -19,7 +19,7 @@ public class KeyValueStore {
         mPrefs = mContext.getSharedPreferences("com.carltaylordev.record.lister", mContext.MODE_PRIVATE);
     }
 
-    public void setStringForKey(String value, String key) {
+    public void setStringForKey(String key, String value) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(key, value).commit();
     }

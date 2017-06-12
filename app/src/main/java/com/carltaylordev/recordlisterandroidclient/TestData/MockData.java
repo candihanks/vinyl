@@ -1,4 +1,4 @@
-package com.carltaylordev.recordlisterandroidclient.mock.data;
+package com.carltaylordev.recordlisterandroidclient.TestData;
 
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 
