@@ -54,7 +54,7 @@ public class RealmRecord extends RealmObject {
         json.put("price", price);
         
         // // TODO: 09/06/2017 these are not in our UI / DB yet 
-        json.put("listing_category", "");
+        json.put("listing_category", "2259");
         json.put("number_of_12s", 1);
         json.put("format", "45");
         json.put("condition_id", "3000"); // Used
