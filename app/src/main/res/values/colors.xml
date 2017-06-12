@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/light_blue</color>
-    <color name="primaryDark">@color/blue</color>
-    <color name="accent">@color/blue</color>
-    <color name="button_background">@color/light_blue</color>
+    <color name="primary">@color/alt_red</color>
+    <color name="primaryDark">@color/alt_dark_red</color>
+    <color name="accent">@color/alt_red</color>
+    <color name="button_background">@color/alt_dark_red</color>
     <color name="background_primary">@color/white</color>
+
+    <color name="alt_red">#F44336</color>
+    <color name="alt_dark_red">#C4362B</color>
 
     <color name="white">#ffffff</color>
     <color name="red">#F6402C</color>
