@@ -40,6 +40,7 @@ public class RecordUploadCoordinator {
     private int mFailed = 0;
     private int mStartSize;
 
+    private boolean mInProgress;
     private Realm mRealm;
     private Context mContext;
     private String mBaseUrl;
@@ -61,6 +62,10 @@ public class RecordUploadCoordinator {
         mStartSize = records.size();
     }
 
+    public boolean isInProgress() {
+        return mInProgress;
+    }
+
     /**
      * Volley Upload
      */
@@ -68,10 +73,12 @@ public class RecordUploadCoordinator {
     public void tryNextUpload() {
         mInterface.onUploadCountUpdate(mFailed + mSucceed + 1);
        if (mRecords.size() > 0) {
+           mInProgress = true;
            RealmRecord record = mRecords.get(0);
            mRecords.remove(0);
            upload(record);
        } else {
+           mInProgress = false;
            if (mSucceed == mStartSize) {
                mInterface.onFinished(new BoolResponse(true, "Uploads Accepted"));
            } else {
