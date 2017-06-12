@@ -9,19 +9,12 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by carl on 07/06/2017.
@@ -42,6 +35,7 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
         private ImageView mImageView;
         private TextView mTitleTextView;
         private TextView mPriceTextView;
+        private ImageView mUploadedImageView;
         private CheckBox mCheckBox;
         private RealmRecord mRecord;
         private Interface mInterface;
@@ -51,6 +45,7 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
             mImageView = (ImageView) view.findViewById(R.id.record_image);
             mTitleTextView = (TextView) view.findViewById(R.id.record_listing_title);
             mPriceTextView = (TextView) view.findViewById(R.id.record_price);
+            mUploadedImageView = (ImageView) view.findViewById(R.id.needs_upload_image_view);
             mCheckBox = (CheckBox) view.findViewById(R.id.checkbox);
             mCheckBox.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -59,8 +54,6 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
                 }
             });
             view.setOnClickListener(this);
-
-
         }
 
         public void bindRecord(RealmRecord record, Interface adapterInterface) {
@@ -70,6 +63,12 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
             RealmImage image = mRecord.getImages().get(0);
             if (image.getThumb() == null) {
                 image.rehydrate();
+            }
+
+            if (mRecord.hasBeenUploaded()) {
+                 mUploadedImageView.setVisibility(View.VISIBLE);
+            } else {
+                mUploadedImageView.setVisibility(View.INVISIBLE);
             }
 
             mImageView.setImageBitmap(image.getThumb());

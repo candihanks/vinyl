@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:paddingBottom="5dp"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="5dp">
 
     <ImageView
         android:src="@drawable/magic_wand"
@@ -26,8 +26,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="14"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textStyle="bold"
-            android:text="Listing Title" />
+            android:text="Listing Title test Listing Title test Listing Title test Listing Title test Listing Title test"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:id="@+id/record_price"
@@ -36,12 +39,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:maxLines="1"
             android:textStyle="normal"
             android:text="price" />
 
+        <ImageView
+            android:id="@+id/needs_upload_image_view"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            app:srcCompat="@android:drawable/ic_menu_upload"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@color/primary"
+            android:layout_alignStart="@+id/record_price" />
+
         <CheckBox
             android:id="@+id/checkbox"
-            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
             android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
