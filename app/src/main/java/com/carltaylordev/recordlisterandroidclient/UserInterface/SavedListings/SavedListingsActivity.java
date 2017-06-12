@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
@@ -39,6 +41,24 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         // TODO: 07/06/2017 auto update list on delete? Callback from Realm?
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.saved_listings_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_upload_selected) {
+
+            // upload on back thread
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * Setup
      */
@@ -54,6 +74,15 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
     RealmResults<RealmRecord> getSavedRecords(Realm realm) {
         RealmResults<RealmRecord> records = realm.where(RealmRecord.class).findAll();
         return records;
+    }
+
+
+    /**
+     * Data Operations
+     */
+
+    void getSelectedRows() {
+
     }
 
     /**
