@@ -75,8 +75,8 @@ public class RecordUploadCoordinator {
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return requestBody == null ? null : requestBody.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-
+                    } catch (UnsupportedEncodingException e) {
+                        Logger.logMessage(e.toString());
                         return null;
                     }
                 }
