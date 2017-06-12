@@ -95,7 +95,7 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
 
         List<RealmRecord> records = mAdapter.getSelectedItems();
         if (records.size() > 0) {
-            super.showHorizontalProgressDialog("Uploading to server", records.size());
+            super.showHorizontalProgressDialog("Attempting Upload:", records.size());
             RecordUploadCoordinator coordinator = new RecordUploadCoordinator(baseUrl, records, mRealm, this, this);
             coordinator.tryNextUpload();
         } else {

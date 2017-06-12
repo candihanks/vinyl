@@ -66,7 +66,7 @@ public class RecordUploadCoordinator {
      */
 
     public void tryNextUpload() {
-        mInterface.onUploadCountUpdate(mFailed + mSucceed);
+        mInterface.onUploadCountUpdate(mFailed + mSucceed + 1);
        if (mRecords.size() > 0) {
            RealmRecord record = mRecords.get(0);
            mRecords.remove(0);
