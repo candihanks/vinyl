@@ -22,8 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static android.R.attr.maxHeight;
-import static android.R.attr.maxWidth;
 import static android.app.Activity.RESULT_OK;
 
 /**
