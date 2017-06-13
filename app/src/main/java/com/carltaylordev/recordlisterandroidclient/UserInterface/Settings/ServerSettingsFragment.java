@@ -17,6 +17,10 @@ import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
 public class ServerSettingsFragment extends Fragment implements UserAuthCoordinator.Interface {
 
+    EditText mUsernameEditText;
+    EditText mPasswordEditText;
+    Button mLoginButton;
+
     /**
      * Constructors
      */
@@ -41,6 +45,7 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
 
         setupBaseUrlEditTextAndButton(rootView, keyValueStore, activity);
         setUpAuthEditTextAndButton(rootView, keyValueStore, activity);
+        refreshUI();
         return rootView;
     }
 
@@ -68,17 +73,17 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
     }
 
     private void setUpAuthEditTextAndButton(View view, final KeyValueStore keyValueStore, final SettingsActivity activity) {
-        final EditText usernameEditText = (EditText)view.findViewById(R.id.username);
-        final EditText passwordEditText = (EditText)view.findViewById(R.id.password);
+        mUsernameEditText = (EditText)view.findViewById(R.id.username);
+        mPasswordEditText = (EditText)view.findViewById(R.id.password);
 
-        Button loginButton = (Button)view.findViewById(R.id.login_logout_button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        mLoginButton = (Button)view.findViewById(R.id.login_logout_button);
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String token = keyValueStore.getStringForKey(KeyValueStore.KEY_SERVER_TOKEN);
                 if (token.isEmpty()) {
-                    String username = usernameEditText.getText().toString();
-                    String password = passwordEditText.getText().toString();
+                    String username = mUsernameEditText.getText().toString();
+                    String password = mPasswordEditText.getText().toString();
                     if (!username.isEmpty() && !password.isEmpty()) {
                         activity.showProgressDialog("Attempting login with server");
                         attemptServerLogin(username, password);
@@ -87,15 +92,30 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
                     }
                 } else {
                     keyValueStore.setStringForKey(KeyValueStore.KEY_SERVER_TOKEN, "");
+                    refreshUI();
                 }
             }
         });
+    }
 
+    /**
+     *  refreshUI
+     */
+
+    private void refreshUI() {
+        mUsernameEditText.setText("");
+        mPasswordEditText.setText("");
+
+        final KeyValueStore keyValueStore = new KeyValueStore(getActivity());
         String token = keyValueStore.getStringForKey(KeyValueStore.KEY_SERVER_TOKEN);
         if (token.isEmpty()) {
-            loginButton.setText("Server Login");
+            mUsernameEditText.setVisibility(View.VISIBLE);
+            mPasswordEditText.setVisibility(View.VISIBLE);
+            mLoginButton.setText("Server Login");
         } else {
-            loginButton.setText("Clear Server Token");
+            mLoginButton.setText("Clear Server Token");
+            mUsernameEditText.setVisibility(View.GONE);
+            mPasswordEditText.setVisibility(View.GONE);
         }
     }
 
@@ -117,5 +137,6 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
         SettingsActivity activity = (SettingsActivity)getActivity();
         activity.hideProgressDialog();
         activity.showAlert("Login Result:", response.getUserMessage());
+        refreshUI();
     }
 }
