@@ -84,11 +84,12 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
                 if (token.isEmpty()) {
                     String username = mUsernameEditText.getText().toString();
                     String password = mPasswordEditText.getText().toString();
-                    if (!username.isEmpty() && !password.isEmpty()) {
+                    String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
+                    if (!username.isEmpty() && !password.isEmpty() && !baseUrl.isEmpty()) {
                         activity.showProgressDialog("Attempting login with server");
-                        attemptServerLogin(username, password);
+                        attemptServerLogin(baseUrl, username, password);
                     } else {
-                        activity.showAlert("Oops", "Please fill in Username and Password fields");
+                        activity.showAlert("Oops", "Username, Password and BaseURL needed");
                     }
                 } else {
                     keyValueStore.setStringForKey(KeyValueStore.KEY_SERVER_TOKEN, "");
@@ -123,9 +124,9 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
      *  Server Login
      */
 
-    private void attemptServerLogin(String username, String password) {
-        UserAuthCoordinator coordinator = new UserAuthCoordinator("", getActivity(), this);
-        coordinator.attemptLogin(username, password);
+    private void attemptServerLogin(String baseUrl, String username, String password) {
+        UserAuthCoordinator coordinator = new UserAuthCoordinator(baseUrl, getActivity(), this);
+        coordinator.attemptAuthentication(username, password);
     }
 
     /**
