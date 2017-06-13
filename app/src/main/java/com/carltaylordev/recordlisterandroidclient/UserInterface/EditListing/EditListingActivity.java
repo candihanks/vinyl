@@ -123,7 +123,10 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_clear_fields) {
+        if (id == R.id.action_new_record) {
+            mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), EditListingActivity.this);
+            refreshUi();
+            super.showToast("New Record Created");
             return true;
         }
         if (id == R.id.action_test_data) {

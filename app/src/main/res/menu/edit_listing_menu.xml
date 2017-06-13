@@ -4,9 +4,9 @@
     tools:context="com.carltaylordev.recordlisterandroidclient.MainActivity">
 
     <item
-        android:id="@+id/action_clear_fields"
+        android:id="@+id/action_new_record"
         android:orderInCategory="101"
-        android:title="Clear"
+        android:title="New"
         app:showAsAction="ifRoom" />
 
     <item
