@@ -31,6 +31,7 @@ public class MockData {
     private void cats() {
         if (EbayCategory.anyExist()) {
             return;
+//            EbayCategory.deleteAll();
         }
 
         /**

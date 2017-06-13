@@ -17,6 +17,7 @@ import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -82,8 +83,8 @@ public class RecordSessionManager {
         mRealmRecord.setListingTitle(String.format("Test Listing Do Not Buy (#%s)", FileManager.randomNumber()));
         mRealmRecord.setPrice("1.99");
 
-        RealmResults<EbayCategory>results = getAllCategories();
-        mRealmRecord.setEbayCategory(results.first());
+        List<EbayCategory>results = getUsersCategories();
+        mRealmRecord.setEbayCategory(results.get(0));
 
         mImages = new RealmList<>();
         try {
@@ -101,7 +102,7 @@ public class RecordSessionManager {
      * Get
      */
 
-    public static RealmResults<EbayCategory> getAllCategories() {
+    public static List<EbayCategory> getUsersCategories() {
         return EbayCategory.getAllFavourites();
     }
 
