@@ -103,9 +103,12 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         List<RealmRecord> records = mAdapter.getSelectedItems();
         if (records.size() > 0) {
             super.showHorizontalProgressDialog("Attempting Upload:", records.size());
+
             KeyValueStore keyValueStore = new KeyValueStore(this);
             String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
-            RecordUploadCoordinator coordinator = new RecordUploadCoordinator(baseUrl, records, mRealm, this, this);
+            String token = keyValueStore.getStringForKey(KeyValueStore.KEY_SERVER_TOKEN);
+
+            RecordUploadCoordinator coordinator = new RecordUploadCoordinator(baseUrl, token, records, mRealm, this, this);
             coordinator.tryNextUpload();
         } else {
             showToast("Select Records to Upload");

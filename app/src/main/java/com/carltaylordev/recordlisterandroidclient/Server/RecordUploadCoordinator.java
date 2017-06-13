@@ -17,6 +17,7 @@ import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -44,11 +45,13 @@ public class RecordUploadCoordinator {
     private Realm mRealm;
     private Context mContext;
     private String mBaseUrl;
+    private String mToken;
     private List<RealmRecord> mRecords;
     private RequestQueue mQueue;
     private RecordUploadCoordinator.Interface mInterface;
 
     public RecordUploadCoordinator(String baseUrl,
+                                   String token,
                                    List<RealmRecord> records,
                                    Realm realm,
                                    Context context,
@@ -57,6 +60,7 @@ public class RecordUploadCoordinator {
         mContext = context;
         mRecords = records;
         mBaseUrl = baseUrl;
+        mToken = token;
         mQueue = Volley.newRequestQueue(mContext);
         mInterface = Interface;
         mStartSize = records.size();
@@ -82,7 +86,7 @@ public class RecordUploadCoordinator {
            if (mSucceed == mStartSize) {
                mInterface.onFinished(new BoolResponse(true, "Uploads Accepted"));
            } else {
-               mInterface.onFinished(new BoolResponse(false, String.format("Number of Uploads Failed: %s (%s) ", mFailed, mStartSize)));
+               mInterface.onFinished(new BoolResponse(false, String.format("Number of Uploads Failed: %s (%s) - try these again", mFailed, mStartSize)));
            }
        }
     }
@@ -90,7 +94,9 @@ public class RecordUploadCoordinator {
     private void upload(final RealmRecord record) {
         String url = mBaseUrl + "add_item";
         try {
-            final String requestBody = record.toJSON().toString();
+            JSONObject jsonObject = record.toJSON();
+            jsonObject.put("token", mToken);
+            final String requestBody = jsonObject.toString();
             StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -102,8 +108,13 @@ public class RecordUploadCoordinator {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     updateRecordAsUploaded(record, false);
-                    mFailed ++;
-                    tryNextUpload();
+                    if (error instanceof AuthFailureError) {
+                        mInProgress = false;
+                        mInterface.onFinished(new BoolResponse(false, "Token not valid. Try clearing token and logging in again via settings"));
+                    } else {
+                        mFailed ++;
+                        tryNextUpload();
+                    }
                 }
             }) {
                 @Override
