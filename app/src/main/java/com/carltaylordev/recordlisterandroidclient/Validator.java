@@ -28,6 +28,10 @@ public class Validator {
             allDataPresent = false;
             message += "\n* Set the Base URL in Settings";
         }
+        if (keyValueStore.getStringForKey(KeyValueStore.KEY_SERVER_TOKEN).isEmpty()) {
+            allDataPresent = false;
+            message += "\n* Login with the server via Settings";
+        }
 
         return new BoolResponse(allDataPresent, message);
     }

@@ -35,8 +35,11 @@ public class ServerSettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.server_settings_fragment, container, false);
+        final KeyValueStore keyValueStore = new KeyValueStore(getActivity());
         SettingsActivity activity = (SettingsActivity) getActivity();
-        setupEditTexts(rootView, activity);
+
+        setupEditTexts(rootView, keyValueStore, activity);
+        setUpLoginButton(rootView, keyValueStore);
         return rootView;
     }
 
@@ -44,9 +47,7 @@ public class ServerSettingsFragment extends Fragment {
      *  Setup
      */
 
-    private void setupEditTexts(View view, final SettingsActivity activity) {
-        final KeyValueStore keyValueStore = new KeyValueStore(getActivity());
-
+    private void setupEditTexts(View view, final KeyValueStore keyValueStore, final SettingsActivity activity) {
         final EditText baseUrlEditText = (EditText) view.findViewById(R.id.base_url_edit_text);
         baseUrlEditText.setText(keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL));
 
@@ -63,5 +64,27 @@ public class ServerSettingsFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void setUpLoginButton(View view, final KeyValueStore keyValueStore) {
+        Button loginButton = (Button)view.findViewById(R.id.login_logout_button);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String token = keyValueStore.getStringForKey(KeyValueStore.KEY_SERVER_TOKEN);
+                if (token.isEmpty()) {
+                    // login
+                } else {
+                    keyValueStore.setStringForKey(KeyValueStore.KEY_SERVER_TOKEN, "");
+                }
+            }
+        });
+
+        String token = keyValueStore.getStringForKey(KeyValueStore.KEY_SERVER_TOKEN);
+        if (token.isEmpty()) {
+            loginButton.setText("Server Login");
+        } else {
+            loginButton.setText("Clear Server Token");
+        }
     }
 }

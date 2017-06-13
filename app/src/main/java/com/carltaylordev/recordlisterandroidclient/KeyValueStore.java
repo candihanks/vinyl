@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 public class KeyValueStore {
 
     public static final String KEY_BASE_SERVER_URL = "KEY_BASE_SERVER_URL";
+    public static final String KEY_SERVER_TOKEN = "KEY_SERVER_TOKEN";
 
     Context mContext;
     SharedPreferences mPrefs;
