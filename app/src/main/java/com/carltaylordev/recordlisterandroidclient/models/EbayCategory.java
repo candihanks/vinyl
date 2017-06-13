@@ -24,7 +24,7 @@ public class EbayCategory extends RealmObject {
 
     public static RealmResults getAll() {
         Realm realm = Realm.getDefaultInstance();
-        final RealmResults<EbayCategory> cats = realm.where(EbayCategory.class).findAll().sort("name");
+        final RealmResults<EbayCategory> cats = realm.where(EbayCategory.class).findAllSorted("name");
         return cats;
     }
 
@@ -38,6 +38,11 @@ public class EbayCategory extends RealmObject {
         Realm realm = Realm.getDefaultInstance();
         final RealmObject cat = realm.where(EbayCategory.class).findFirst();
         return cat != null;
+    }
+
+    public static void deleteAll() {
+        RealmResults results = EbayCategory.getAll();
+        results.deleteAllFromRealm();
     }
 
     public String getName() {
