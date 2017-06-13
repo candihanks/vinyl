@@ -5,4 +5,7 @@
 
     <string name="title_activity_main_activity">Record Lister</string>
     <string name="title_activity_saved_listings">Saved</string>
+
+    <string name="base_url"></string>
+
 </resources>

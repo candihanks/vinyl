@@ -23,6 +23,6 @@ public class DebugData {
 
     private void keyValueStore() {
         KeyValueStore keyValueStore = new KeyValueStore(mContext);
-        keyValueStore.setStringForKey(KeyValueStore.KEY_BASE_SERVER_URL, mContext.getString(R.string.base_url));
+        keyValueStore.setStringForKey(KeyValueStore.KEY_BASE_SERVER_URL, mContext.getString(R.string.secret_base_url));
     }
 }
