@@ -62,8 +62,8 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
      */
 
     void setupSpinner(View view, EditListingActivity activity) {
-        ArrayAdapter<EbayCategory> spinnerArrayAdapter = new ArrayAdapter<>(activity,
-                android.R.layout.simple_spinner_item, activity.mRecordSessionManager.getAllCategories());
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(activity,
+                android.R.layout.simple_spinner_item, activity.mRecordSessionManager.getCategoriesAsStrings());
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mStyleCatSpinner = (Spinner)view.findViewById(R.id.spinner_ebay_cats);
@@ -104,7 +104,7 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
         record.setTitle(mTitleEditText.getText().toString());
         record.setLabel(mLabelEditText.getText().toString());
         record.setListingTitle(mListingTitleEditText.getText().toString());
-        record.setEbayCategory((EbayCategory)mStyleCatSpinner.getSelectedItem());
+        manager.setEbayCatagoryMatchingName(mStyleCatSpinner.getSelectedItem().toString());
     }
 
     @Override
@@ -114,5 +114,9 @@ public class Info1Fragment extends android.support.v4.app.Fragment implements Re
         mTitleEditText.setText(record.getTitle());
         mLabelEditText.setText(record.getLabel());
         mListingTitleEditText.setText(record.getListingTitle());
+
+        EbayCategory ebayCategory = record.getEbayCategory();
+        ArrayAdapter styleCatAdapter = (ArrayAdapter)mStyleCatSpinner.getAdapter();
+        mStyleCatSpinner.setSelection(styleCatAdapter.getPosition(ebayCategory.getName()));
     }
 }

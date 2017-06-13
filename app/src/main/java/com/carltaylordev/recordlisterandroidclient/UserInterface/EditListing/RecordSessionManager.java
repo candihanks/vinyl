@@ -82,8 +82,9 @@ public class RecordSessionManager {
         mRealmRecord.setListingTitle(String.format("Test Listing Do Not Buy (#%s)", FileManager.randomNumber()));
         mRealmRecord.setPrice("1.99");
 
-        List<EbayCategory>results = getUsersCategories();
-        mRealmRecord.setEbayCategory(results.get(0));
+        List<String> stringCats = getCategoriesAsStrings();
+        EbayCategory category = mRealm.where(EbayCategory.class).equalTo("name", stringCats.get(0)).findFirst();
+        mRealmRecord.setEbayCategory(category);
 
         mImages = new RealmList<>();
         try {
@@ -101,8 +102,13 @@ public class RecordSessionManager {
      * Get
      */
 
-    public static List<EbayCategory> getUsersCategories() {
-        return EbayCategory.getAllSortedByFavourite();
+    public static List<String> getCategoriesAsStrings() {
+        List<EbayCategory> sorted = EbayCategory.getAllSortedByFavourite();
+        List<String> strings = new ArrayList<>();
+        for (EbayCategory category : sorted) {
+            strings.add(category.getName());
+        }
+        return strings;
     }
 
     public static ArrayList<String> getRecordConditions() {
@@ -136,6 +142,15 @@ public class RecordSessionManager {
 
     public RealmRecord getRecord() {
         return mRealmRecord;
+    }
+
+    /**
+     * Set
+     */
+
+    public void setEbayCatagoryMatchingName(String name) {
+        EbayCategory category = mRealm.where(EbayCategory.class).equalTo("name", name).findFirst();
+        mRealmRecord.setEbayCategory(category);
     }
 
     /**
