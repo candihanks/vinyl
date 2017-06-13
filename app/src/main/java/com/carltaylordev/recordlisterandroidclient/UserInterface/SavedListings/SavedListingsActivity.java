@@ -13,6 +13,7 @@ import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.Server.RecordUploadCoordinator;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.BaseActivity;
 import com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing.EditListingActivity;
+import com.carltaylordev.recordlisterandroidclient.Validator;
 import com.carltaylordev.recordlisterandroidclient.models.BoolResponse;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
@@ -93,16 +94,17 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
      */
 
     void uploadSelectedRows() {
-        KeyValueStore keyValueStore = new KeyValueStore(this);
-        String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
-        if (baseUrl.isEmpty()) {
-            super.showAlert("Attention", "Please Set base url in Settings");
+        BoolResponse allDataPresent = Validator.allDataPresentToEnableUpload(this);
+        if (!allDataPresent.isTrue()) {
+            super.showAlert("Attention", allDataPresent.getUserMessage());
             return;
         }
 
         List<RealmRecord> records = mAdapter.getSelectedItems();
         if (records.size() > 0) {
             super.showHorizontalProgressDialog("Attempting Upload:", records.size());
+            KeyValueStore keyValueStore = new KeyValueStore(this);
+            String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
             RecordUploadCoordinator coordinator = new RecordUploadCoordinator(baseUrl, records, mRealm, this, this);
             coordinator.tryNextUpload();
         } else {
