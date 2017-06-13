@@ -147,6 +147,7 @@ public class RecordUploadCoordinator {
     private void updateRecordAsUploaded(RealmRecord record, boolean success) {
         mRealm.beginTransaction();
         record.setUploaded(success);
+        mRealm.copyToRealmOrUpdate(record);
         mRealm.commitTransaction();
     }
 }
