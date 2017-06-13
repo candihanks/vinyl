@@ -82,7 +82,7 @@ public class RecordUploadCoordinator {
            if (mSucceed == mStartSize) {
                mInterface.onFinished(new BoolResponse(true, "Uploads Accepted"));
            } else {
-               mInterface.onFinished(new BoolResponse(false, String.format("Number of Uploads not Accepted: %s (%s) ", mFailed, mStartSize)));
+               mInterface.onFinished(new BoolResponse(false, String.format("Number of Uploads Failed: %s (%s) ", mFailed, mStartSize)));
            }
        }
     }
