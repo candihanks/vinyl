@@ -1,6 +1,7 @@
 package com.carltaylordev.recordlisterandroidclient.UserInterface.SavedListings;
 
 import android.app.Activity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.security.AccessController.getContext;
 
 /**
  * Created by carl on 07/06/2017.
@@ -66,14 +69,15 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
             }
 
             if (mRecord.hasBeenUploaded()) {
-                 mUploadedImageView.setVisibility(View.VISIBLE);
+                 mUploadedImageView.setVisibility(View.INVISIBLE);
             } else {
-                mUploadedImageView.setVisibility(View.INVISIBLE);
+                mUploadedImageView.setVisibility(View.VISIBLE);
             }
 
             mImageView.setImageBitmap(image.getThumb());
             mTitleTextView.setText(mRecord.getListingTitle());
             mPriceTextView.setText(mRecord.getPrice());
+            mCheckBox.setChecked(false);
         }
 
         @Override
@@ -92,6 +96,11 @@ public class RecyclerAdapter extends  RecyclerView.Adapter<RecyclerAdapter.Recor
     public RecyclerAdapter(List<RealmRecord> records, Activity activity) {
         mRecords = records;
         mInterface = (RecordHolder.Interface) activity;
+    }
+
+    public void updateRecords(List<RealmRecord>records) {
+        mRecords = records;
+        this.notifyDataSetChanged();
     }
 
     @Override

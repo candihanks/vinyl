@@ -42,8 +42,6 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
 
         mRealm = Realm.getDefaultInstance();
         setupRecyclerView(getSavedRecords(mRealm));
-
-        // TODO: 07/06/2017 auto onUploadCountUpdate list on delete? Callback from Realm?
     }
 
     @Override
@@ -75,14 +73,23 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    /**
+     * Data Loading
+     */
+
     List<RealmRecord> getSavedRecords(Realm realm) {
         RealmResults<RealmRecord> records = realm.where(RealmRecord.class).findAll();
         List<RealmRecord> workingCopy = realm.copyFromRealm(records);
         return workingCopy;
     }
 
+    private void refreshRecyclerView() {
+        mAdapter.updateRecords(getSavedRecords(mRealm));
+        mRecyclerView.invalidate();
+    }
+
     /**
-     * Data Operations
+     * Uploading
      */
 
     void uploadSelectedRows() {
@@ -131,5 +138,6 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         } else {
             super.showAlert("Info:", response.getUserMessage());
         }
+        refreshRecyclerView();
     }
 }
