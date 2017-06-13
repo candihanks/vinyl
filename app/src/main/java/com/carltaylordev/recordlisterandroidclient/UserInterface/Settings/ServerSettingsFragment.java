@@ -80,20 +80,25 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
+                if (baseUrl.isEmpty()) {
+                    activity.showAlert("Oops", "Please set BaseURL");
+                    return;
+                }
                 String token = keyValueStore.getStringForKey(KeyValueStore.KEY_SERVER_TOKEN);
                 if (token.isEmpty()) {
                     String username = mUsernameEditText.getText().toString();
                     String password = mPasswordEditText.getText().toString();
-                    String baseUrl = keyValueStore.getStringForKey(KeyValueStore.KEY_BASE_SERVER_URL);
-                    if (!username.isEmpty() && !password.isEmpty() && !baseUrl.isEmpty()) {
+
+                    if (!username.isEmpty() && !password.isEmpty()) {
                         activity.showProgressDialog("Attempting login with server");
                         attemptServerLogin(baseUrl, username, password);
                     } else {
-                        activity.showAlert("Oops", "Username, Password and BaseURL needed");
+                        activity.showAlert("Oops", "Username & Password needed");
                     }
                 } else {
-                    keyValueStore.setStringForKey(KeyValueStore.KEY_SERVER_TOKEN, "");
-                    refreshUI();
+                    activity.showProgressDialog("Attempting to clear token with server");
+                    attemptServerClearAuthToken(baseUrl, token);
                 }
             }
         });
@@ -121,12 +126,17 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
     }
 
     /**
-     *  Server Login
+     *  Server
      */
 
     private void attemptServerLogin(String baseUrl, String username, String password) {
         UserAuthCoordinator coordinator = new UserAuthCoordinator(baseUrl, getActivity(), this);
         coordinator.attemptAuthentication(username, password);
+    }
+
+    private void attemptServerClearAuthToken(String baseUrl, String token) {
+        UserAuthCoordinator coordinator = new UserAuthCoordinator(baseUrl, getActivity(), this);
+        coordinator.attemptClearAuthToken(token);
     }
 
     /**
@@ -137,7 +147,7 @@ public class ServerSettingsFragment extends Fragment implements UserAuthCoordina
     public void onFinished(BoolResponse response) {
         SettingsActivity activity = (SettingsActivity)getActivity();
         activity.hideProgressDialog();
-        activity.showAlert("Login Result:", response.getUserMessage());
+        activity.showAlert("Result:", response.getUserMessage());
         refreshUI();
     }
 }

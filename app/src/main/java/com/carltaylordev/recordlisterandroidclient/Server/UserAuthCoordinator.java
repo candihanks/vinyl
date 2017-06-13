@@ -54,8 +54,28 @@ public class UserAuthCoordinator {
         }
     }
 
+    public void attemptClearAuthToken(String token) {
+        if (!mInProgress) {
+            mInProgress = true;
+            clearAuthToken(token);
+        }
+    }
+
+    private void jsonParseErrorAuthResponse() {
+        mInterface.onFinished(new BoolResponse(false, "Unknown login error: error parsing JSON response"));
+    }
+
+    private void jsonParseErrorTokenClearResponse() {
+        mInterface.onFinished(new BoolResponse(false, "Unknown error: error parsing JSON response"));
+    }
+
+    private void setToken(String token) {
+        KeyValueStore keyValueStore = new KeyValueStore(mContext);
+        keyValueStore.setStringForKey(KeyValueStore.KEY_SERVER_TOKEN, token);
+    }
+
     /**
-     * Volley Login
+     * Volley
      */
 
     private void login(String username, String password) {
@@ -72,11 +92,10 @@ public class UserAuthCoordinator {
                     mInProgress = false;
                     try {
                         JSONObject jsonObject = new JSONObject(response);
-                        final KeyValueStore keyValueStore = new KeyValueStore(mContext);
-                        keyValueStore.setStringForKey(KeyValueStore.KEY_SERVER_TOKEN, jsonObject.getString("token"));
+                        setToken(jsonObject.getString("token"));
                         mInterface.onFinished(new BoolResponse(true, "Token received, you are now logged in"));
                     } catch (JSONException e) {
-                        jsonParseError();
+                        jsonParseErrorAuthResponse();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -84,13 +103,13 @@ public class UserAuthCoordinator {
                 public void onErrorResponse(VolleyError error) {
                     mInProgress = false;
                     try {
-                        String responseBody = new String( error.networkResponse.data, "utf-8" );
-                        JSONObject jsonObject = new JSONObject( responseBody );
+                        String responseBody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject jsonObject = new JSONObject(responseBody);
                         mInterface.onFinished(new BoolResponse(false, jsonObject.getString("message")));
-                    } catch ( JSONException e ) {
-                        jsonParseError();
-                    } catch (UnsupportedEncodingException e){
-                        jsonParseError();
+                    } catch (JSONException e) {
+                        jsonParseErrorAuthResponse();
+                    } catch (UnsupportedEncodingException e) {
+                        jsonParseErrorAuthResponse();
                     }
                 }
             }) {
@@ -117,7 +136,7 @@ public class UserAuthCoordinator {
                             return Response.success(stringResponse, HttpHeaderParser.parseCacheHeaders(response));
                         }
                     }
-                    return Response.error(new VolleyError("Upload Failed"));
+                    return Response.error(new VolleyError("Failed"));
                 }
             };
 
@@ -129,7 +148,74 @@ public class UserAuthCoordinator {
         }
     }
 
-    private void jsonParseError() {
-        mInterface.onFinished(new BoolResponse(false, "Unknown login error: error parsing JSON response"));
+    private void clearAuthToken(String token) {
+        String url = mBaseUrl + "clear_auth_token";
+        try {
+            final JSONObject json = new JSONObject();
+            json.put("token", token);
+            final String requestBody = json.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    mInProgress = false;
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        setToken("");
+                        mInterface.onFinished(new BoolResponse(true, jsonObject.getString("message")));
+                    } catch (JSONException e) {
+                        jsonParseErrorTokenClearResponse();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    mInProgress = false;
+                    try {
+                        String responseBody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        setToken("");
+                        mInterface.onFinished(new BoolResponse(false, jsonObject.getString("message")));
+                    } catch (JSONException e) {
+                        jsonParseErrorTokenClearResponse();
+                    } catch (UnsupportedEncodingException e) {
+                        jsonParseErrorTokenClearResponse();
+                    }
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        Logger.logMessage(e.toString());
+                        return null;
+                    }
+                }
+
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    if (response != null) {
+                        String stringResponse = new String(response.data);
+                        if (response.statusCode == 200) {
+                            return Response.success(stringResponse, HttpHeaderParser.parseCacheHeaders(response));
+                        }
+                    }
+                    return Response.error(new VolleyError("Failed"));
+                }
+            };
+
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEOUT_TIME_MILLIS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            mQueue.add(stringRequest);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
+
