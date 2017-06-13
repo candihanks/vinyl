@@ -44,13 +44,14 @@
             android:text="price" />
 
         <ImageView
+            android:tint="@color/black_overlay"
             android:id="@+id/needs_upload_image_view"
             android:layout_width="20dp"
-            android:layout_height="20dp"
-            app:srcCompat="@android:drawable/ic_menu_upload"
-            android:layout_centerVertical="true"
-            android:backgroundTint="@color/primary"
-            android:layout_alignStart="@+id/record_price" />
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignStart="@+id/checkbox"
+            android:layout_below="@+id/record_price"
+            app:srcCompat="@android:drawable/ic_menu_upload" />
 
         <CheckBox
             android:id="@+id/checkbox"
