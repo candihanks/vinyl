@@ -57,6 +57,7 @@ public class RealmRecord extends RealmObject {
         json.put("listing_category", ebayCategory.getNumber());
         json.put("number_of_12s", numberOfRecords); // this translates to 'number of records' server side
         json.put("format", ebayCategory.getFormat());
+        json.put("listing_title", listingTitle);
 
         // TODO: 09/06/2017 these are not in our UI / DB yet may keep them hardcoded
         json.put("condition_id", "3000"); // Used
