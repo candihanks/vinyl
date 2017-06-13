@@ -3,6 +3,7 @@ package com.carltaylordev.recordlisterandroidclient.models;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -19,10 +20,17 @@ public class EbayCategory extends RealmObject {
     private String number;
     private String name;
     private String format;
+    private Boolean isFavourite = false;
 
     public static RealmResults getAll() {
         Realm realm = Realm.getDefaultInstance();
-        final RealmResults<EbayCategory> cats = realm.where(EbayCategory.class).findAll();
+        final RealmResults<EbayCategory> cats = realm.where(EbayCategory.class).findAll().sort("name");
+        return cats;
+    }
+
+    public static RealmResults getAllFavourites() {
+        Realm realm = Realm.getDefaultInstance();
+        final RealmResults<EbayCategory> cats = realm.where(EbayCategory.class).equalTo("isFavourite", true).findAll().sort("name");
         return cats;
     }
 
@@ -38,6 +46,14 @@ public class EbayCategory extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean isFavourite() {
+        return isFavourite;
+    }
+
+    public void setAsFavourite(Boolean favourite) {
+        isFavourite = favourite;
     }
 
     public String getNumber() {

@@ -100,7 +100,7 @@ public class RecordSessionManager {
      */
 
     public static RealmResults<EbayCategory> getAllCategories() {
-        return EbayCategory.getAll();
+        return EbayCategory.getAllFavourites();
     }
 
     public static ArrayList<String> getRecordConditions() {
