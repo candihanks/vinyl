@@ -21,7 +21,6 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by carl on 29/05/2017.
@@ -103,7 +102,7 @@ public class RecordSessionManager {
      */
 
     public static List<EbayCategory> getUsersCategories() {
-        return EbayCategory.getAllFavourites();
+        return EbayCategory.getAllSortedByFavourite();
     }
 
     public static ArrayList<String> getRecordConditions() {
