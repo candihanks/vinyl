@@ -42,6 +42,8 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
 
     public RecordSessionManager mRecordSessionManager;
 
+    private Realm mRealm;
+
     private static final int REQUEST_PERMISSIONS = 200;
     private boolean permissionsAccepted = false;
     private String [] permissions = {
@@ -65,6 +67,8 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_listing_activity);
+
+        mRealm = Realm.getDefaultInstance();
 
         requestPermissions();
 
@@ -92,6 +96,12 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
     protected void onResume() {
         super.onResume();
         refreshUi();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
     }
 
     @Override
@@ -124,7 +134,7 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_new_record) {
-            mRecordSessionManager = new RecordSessionManager(new RealmRecord(), Realm.getDefaultInstance(), EditListingActivity.this);
+            mRecordSessionManager = new RecordSessionManager(new RealmRecord(), mRealm, EditListingActivity.this);
             refreshUi();
             super.showToast("New Record Created");
             return true;
@@ -142,13 +152,12 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
      */
 
     private RealmRecord getRecordForUuid(String uuid) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmRecord record = realm.where(RealmRecord.class).equalTo(RealmRecord.PRIMARY_KEY, uuid).findFirst();
+        RealmRecord record = mRealm.where(RealmRecord.class).equalTo(RealmRecord.PRIMARY_KEY, uuid).findFirst();
         if (record == null) {
             return new RealmRecord();
         } else {
             // Create working copy so we can manipulate outside write transactions
-            RealmRecord workingCopy = realm.copyFromRealm(record);
+            RealmRecord workingCopy = mRealm.copyFromRealm(record);
             return workingCopy;
         }
     }
@@ -191,13 +200,12 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
      */
 
     private void loadSessionOnBackgroundThread(String uuid) {
-        final Realm realm = Realm.getDefaultInstance();
         final RealmRecord record = getRecordForUuid(uuid);
 
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                mRecordSessionManager = new RecordSessionManager(record, realm, EditListingActivity.this);
+                mRecordSessionManager = new RecordSessionManager(record, mRealm, EditListingActivity.this);
                 mRecordLoadedHandler.sendEmptyMessage(0);
             }
         };

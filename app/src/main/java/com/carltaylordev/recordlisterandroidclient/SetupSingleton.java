@@ -29,6 +29,7 @@ public class SetupSingleton {
                 setupDebugData(context);
             }
             clearTempDir(context);
+            realm.close();
         }
         return instance;
     }

@@ -62,6 +62,12 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
+    }
+
     /**
      * Setup
      */
