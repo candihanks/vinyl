@@ -119,7 +119,7 @@ public class FileManager {
      * Helpers
      */
 
-    private int randomNumber() {
+    static public int randomNumber() {
         long seconds = System.currentTimeMillis() / 1000l;
         Random generator = new Random(seconds);
         int randNumber = 10000000;

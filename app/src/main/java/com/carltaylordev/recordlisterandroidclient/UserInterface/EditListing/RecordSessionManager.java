@@ -80,14 +80,14 @@ public class RecordSessionManager {
             return;
         }
 
-        mRealmRecord.setArtist("Dave Clarke");
-        mRealmRecord.setTitle("Red 3");
-        mRealmRecord.setLabel("Deconstruction");
+        mRealmRecord.setArtist("Test Artist");
+        mRealmRecord.setTitle("Test Title");
+        mRealmRecord.setLabel("Test Label");
         mRealmRecord.setMediaCondition("Good Plus (G+)");
         mRealmRecord.setCoverCondition("Good Plus (G+)");
         mRealmRecord.setComments("Here is a great record");
-        mRealmRecord.setListingTitle("Test Listing Do Not Buy");
-        mRealmRecord.setPrice("9.99");
+        mRealmRecord.setListingTitle(String.format("Test Listing Do Not Buy (#%s)", FileManager.randomNumber()));
+        mRealmRecord.setPrice("1.99");
 
         RealmResults<EbayCategory>results = getAllCategories();
         mRealmRecord.setEbayCategory(results.first());

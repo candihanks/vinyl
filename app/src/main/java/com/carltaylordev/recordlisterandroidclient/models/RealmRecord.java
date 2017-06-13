@@ -23,8 +23,6 @@ public class RealmRecord extends RealmObject {
 
     @Ignore
     public static final String PRIMARY_KEY = "uuid";
-    @Ignore
-    public static final String UPLOADED = "uploaded";
 
     @Ignore
     private boolean checked = false;
@@ -41,6 +39,7 @@ public class RealmRecord extends RealmObject {
     private String listingTitle;
     private EbayCategory ebayCategory;
     private String price;
+    private String numberOfRecords;
     private Boolean uploaded = false;
 
     private RealmList<RealmImage>images;
@@ -55,11 +54,11 @@ public class RealmRecord extends RealmObject {
         json.put("cover_condition", coverCondition);
         json.put("notes", comments);
         json.put("price", price);
-        
-        // // TODO: 09/06/2017 these are not in our UI / DB yet 
-        json.put("listing_category", "2259");
-        json.put("number_of_12s", 1);
-        json.put("format", "45");
+        json.put("listing_category", ebayCategory.getNumber());
+        json.put("number_of_12s", numberOfRecords); // this translates to 'number of records' server side
+        json.put("format", ebayCategory.getFormat());
+
+        // TODO: 09/06/2017 these are not in our UI / DB yet may keep them hardcoded
         json.put("condition_id", "3000"); // Used
         json.put("auction_type", "BIN");
         json.put("listing_duration", "Days_30");
@@ -88,6 +87,14 @@ public class RealmRecord extends RealmObject {
             json.put("sound_clips", base64SoundClips);
         } catch (NullPointerException e) {}
         return json;
+    }
+
+    public String getNumberOfRecords() {
+        return numberOfRecords;
+    }
+
+    public void setNumberOfRecords(String numberOfRecords) {
+        this.numberOfRecords = numberOfRecords;
     }
 
     public String getUuid() {

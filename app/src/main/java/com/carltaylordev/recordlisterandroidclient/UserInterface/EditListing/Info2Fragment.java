@@ -14,10 +14,13 @@ import android.widget.Spinner;
 import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.models.RealmRecord;
 
+import java.util.ArrayList;
+
 public class Info2Fragment extends android.support.v4.app.Fragment implements RecordSessionManager.UpdateSessionInterface, RecordSessionManager.UpdateUiInterface {
 
     Spinner mRecordConditionSpinner;
     Spinner mCoverConditionSpinner;
+    Spinner mNumberOfRecordsSpinner;
     EditText mCommentsEditText;
     EditText mPriceEditText;
 
@@ -104,6 +107,15 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
         recordConditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCoverConditionSpinner = (Spinner)view.findViewById(R.id.spinner_cover_condition);
         mCoverConditionSpinner.setAdapter(coverConditionAdapter);
+
+        ArrayList<String> numbers = new ArrayList();
+        for (int i = 1; i < 11; i ++) {
+            numbers.add(Integer.toString(i));
+        }
+        ArrayAdapter<String> numberOfRecordsAdapter = new ArrayAdapter<>(activity,
+                android.R.layout.simple_spinner_item, numbers);
+        mNumberOfRecordsSpinner = (Spinner)view.findViewById(R.id.spinner_number_of_records);
+        mNumberOfRecordsSpinner.setAdapter(numberOfRecordsAdapter);
     }
 
     /**
@@ -117,18 +129,22 @@ public class Info2Fragment extends android.support.v4.app.Fragment implements Re
         record.setMediaCondition(mRecordConditionSpinner.getSelectedItem().toString());
         record.setCoverCondition(mCoverConditionSpinner.getSelectedItem().toString());
         record.setPrice(mPriceEditText.getText().toString());
+        record.setNumberOfRecords(mNumberOfRecordsSpinner.getSelectedItem().toString());
     }
 
     @Override
     public void updateUI(RecordSessionManager manager) {
         RealmRecord record = manager.getRecord();
         mCommentsEditText.setText(record.getComments());
+        mPriceEditText.setText(record.getPrice());
 
         ArrayAdapter recordConditionAdapter = (ArrayAdapter)mRecordConditionSpinner.getAdapter();
-        ArrayAdapter coverConditionAdapter = (ArrayAdapter)mCoverConditionSpinner.getAdapter();
         mRecordConditionSpinner.setSelection(recordConditionAdapter.getPosition(record.getMediaCondition()));
+
+        ArrayAdapter coverConditionAdapter = (ArrayAdapter)mCoverConditionSpinner.getAdapter();
         mCoverConditionSpinner.setSelection(coverConditionAdapter.getPosition(record.getCoverCondition()));
 
-        mPriceEditText.setText(record.getPrice());
+        ArrayAdapter numberOfRecordsAdapter = (ArrayAdapter)mNumberOfRecordsSpinner.getAdapter();
+        mNumberOfRecordsSpinner.setSelection(numberOfRecordsAdapter.getPosition(record.getNumberOfRecords()));
     }
 }

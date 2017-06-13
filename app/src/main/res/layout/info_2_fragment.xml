@@ -34,6 +34,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></Spinner>
 
+            <TextView
+                android:layout_marginTop="10dp"
+                style="@style/SpinnerLabelStyle"
+                android:text="Number of Records" />
+
+            <Spinner
+                android:id="@+id/spinner_number_of_records"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></Spinner>
+
             <EditText
                 android:id="@+id/edit_text_price"
                 android:layout_width="match_parent"
