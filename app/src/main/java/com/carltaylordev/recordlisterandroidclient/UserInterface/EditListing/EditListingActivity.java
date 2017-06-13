@@ -16,6 +16,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.carltaylordev.recordlisterandroidclient.R;
@@ -68,7 +70,6 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
 
         setupViewPager();
         setupSaveFab();
-        setupTestFab();
 
         if (mRecordSessionManager == null) {
             Intent intent = getIntent();
@@ -111,6 +112,26 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
     public void onAttachFragment (Fragment fragment) {
         super.onAttachFragment(fragment);
         mFragList.add(new WeakReference(fragment));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.edit_listing_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_clear_fields) {
+            return true;
+        }
+        if (id == R.id.action_test_data) {
+            mRecordSessionManager.createTestData();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -158,16 +179,6 @@ public class EditListingActivity extends BaseActivity implements RecordSessionMa
                 } else {
                     showAlert("You need to add:", response.getUserMessage());
                 }
-            }
-        });
-    }
-
-    private void setupTestFab() {
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.test_data_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mRecordSessionManager.createTestData();
             }
         });
     }

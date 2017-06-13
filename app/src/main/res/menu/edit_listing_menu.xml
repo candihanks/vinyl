@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.carltaylordev.recordlisterandroidclient.MainActivity">
+
+    <item
+        android:id="@+id/action_clear_fields"
+        android:orderInCategory="101"
+        android:title="Clear"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="101"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_test_data"
+        android:orderInCategory="102"
+        android:title="Test Data"
+        app:showAsAction="never" />
+</menu>
