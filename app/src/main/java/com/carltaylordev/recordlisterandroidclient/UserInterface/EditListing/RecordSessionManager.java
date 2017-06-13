@@ -2,10 +2,13 @@ package com.carltaylordev.recordlisterandroidclient.UserInterface.EditListing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.carltaylordev.recordlisterandroidclient.Logger;
 import com.carltaylordev.recordlisterandroidclient.Media.AudioTrack;
 import com.carltaylordev.recordlisterandroidclient.Media.FileManager;
+import com.carltaylordev.recordlisterandroidclient.R;
 import com.carltaylordev.recordlisterandroidclient.models.EbayCategory;
 import com.carltaylordev.recordlisterandroidclient.models.RealmAudioClip;
 import com.carltaylordev.recordlisterandroidclient.models.RealmImage;
@@ -70,16 +73,6 @@ public class RecordSessionManager {
      */
 
     public void createTestData() {
-        RealmResults<RealmRecord> savedRecords = mRealm.where(RealmRecord.class).findAll();
-        if (savedRecords.size() > 0) {
-            // get last record
-            mRealmRecord = mRealm.copyFromRealm(savedRecords.get(savedRecords.size() - 1));
-            mRealmRecord.setListingTitle("Test Listing Do Not Buy");
-            loadAssociatedData();
-            refreshUi();
-            return;
-        }
-
         mRealmRecord.setArtist("Test Artist");
         mRealmRecord.setTitle("Test Title");
         mRealmRecord.setLabel("Test Label");
@@ -91,6 +84,15 @@ public class RecordSessionManager {
 
         RealmResults<EbayCategory>results = getAllCategories();
         mRealmRecord.setEbayCategory(results.first());
+
+        mImages = new RealmList<>();
+        try {
+            Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.test_800);
+            FileManager manager = new FileManager(mContext);
+            File tempFile = manager.writeJpegToDisc(bitmap, FileManager.getRootTempPath(), cleanStringForFileName(mRealmRecord.getListingTitle()));
+            RealmImage image = new RealmImage("test", tempFile.getAbsolutePath());
+            mImages.add(image);
+        } catch (Exception e) {}
 
         refreshUi();
     }
