@@ -8,6 +8,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
@@ -74,6 +75,10 @@ public class RecordUploadCoordinator {
      * Volley Upload
      */
 
+    private void jsonParseErrorTokenClearResponse() {
+        mInterface.onFinished(new BoolResponse(false, "Server error: error parsing JSON response"));
+    }
+
     public void tryNextUpload() {
         mInterface.onUploadCountUpdate(mFailed + mSucceed + 1);
        if (mRecords.size() > 0) {
@@ -86,7 +91,7 @@ public class RecordUploadCoordinator {
            if (mSucceed == mStartSize) {
                mInterface.onFinished(new BoolResponse(true, "Uploads Accepted"));
            } else {
-               mInterface.onFinished(new BoolResponse(false, String.format("Number of Uploads Failed: %s (%s) - try these again", mFailed, mStartSize)));
+               mInterface.onFinished(new BoolResponse(false, String.format("Number of Uploads Failed: %s (%s)", mFailed, mStartSize)));
            }
        }
     }
@@ -108,9 +113,19 @@ public class RecordUploadCoordinator {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     updateRecordAsUploaded(record, false);
+                    mInProgress = false;
+
                     if (error instanceof AuthFailureError) {
-                        mInProgress = false;
-                        mInterface.onFinished(new BoolResponse(false, "Token not valid. Try clearing token and logging in again via settings"));
+                        mInterface.onFinished(new BoolResponse(false, "Token no longer valid. Try clearing token and logging in again via settings"));
+
+                    } else if (error instanceof ServerError) {
+                        try {
+                            String responseBody = new String(error.networkResponse.data, "utf-8");
+                            JSONObject jsonObject = new JSONObject(responseBody);
+                            mInterface.onFinished(new BoolResponse(false, jsonObject.getString("message")));
+                        } catch (Exception e) {
+                            jsonParseErrorTokenClearResponse();
+                        }
                     } else {
                         mFailed ++;
                         tryNextUpload();
