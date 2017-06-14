@@ -46,6 +46,18 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        refreshRecyclerView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.saved_listings_menu, menu);
         return true;
@@ -60,12 +72,6 @@ public class SavedListingsActivity extends BaseActivity implements RecyclerAdapt
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mRealm.close();
     }
 
     /**
