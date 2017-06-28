@@ -75,7 +75,7 @@ public class RecordUploadCoordinator {
      * Volley Upload
      */
 
-    private void jsonParseErrorTokenClearResponse() {
+    private void jsonParseError() {
         mInterface.onFinished(new BoolResponse(false, "Server error: error parsing JSON response"));
     }
 
@@ -112,19 +112,29 @@ public class RecordUploadCoordinator {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    updateRecordAsUploaded(record, false);
                     mInProgress = false;
 
                     if (error instanceof AuthFailureError) {
                         mInterface.onFinished(new BoolResponse(false, "Token no longer valid. Try clearing token and logging in again via settings"));
-
+                        return;
                     } else if (error instanceof ServerError) {
                         try {
                             String responseBody = new String(error.networkResponse.data, "utf-8");
                             JSONObject jsonObject = new JSONObject(responseBody);
-                            mInterface.onFinished(new BoolResponse(false, jsonObject.getString("message")));
+                            try {
+                                mInterface.onFinished(new BoolResponse(false, jsonObject.getString("message")));
+                            } catch (Exception e) {
+                                try {
+                                    // This will occur when DRF is sending back the message, not our code
+                                    mInterface.onFinished(new BoolResponse(false, jsonObject.getString("detail")));
+                                } catch (Exception e1) {
+                                    jsonParseError();
+                                }
+                            }
+
+                            return;
                         } catch (Exception e) {
-                            jsonParseErrorTokenClearResponse();
+                            jsonParseError();
                         }
                     } else {
                         mFailed ++;
