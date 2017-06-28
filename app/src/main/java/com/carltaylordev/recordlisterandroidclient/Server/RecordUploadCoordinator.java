@@ -97,7 +97,7 @@ public class RecordUploadCoordinator {
     }
 
     private void upload(final RealmRecord record) {
-        String url = mBaseUrl + "add_item";
+        String url = mBaseUrl + "add_item/";
         try {
             JSONObject jsonObject = record.toJSON();
             jsonObject.put("token", mToken);

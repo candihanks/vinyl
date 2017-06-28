@@ -79,7 +79,7 @@ public class UserAuthCoordinator {
      */
 
     private void login(String username, String password) {
-        String url = mBaseUrl + "auth_user";
+        String url = mBaseUrl + "auth_user/";
         try {
             final JSONObject json = new JSONObject();
             json.put("username", username);
