@@ -14,9 +14,10 @@ import java.util.regex.Pattern;
 public class Validator {
 
     public static boolean isValidUrl(String url) {
-        Pattern pattern = Pattern.compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?");
-        Matcher matcher = pattern.matcher(url);
-        return matcher.matches();
+        return true;
+//        Pattern pattern = Pattern.compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?");
+//        Matcher matcher = pattern.matcher(url);
+//        return matcher.matches();
     }
 
     public static BoolResponse allDataPresentToEnableUpload(Context context) {
